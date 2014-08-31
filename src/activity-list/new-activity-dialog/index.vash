@@ -1,0 +1,18 @@
+<div>
+	<ul class="list">
+		<li class="item item-input item-select">
+			<div>
+				<div class="input-label">
+					Activity type
+				</div>
+				<select class="js-type-select">
+					@model.activityTypes.forEach(function(activityType){
+						<option value="@activityType.key" class="js-new-record">@activityType.name</option>
+					})
+				</select>
+			</div>
+		</li>
+	</ul>
+	<div class="js-form-container">
+	</div>
+</div>

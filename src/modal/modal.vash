@@ -1,0 +1,16 @@
+<div style="display:none;" class="modal">
+	<div class="bar bar-header bar-balanced">
+	  <h1 class="title">@model.title</h1>
+	  <button class="js-close button icon ion-close"></button>
+	</div>
+	<div class="content has-header">
+		<div class="modal-body">
+		</div>
+
+		<div class="list">
+			<label class="item">
+			  <button class="js-close button button-block button-positive" type="button">Ok</button>
+			</label>
+		</div>
+	</div>
+</div>

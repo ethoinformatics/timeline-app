@@ -1,0 +1,11 @@
+<div>
+	<div class="input-label">
+		Show
+	</div>
+	<select>
+		@model.activityStates.forEach(function(activityState){
+			<option class="js-new-record">@activityState</option>
+		})
+	</select>
+</div>
+

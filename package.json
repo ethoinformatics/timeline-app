@@ -1,0 +1,40 @@
+{
+  "name": "sample-ui-browserify",
+  "version": "0.0.0",
+  "description": "This sample uses browserify to organize the code in to modules, vash for client side rendering of templates and jQuery for everything else",
+  "main": "index.js",
+  "scripts": {
+    "start": "./node_modules/.bin/nodemon -e js,vash ./build.js",
+    "deploy": "cp -r public/* ./dist/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ethoinformatics/sample-ui-browserify.git"
+  },
+  "author": "ethoformatics",
+  "license": "none",
+  "bugs": {
+    "url": "https://github.com/ethoinformatics/sample-ui-browserify/issues"
+  },
+  "homepage": "https://github.com/ethoinformatics/sample-ui-browserify",
+  "dependencies": {
+    "brfs": "^1.2.0",
+    "browserify": "^5.9.1",
+    "cubism": "^1.6.0",
+    "d3": "^3.4.11",
+    "jocal": "0.0.1",
+    "lodash": "^2.4.1",
+    "mkdirp": "^0.5.0",
+    "node-lessify": "0.0.4",
+    "reactive": "^1.2.0",
+    "vashify": "^0.3.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.2.1"
+  },
+  "browser": {
+    "modal": "./src/modal/index.js",
+    "activity-types": "./src/activity-types/index.js",
+    "form-builder": "./src/form-builder/index.js"
+  }
+}

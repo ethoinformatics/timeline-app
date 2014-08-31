@@ -1,0 +1,31 @@
+<div class="pane">
+	<div class="bar bar-header bar-dark">
+		<h1 class="title">Activity Manager</h1>
+		<button class="js-btn-add button-clear button button-balanced">
+			<i class="icon ion-plus-circled"></i>
+		 </button>
+	  </div>
+	<div class="content has-header">
+		<ul class="list">
+			<li id="select-container" class="item item-input item-select">
+			</li>
+			<li class="item item-divider">
+				Records
+			</li>
+			<li id="list-container" class="list">
+
+			</li>
+		</ul>
+	</div>
+
+	<div class="bar bar-footer bar-dark">
+		<button class="js-show-activity-list button button-clear">
+			<i class="balanced icon ion-android-data"></i>
+		</button>
+		<div class="title"> <button class="button button-clear"> <i class="icon ion-alert"></i> </button>
+		</div>
+		<button class="js-show-timeline button button-clear">
+			<i class="icon ion-stats-bars"></i>
+		</button>
+	</div>
+</div>

@@ -1,0 +1,19 @@
+<form role="form">
+	<ul class="list">
+		<li class="item item-input">
+			<label>
+			  <span class="input-label">Latitude</span>
+			  <input type="text" class="js-lat">
+			</label>
+		</li>
+		<li class="item item-input">
+			<label>
+			  <span class="input-label">Longitude</span>
+			  <input type="text" class="js-lng">
+			</label>
+		</li>
+		<li class="item">
+  			<button type="button" class="button button-dark js-get-location">Load current location</button>
+		</li>
+	</ul>
+</form>
