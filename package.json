@@ -22,9 +22,11 @@
     "browserify": "^5.9.1",
     "cubism": "^1.6.0",
     "d3": "^3.4.11",
+    "ezuuid": "0.0.1",
     "jocal": "0.0.1",
     "lodash": "^2.4.1",
     "mkdirp": "^0.5.0",
+    "moment": "^2.8.2",
     "node-lessify": "0.0.4",
     "reactive": "^1.2.0",
     "vashify": "^0.3.3"
@@ -35,6 +37,7 @@
   "browser": {
     "modal": "./src/modal/index.js",
     "activity-types": "./src/activity-types/index.js",
-    "form-builder": "./src/form-builder/index.js"
+    "form-builder": "./src/form-builder/index.js",
+    "long-click": "./src/long-click.js"
   }
 }

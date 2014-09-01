@@ -2,6 +2,7 @@ var $ = window.$,
 	EventEmitter = require('events').EventEmitter,
 	_ = require('lodash'),
 	util = require('util'),
+	ezuuid = require('ezuuid'),
 	Modal = require('modal'),
 	formBuilder = require('form-builder'),
 	template = require('index.vash'),
@@ -28,9 +29,10 @@ function NewActivityDialog(){
 			data = {};
 
 		data = {
+			id: ezuuid(),
 			data: data,
 			type: type.name,
-			beginTimestamp: new Date(),
+			starting_time: new Date(),
 		};
 
 		self.emit('new', data);

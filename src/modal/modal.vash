@@ -1,5 +1,5 @@
 <div style="display:none;" class="modal">
-	<div class="bar bar-header bar-balanced">
+	<div class="bar bar-header bar-dark">
 	  <h1 class="title">@model.title</h1>
 	  <button class="js-close button icon ion-close"></button>
 	</div>
@@ -9,7 +9,7 @@
 
 		<div class="list">
 			<label class="item">
-			  <button class="js-close button button-block button-positive" type="button">Ok</button>
+			  <button class="js-close button button-block button-balanced" type="button">Ok</button>
 			</label>
 		</div>
 	</div>

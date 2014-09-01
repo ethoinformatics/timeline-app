@@ -1,7 +1,7 @@
 var $ = window.$,
 	_ = require('lodash'),
-	Timeline = require('./timeline/'),
-	ActivityList = require('./activity-list/');
+	Timeline = require('./views/timeline/'),
+	ActivityList = require('./views/activity-list/');
 
 $(function(){
 	var $body = $('body'),

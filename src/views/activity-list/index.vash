@@ -1,6 +1,6 @@
 <div class="pane">
 	<div class="bar bar-header bar-dark">
-		<h1 class="title">Activity Manager</h1>
+		<h1 class="title">Activity List</h1>
 		<button class="js-btn-add button-clear button button-balanced">
 			<i class="icon ion-plus-circled"></i>
 		 </button>
@@ -10,10 +10,13 @@
 			<li id="select-container" class="item item-input item-select">
 			</li>
 			<li class="item item-divider">
-				Records
+				Activities
 			</li>
+			@{var itemTemplate = require('./list-item.vash'); }
 			<li id="list-container" class="list">
-
+			@model.items.forEach(function(item){
+				@html.raw(itemTemplate(item))
+			})
 			</li>
 		</ul>
 	</div>

@@ -6,6 +6,7 @@
 					Activity type
 				</div>
 				<select class="js-type-select">
+					<option value="-1">Select</option>
 					@model.activityTypes.forEach(function(activityType){
 						<option value="@activityType.key" class="js-new-record">@activityType.name</option>
 					})
