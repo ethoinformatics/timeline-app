@@ -1,5 +1,6 @@
-// vim: ts=2 sw=2
-(function () {
+// https://github.com/jiahuang/d3-timeline
+
+function load(d3) {
   d3.timeline = function() {
     var DISPLAY_TYPES = ["circle", "rect"];
 
@@ -26,7 +27,7 @@
         stacked = false,
         rotateTicks = false,
         timeIsRelative = false,
-        itemHeight = 20,
+        itemHeight = 50,
         itemMargin = 5,
         showTodayLine = false,
         showTodayFormat = {marginTop: 25, marginBottom: 0, width: 1, color: colorCycle},
@@ -480,4 +481,8 @@
 
     return timeline;
   };
-})();
+
+  return d3.timeline;
+}
+
+module.exports = load;
