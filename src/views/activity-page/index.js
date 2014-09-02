@@ -26,12 +26,23 @@ function ActivityList(){
 	var self = this,
 	activityFilter = new ActivityFilter();
 
-	self.$element = $(pageTemplate({
-		items: getActivities()
-	}));
+	activityFilter.on('predicate-change', function(pred){
+		debugger
+		render(getActivities().filter(pred));
+	});
 
+	self.$element = $('<div></div>');
+	render(getActivities());
 
-	self.$element.find('#select-container').append(activityFilter.$element);
+	function render(activities){
+		self.$element.empty()
+			.append($(pageTemplate({
+				items: activities
+			})));
+
+		self.$element.find('#select-container').append(activityFilter.$element);
+	}
+
 	self.$element.find('.js-btn-add')
 		.on('click', function(){
 

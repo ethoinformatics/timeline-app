@@ -1,32 +1,31 @@
 var $ = window.$,
 	_ = require('lodash'),
 	Timeline = require('./views/timeline/'),
-	ActivityList = require('./views/activity-list/');
+	ActivityPage = require('./views/activity-page/');
 
+// todo: use device-ready
 $(function(){
 	var $body = $('body'),
 		timeline = new Timeline(),
-		activityList = new ActivityList();
+		activityPage = new ActivityPage();
 		
 		timeline.hide();
 
-		$body.append(activityList.$element);
+		$body.append(activityPage.$element);
 		$body.append(timeline.$element);
 
-		activityList.show();
+		activityPage.show();
 		timeline.hide();
 
 		$body.on('click', '.js-show-timeline', function(){
-			activityList.hide();
+			activityPage.hide();
 			timeline.show();
 		});
 
 		$body.on('click', '.js-show-activity-list', function(){
-			activityList.show();
+			activityPage.show();
 			timeline.hide();
 		});
-
-
 });
 
 

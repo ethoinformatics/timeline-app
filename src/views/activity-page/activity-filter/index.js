@@ -4,12 +4,12 @@ var $ = window.$,
 	template = require('./index.vash');
 
 function createPredicate(){
-	switch (this._activityState.toLowerCase){
+	switch (this._activityState.toLowerCase()){
 		case 'current activities':
-			return function(activity){ return !activity.endTimestamp; };
+			return function(activity){ return !activity.ending_time; };
 
 		case 'completed activities':
-			return function(activity){ return !!activity.endTimestamp; };
+			return function(activity){ return !!activity.ending_time; };
 
 		case 'all activities':
 			return function(){ return true; };
@@ -34,8 +34,8 @@ function ActivitySelector(){
 		}));
 
 	self.$element
-		.find('select')
-		.on('change', function(){
+		.on('change', 'select', function(){
+			debugger
 			var $this = $(this);
 			self._activityState = $this.val();
 
