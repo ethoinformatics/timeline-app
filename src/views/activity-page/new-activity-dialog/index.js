@@ -1,5 +1,6 @@
 var $ = window.$,
 	EventEmitter = require('events').EventEmitter,
+	randomColor = require('rgba-generate')(.8),
 	_ = require('lodash'),
 	util = require('util'),
 	ezuuid = require('ezuuid'),
@@ -30,6 +31,7 @@ function NewActivityDialog(){
 
 		data = {
 			id: ezuuid(),
+			color: randomColor().toHex(),
 			data: data,
 			type: type.name,
 			starting_time: new Date(),

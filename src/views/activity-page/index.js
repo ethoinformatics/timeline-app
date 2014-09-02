@@ -1,3 +1,5 @@
+require('./index.less');
+
 var $ = window.$,
 	_ = require('lodash'),
 	vash =  require('vash-runtime'),

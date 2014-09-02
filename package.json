@@ -29,6 +29,7 @@
     "node-lessify": "0.0.4",
     "q": "^1.0.1",
     "reactive": "^1.2.0",
+    "rgba-generate": "^1.0.0",
     "vashify": "^0.3.3"
   },
   "devDependencies": {
