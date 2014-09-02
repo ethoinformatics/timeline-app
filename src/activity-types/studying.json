@@ -1,8 +1,10 @@
 {
 	"name": {
-		"type": "string"
+		"label": "Name",
+		"type": "text"
 	},
 	"age": {
-		"type": "integer"
+		"label": "Age",
+		"type": "number"
 	}
 }

@@ -1,12 +1,23 @@
 var $ = window.$,
-	_ = require('lodash');
+	_ = require('lodash'),
+	walker = require('merle');
 
 
 module.exports = function(metadata, data){
 	data = Object(data);
 
-	var $root = $('<div></div')
-		.text('i was built by the form builder');
+	var $root = $('<ul></ul')
+
+	walker(metadata, function(){
+		if (!this.value.type) return;
+
+		var $input = $('<input></input>');
+		$input.attr('type', this.value.type);
+		$input.attr('data-name', this.name);
+		$input.attr('placeholder', this.value.label || this.name);
+
+		$root.append($input);
+	});
 
 	return {
 		getData: function(){
