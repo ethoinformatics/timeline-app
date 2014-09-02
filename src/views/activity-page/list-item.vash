@@ -4,6 +4,7 @@
 			<span data-ending-time="@model.ending_time" class="item-note">
 				Ended @html.relativeTime(model.ending_time)
 			</span>
+		<i style="background-color: @model.color" class="icon color-box"></i>
 	</div>
 } else {
 	<div on-hold="show('@model.id')" data-id="@model.id" class="item item-icon-right activity activity-current">
