@@ -13,7 +13,7 @@
 				Activities
 			</li>
 			@{var itemTemplate = require('./list-item.vash'); }
-			<li id="list-container" class="list">
+			<li id="list-container" ng-controller="umm" class="list">
 			@model.items.forEach(function(item){
 				@html.raw(itemTemplate(item))
 			})

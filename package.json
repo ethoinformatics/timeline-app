@@ -27,6 +27,7 @@
     "mkdirp": "^0.5.0",
     "moment": "^2.8.2",
     "node-lessify": "0.0.4",
+    "q": "^1.0.1",
     "reactive": "^1.2.0",
     "vashify": "^0.3.3"
   },
@@ -34,6 +35,7 @@
     "nodemon": "^1.2.1"
   },
   "browser": {
+    "angular": "./src/angular.js",
     "modal": "./src/modal/index.js",
     "activity-types": "./src/activity-types/index.js",
     "form-builder": "./src/form-builder/index.js",

@@ -13,6 +13,9 @@ $(function(){
 		$body.append(activityList.$element);
 		$body.append(timeline.$element);
 
+		activityList.show();
+		timeline.hide();
+
 		$body.on('click', '.js-show-timeline', function(){
 			activityList.hide();
 			timeline.show();

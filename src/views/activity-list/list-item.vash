@@ -1,4 +1,4 @@
- <div data-id="@model.id" class="item item-icon-right">
+ <div on-hold="show('@model.id')" data-id="@model.id" class="item">
 	@model.type
 	@if (model.ending_time){
 		<span data-ending-time="@model.ending_time" class="item-note">
@@ -9,5 +9,4 @@
 			Started @html.relativeTime(model.starting_time)
 		</span>
 	}
-	<i class="js-delete icon assertive ion-close-circled"></i>
 </div>

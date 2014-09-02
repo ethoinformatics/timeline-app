@@ -7,7 +7,11 @@ var $ = window.$,
 	ActivityFilter = require('./activity-filter'),
 	NewActivityDialog = require('./new-activity-dialog'),
 	itemTemplate = require('./list-item.vash'),
-	pageTemplate = require('./index.vash');
+	pageTemplate = require('./index.vash'),
+	actionList = require('./action-list.js');
+
+
+var tmp_MenuLoaded = false;
 
 vash.helpers.relativeTime = function(date){
 	return moment(date).fromNow();
@@ -25,6 +29,7 @@ function ActivityList(){
 	self.$element = $(pageTemplate({
 		items: getActivities()
 	}));
+
 
 	self.$element.find('#select-container').append(activityFilter.$element);
 	self.$element.find('.js-btn-add')
@@ -44,25 +49,49 @@ function ActivityList(){
 		});
 
 	longClick(self.$element, '.item[data-id]', function(){
-		console.dir(this);
-		window.alert('long click.');
+		// console.dir(this);
+		// window.alert('long click.');
 	});
 
-	self.$element.on('click', '.js-delete', function(ev){
-		ev.preventDefault();
-		var $item = $(this).closest('.item');
-		var id = $item.data('id');
-
-		
-		var activities = storage('activities') || [];
-		_.remove(activities, function(a){ return a.id == id; });
-		storage('activities', activities);
-		$item.fadeOut('fast');
-	});
 
 	self.hide = self.$element.hide.bind(self.$element);
-	self.show = self.$element.show.bind(self.$element);
+	self.show = function (){
+		loadMenu();
+		self.$element.show();
+	};
 
+
+	function loadMenu(){
+		if (tmp_MenuLoaded) return;
+		tmp_MenuLoaded = true;
+		var menu = actionList.load();
+
+		menu.on('stop-activity', function(id){
+			var activities = storage('activities') || [];
+			var activity = _.find(activities, function(a){ return a.id == id; });
+
+			activity.ending_time = new Date();
+			storage('activities', activities);
+
+			self.$element.find('*[data-id="'+id + '"]')
+				.replaceWith(itemTemplate(activity));
+		});
+
+		menu.on('edit-activity', function(id){
+			alert(id);
+		});
+
+		menu.on('delete-activity', function(id){
+			var activities = storage('activities') || [];
+			_.remove(activities, function(a){ return a.id == id; });
+			storage('activities', activities);
+			var $item = self.$element.find('*[data-id="'+id + '"]');
+			$item.fadeOut('fast');
+		});
+	}
+	
+
+	
 
 	function updateTimes(){
 		self.$element

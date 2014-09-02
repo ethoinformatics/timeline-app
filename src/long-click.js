@@ -10,7 +10,7 @@ function longClick($root, selector, cb){
 		var timeoutHandler = setTimeout(function(){
 			$(self).removeClass('active');
 			cb.apply(self, args);
-		}, 1000);
+		}, 800);
 
 		$('body').on('mouseup mousedown', selector, function(){
 			if (timeoutHandler){
