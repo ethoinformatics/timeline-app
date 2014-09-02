@@ -40,9 +40,15 @@ function Timeline(){
 		});
 
 		var chart = d3.timeline()
+			.showToday()
 			.stack()
-			.margin({left:90, right:30, top:0, bottom:0});
-
+			.margin({left:90, right:30, top:0, bottom:0})
+			.tickFormat({
+				format: d3.time.format("%I:%M %p"),
+				tickTime: d3.time.minutes,
+				tickInterval: 15,
+				tickSize: 6
+			});
 
 		d3.select('#timeline-container')
 			.append('svg')
