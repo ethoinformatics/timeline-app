@@ -1,3 +1,4 @@
+/* global HockeyApp */
 var $ = window.$,
 	_ = require('lodash'),
 	Timeline = require('./views/timeline/'),
@@ -26,8 +27,18 @@ $(function(){
 			activityPage.show();
 			timeline.hide();
 		});
+
+		initHockeyApp();
 });
 
+function initHockeyApp(){
+		if (!HockeyApp){
+			return console.log('skipping hockeyapp.  this should be desktop browsers only.');
+		}
 
-
-
+		HockeyApp.init(
+			[ 'fce2c0e86b0cd9989fb9d6db7688cba3', true, true ],
+			function() { window.alert('hockeyapp initialised'); },
+			function(msg) { window.alert(msg); }
+		);
+}
