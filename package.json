@@ -4,7 +4,7 @@
   "description": "This sample uses browserify to organize the code in to modules, vash for client side rendering of templates and jQuery for everything else",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/.bin/nodemon -e js,vash ./build.js",
+    "start": "./node_modules/.bin/nodemon -e js,vash ./bundler.js",
     "deploy": "cp -r public/* ./dist/"
   },
   "repository": {
