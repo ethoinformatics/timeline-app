@@ -5,11 +5,9 @@ module.exports = function updateCheck(){
 		return console.log('skipping hockeyapp.  this should be desktop browsers only.');
 	}
 
-	window.alert('loading hockey app');
-
 	HockeyApp.init(
 		[ 'fce2c0e86b0cd9989fb9d6db7688cba3', true, true ],
-		function() { window.alert('hockeyapp initialised'); },
+		function() { console.log('hockeyapp loaded'); },
 		function(msg) { window.alert(msg); }
 	);
 };
