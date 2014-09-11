@@ -1,11 +1,12 @@
 /* global HockeyApp */
+window.alert('tesafds');
 var $ = window.$,
 	_ = require('lodash'),
 	Timeline = require('./views/timeline/'),
-	ActivityPage = require('./views/activity-page/');
+	ActivityPage = require('./views/activity-page/'),
+	ready = require('dom-ready');
 
-// todo: use device-ready
-$(function(){
+ready(function appLoad(){
 	var $body = $('body'),
 		timeline = new Timeline(),
 		activityPage = new ActivityPage();
@@ -35,6 +36,7 @@ function initHockeyApp(){
 		if (!HockeyApp){
 			return console.log('skipping hockeyapp.  this should be desktop browsers only.');
 		}
+		window.alert('loading hockey app');
 
 		HockeyApp.init(
 			[ 'fce2c0e86b0cd9989fb9d6db7688cba3', true, true ],
@@ -42,3 +44,4 @@ function initHockeyApp(){
 			function(msg) { window.alert(msg); }
 		);
 }
+
