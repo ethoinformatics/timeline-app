@@ -1,8 +1,7 @@
-/* global HockeyApp */
-window.alert('tesafds');
 var $ = require('jquery'),
 	Timeline = require('./views/timeline/'),
 	ActivityPage = require('./views/activity-page/'),
+	updateAppCheck = require('./update-app-check'),
 	ready = require('dom-ready');
 
 ready(function appLoad(){
@@ -10,37 +9,25 @@ ready(function appLoad(){
 		timeline = new Timeline(),
 		activityPage = new ActivityPage();
 		
-		timeline.hide();
+	timeline.hide();
 
-		$body.append(activityPage.$element);
-		$body.append(timeline.$element);
+	$body.append(activityPage.$element);
+	$body.append(timeline.$element);
 
+	activityPage.show();
+	timeline.hide();
+
+	$body.on('click', '.js-show-timeline', function(){
+		activityPage.hide();
+		timeline.show();
+	});
+
+	$body.on('click', '.js-show-activity-list', function(){
 		activityPage.show();
 		timeline.hide();
+	});
 
-		$body.on('click', '.js-show-timeline', function(){
-			activityPage.hide();
-			timeline.show();
-		});
-
-		$body.on('click', '.js-show-activity-list', function(){
-			activityPage.show();
-			timeline.hide();
-		});
-
-		initHockeyApp();
+	updateAppCheck();
 });
 
-function initHockeyApp(){
-		if (!HockeyApp){
-			return console.log('skipping hockeyapp.  this should be desktop browsers only.');
-		}
-		window.alert('loading hockey app');
-
-		HockeyApp.init(
-			[ 'fce2c0e86b0cd9989fb9d6db7688cba3', true, true ],
-			function() { window.alert('hockeyapp initialised'); },
-			function(msg) { window.alert(msg); }
-		);
-}
 
