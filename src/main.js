@@ -1,7 +1,6 @@
 /* global HockeyApp */
 window.alert('tesafds');
-var $ = window.$,
-	_ = require('lodash'),
+var $ = require('jquery'),
 	Timeline = require('./views/timeline/'),
 	ActivityPage = require('./views/activity-page/'),
 	ready = require('dom-ready');

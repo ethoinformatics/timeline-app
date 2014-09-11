@@ -1,6 +1,6 @@
 require('./index.less');
 
-var $ = window.$,
+var $ = require('jquery'),
 	_ = require('lodash'),
 	vash =  require('vash-runtime'),
 	moment =  require('moment'),

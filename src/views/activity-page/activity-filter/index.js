@@ -1,4 +1,4 @@
-var $ = window.$,
+var $ = require('jquery'),
 	util = require('util'),
 	EventEmitter = require('events').EventEmitter,
 	template = require('./index.vash');

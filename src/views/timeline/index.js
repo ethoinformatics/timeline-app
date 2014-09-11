@@ -1,6 +1,6 @@
 require('./index.less');
 
-var $ = window.$,
+var $ = require('jquery'),
 	_ = require('lodash'),
 	d3 = require('d3'),
 	moment = require('moment'),

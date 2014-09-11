@@ -1,4 +1,4 @@
-var $ = window.$,
+var $ = require('jquery'),
 	EventEmitter = require('events').EventEmitter,
 	randomColor = require('rgba-generate')(.8),
 	_ = require('lodash'),

@@ -1,4 +1,4 @@
-var $ = window.$,
+var $ = require('jquery'),
 	_ = require('lodash'),
 	walker = require('merle');
 

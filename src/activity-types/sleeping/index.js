@@ -1,4 +1,4 @@
-var $ = window.$,
+var $ = require('jquery'),
 	template = require('./index.vash');
 
 

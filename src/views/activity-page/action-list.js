@@ -2,7 +2,7 @@ var angular = require('angular'),
 	EventEmitter = require('events').EventEmitter,
 	loaded = false,
 	eventEmitter = new EventEmitter(),
-	$ = window.$;
+	$ = require('jquery');
 
 angular.module('mySuperApp', ['ionic'])
 	.controller('umm', function($scope, $ionicActionSheet, $timeout) {
