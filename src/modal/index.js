@@ -1,4 +1,4 @@
-var $ = window.$,
+var $ = require('jquery'),
 	EventEmitter = require('events').EventEmitter,
 	backdropTemplate = require('./backdrop.vash'),
 	util = require('util'),
