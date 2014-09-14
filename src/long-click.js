@@ -1,5 +1,5 @@
 var _ = require('lodash'),
-	$ = window.$;
+	$ = require('jquery');
 
 function longClick($root, selector, cb){
 	$root.on('mousedown', selector, function(){
