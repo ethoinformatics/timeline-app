@@ -12,11 +12,7 @@
 			<li class="item item-divider">
 				Activities
 			</li>
-			@{var itemTemplate = require('./list-item.vash'); }
 			<li id="list-container" ng-controller="umm" class="list">
-			@model.items.forEach(function(item){
-				@html.raw(itemTemplate(item))
-			})
 			</li>
 		</ul>
 	</div>

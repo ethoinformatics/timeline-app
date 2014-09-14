@@ -1,24 +1,21 @@
 require('./index.less');
 
 var $ = require('jquery'),
+	d3 = require('d3'),
 	_ = require('lodash'),
-	vash =  require('vash-runtime'),
 	moment =  require('moment'),
 	storage = require('jocal'),
 	longClick = require('long-click'),
 	ActivityFilter = require('./activity-filter'),
 	NewActivityDialog = require('./new-activity-dialog'),
-	itemTemplate = require('./list-item.vash'),
 	pageTemplate = require('./index.vash'),
 	actionList = require('./action-list.js');
 
-
 var tmp_MenuLoaded = false;
 
-vash.helpers.relativeTime = function(date){
+function relativeTime(date){
 	return moment(date).fromNow();
-};
-
+}
 
 function getActivities(){
 	return storage('activities') || [];
@@ -26,24 +23,65 @@ function getActivities(){
 
 function ActivityList(){
 	var self = this,
-	activityFilter = new ActivityFilter();
+	activityFilter = new ActivityFilter(),
+	vis;
 
 	activityFilter.on('predicate-change', function(pred){
-		debugger
-		render(getActivities().filter(pred));
+		self.render(getActivities().filter(pred));
 	});
 
-	self.$element = $('<div></div>');
-	render(getActivities());
+	self.$element = $(pageTemplate({}));
+	self.$element.find('#select-container').append(activityFilter.$element);
+	self.render = function(activities){
+		activities = activities || getActivities();
 
-	function render(activities){
-		self.$element.empty()
-			.append($(pageTemplate({
-				items: activities
-			})));
+		if (!vis){
+			vis = d3.select('#list-container');
+		}
 
-		self.$element.find('#select-container').append(activityFilter.$element);
-	}
+		var activityElements = vis.selectAll('div')
+			.data(activities, function(a){ return a.id; });
+
+		// create new elements
+		var newActivityElements = activityElements
+			.enter()
+			.append('div')
+			.attr('data-id', function(a){return a.id;});
+
+		newActivityElements
+			.append('span')
+			.text(function(a){ return a.type; });
+
+		newActivityElements
+			.append('span')
+			.attr('class', 'item-note');
+
+		newActivityElements
+			.append('i')
+			.style('background-color', function(a) {return a.color; })
+			.attr('class', 'icon color-box');
+
+
+		// all elements
+		activityElements
+			.select('.item-note')
+			.text(function(a){
+				if (a.ending_time){
+					return 'Ended ' + relativeTime(a.ending_time);
+				}
+
+				return 'Started ' + relativeTime(a.starting_time);
+			});
+
+		activityElements
+			.attr('class', function(a){
+				var classes = ['item', 'item-icon-right', 'activity'];
+
+				classes.push(a.ending_time ? 'activity-completed' : 'activity-current');
+
+				return classes.join(' ');
+			});
+	};
 
 	self.$element.find('.js-btn-add')
 		.on('click', function(){
@@ -54,9 +92,7 @@ function ActivityList(){
 				activities.push(data);
 				storage('activities', activities);
 
-				var $item = $(itemTemplate(data));
-				self.$element.find('#list-container')
-					.append($item);
+				self.render();
 			});
 			newActivityDialog.show();
 		});
@@ -102,32 +138,21 @@ function ActivityList(){
 			$item.fadeOut('fast');
 		});
 	}
-	
 
-	
 
-	function updateTimes(){
-		self.$element
-			.find('span[data-starting-time]')
-			.each(function(){
-				var $this = $(this),
-					date = $this.data('starting-time');
+	process.nextTick(function(){
+		self.render();
 
-				$this.text('Started ' + moment(date).fromNow());
-			});
 
-		self.$element
-			.find('span[data-ending-time]')
-			.each(function(){
-				var $this = $(this),
-					date = $this.data('ending-time');
+		(function reDraw(){
+			setTimeout(function render(){
+				self.render();
+				reDraw();
+			}, 5000);
+		})();
+	});
 
-				$this.text('Ended ' + moment(date).fromNow());
-			});
 
-		setTimeout(updateTimes, 1000);
-	}
-	updateTimes();
 }
 
 module.exports = ActivityList;
