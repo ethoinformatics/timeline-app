@@ -1,8 +1,8 @@
 <div class="pane">
-	<div class="bar bar-header bar-dark">
+	<div class="bar bar-header bar-stable">
 		<h1 class="title">Activity List</h1>
-		<button class="js-btn-add button-clear button button-balanced">
-			<i class="icon ion-plus-circled"></i>
+		<button class="js-btn-add button button-positive">
+			New
 		 </button>
 	  </div>
 	<div class="content has-header">
@@ -21,7 +21,7 @@
 		</ul>
 	</div>
 
-	<div class="bar bar-footer bar-dark">
+	<div class="bar bar-footer bar-stable">
 		<button class="js-show-activity-list button button-clear">
 			<i class="balanced icon ion-android-data"></i>
 		</button>

@@ -1,5 +1,5 @@
 <div class="pane">
-	<div class="bar bar-header bar-dark">
+	<div class="bar bar-header bar-stable">
 		<h1 class="title">Timeline</h1>
 		<button class="js-btn-add button-clear button button-balanced">
 		 </button>
@@ -8,7 +8,7 @@
 		<div id="timeline-container"></div>
 	</div>
 
-	<div class="bar bar-footer bar-dark">
+	<div class="bar bar-footer bar-stable">
 		<button class="js-show-activity-list button button-clear">
 			<i class="icon ion-android-data"></i>
 		</button>
