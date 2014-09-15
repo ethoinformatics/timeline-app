@@ -27,6 +27,17 @@ function Modal(title, $content){
 			.on('click', function(ev){
 				ev.preventDefault();
 
+				$backdrop.removeClass('active')
+				$modal.fadeOut('fast', function(){
+					$modal.remove();
+					$backdrop.addClass('hide');
+				});
+			});
+
+		$modal.find('.js-ok')
+			.on('click', function(ev){
+				ev.preventDefault();
+
 				self.emit('ok');
 				$backdrop.removeClass('active')
 				$modal.fadeOut('fast', function(){

@@ -35,7 +35,6 @@ function ActivitySelector(){
 
 	self.$element
 		.on('change', 'select', function(){
-			debugger
 			var $this = $(this);
 			self._activityState = $this.val();
 

@@ -24,14 +24,15 @@ function ActivityList(){
 	activityFilter = new ActivityFilter(),
 	vis;
 
-	activityFilter.on('predicate-change', function(pred){
-		self.render(getActivities().filter(pred));
+	activityFilter.on('predicate-change', function(){
+		self.render();
 	});
 
 	self.$element = $(pageTemplate({}));
 	self.$element.find('#select-container').append(activityFilter.$element);
-	self.render = function(activities){
-		activities = activities || getActivities();
+	self.render = function(){
+		var activities = getActivities();
+		var isVisble = activityFilter.createPredicate();
 
 		if (!vis){
 			vis = d3.select('#list-container');
@@ -79,6 +80,12 @@ function ActivityList(){
 
 				return classes.join(' ');
 			});
+
+		activityElements
+			.style('display', function(a){
+				if (isVisble(a)) return '';
+				return 'none';
+			});
 	};
 
 	self.$element.find('.js-btn-add')
@@ -97,7 +104,7 @@ function ActivityList(){
 
 	longClick(self.$element, '.item[data-id]', function(){
 		var id = $(this).data('id');
-		actionList(id);
+		actionList.show(id);
 	});
 
 
@@ -106,11 +113,9 @@ function ActivityList(){
 		self.$element.show();
 	};
 
-
 	function loadMenu(){
-		var menu = actionList();
+		var menu = actionList.load();
 
-		return;
 		menu.on('stop-activity', function(id){
 			var activities = storage('activities') || [];
 			var activity = _.find(activities, function(a){ return a.id == id; });
@@ -129,24 +134,16 @@ function ActivityList(){
 			var activities = storage('activities') || [];
 			_.remove(activities, function(a){ return a.id == id; });
 			storage('activities', activities);
-			var $item = self.$element.find('*[data-id="'+id + '"]');
-			$item.fadeOut('fast');
+
+			self.render();
 		});
 	}
 
 
 	process.nextTick(function(){
 		self.render();
-
-		// (function reDraw(){
-		// 	setTimeout(function(){
-		// 		self.render();
-		// 		reDraw();
-		// 	}, 5000);
-		// })();
+		loadMenu();
 	});
-
-
 }
 
 module.exports = ActivityList;

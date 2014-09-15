@@ -2,7 +2,7 @@ var _ = require('lodash'),
 	$ = require('jquery');
 
 function longClick($root, selector, cb){
-	$root.on('mousedown', selector, function(){
+	$root.on('touchstart', selector, function(){
 		var self = this,
 			args = _.toArray(arguments);
 			$(self).addClass('active');
@@ -22,7 +22,7 @@ function longClick($root, selector, cb){
 			return true;
 		};
 
-		$('body').one('mouseup', selector, mouseUp);
+		$('body').one('touchend', selector, mouseUp);
 
 		return true;
 	});
