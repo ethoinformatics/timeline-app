@@ -11,8 +11,6 @@ var $ = require('jquery'),
 	pageTemplate = require('./index.vash'),
 	actionList = require('./action-list.js');
 
-var tmp_MenuLoaded = false;
-
 function relativeTime(date){
 	return moment(date).fromNow();
 }
@@ -98,23 +96,21 @@ function ActivityList(){
 		});
 
 	longClick(self.$element, '.item[data-id]', function(){
-		// console.dir(this);
-		// window.alert('long click.');
+		var id = $(this).data('id');
+		actionList(id);
 	});
 
 
 	self.hide = self.$element.hide.bind(self.$element);
 	self.show = function (){
-		loadMenu();
 		self.$element.show();
 	};
 
 
 	function loadMenu(){
-		if (tmp_MenuLoaded) return;
-		tmp_MenuLoaded = true;
-		var menu = actionList.load();
+		var menu = actionList();
 
+		return;
 		menu.on('stop-activity', function(id){
 			var activities = storage('activities') || [];
 			var activity = _.find(activities, function(a){ return a.id == id; });
@@ -122,8 +118,7 @@ function ActivityList(){
 			activity.ending_time = new Date();
 			storage('activities', activities);
 
-			self.$element.find('*[data-id="'+id + '"]')
-				.replaceWith(itemTemplate(activity));
+			self.render();
 		});
 
 		menu.on('edit-activity', function(id){
@@ -143,13 +138,12 @@ function ActivityList(){
 	process.nextTick(function(){
 		self.render();
 
-
-		(function reDraw(){
-			setTimeout(function render(){
-				self.render();
-				reDraw();
-			}, 5000);
-		})();
+		// (function reDraw(){
+		// 	setTimeout(function(){
+		// 		self.render();
+		// 		reDraw();
+		// 	}, 5000);
+		// })();
 	});
 
 

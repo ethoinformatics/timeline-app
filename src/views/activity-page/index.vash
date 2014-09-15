@@ -12,7 +12,7 @@
 			<li class="item item-divider">
 				Activities
 			</li>
-			<li id="list-container" ng-controller="umm" class="list">
+			<li id="list-container" class="list">
 			</li>
 		</ul>
 	</div>
