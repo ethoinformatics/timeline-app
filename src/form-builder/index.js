@@ -1,21 +1,28 @@
 var $ = require('jquery'),
 	_ = require('lodash'),
-	walker = require('merle');
+	walker = require('merle'),
+	templates = {
+		text: require('./text-field.vash'),
+	};
 
 
 module.exports = function(metadata, data){
 	data = Object(data);
 
 	var $root = $('<ul></ul')
+		.addClass('list');
 
 	walker(metadata, function(){
 		if (!this.value.type) return;
 
-		var $input = $('<input></input>');
-		$input.attr('type', this.value.type);
-		$input.attr('data-name', this.name);
-		$input.attr('placeholder', this.value.label || this.name);
+		// just use text for everything at the moment
+		var model = Object.create(this.value);
+		model.name = this.name;
+		model.label = model.label || model.name;
+		model.value = data[model.name];
 
+		var $input = templates.text(model);
+			
 		$root.append($input);
 	});
 

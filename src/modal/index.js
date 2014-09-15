@@ -11,7 +11,7 @@ function Modal(title, $content){
 	EventEmitter.call(self);
 
 	if (!$backdrop) {
-		$backdrop = $(backdropTemplate({}))
+		$backdrop = $(backdropTemplate({}));
 		$('body').append($backdrop);
 	}
 
@@ -27,7 +27,7 @@ function Modal(title, $content){
 			.on('click', function(ev){
 				ev.preventDefault();
 
-				$backdrop.removeClass('active')
+				$backdrop.removeClass('active');
 				$modal.fadeOut('fast', function(){
 					$modal.remove();
 					$backdrop.addClass('hide');
@@ -39,7 +39,7 @@ function Modal(title, $content){
 				ev.preventDefault();
 
 				self.emit('ok');
-				$backdrop.removeClass('active')
+				$backdrop.removeClass('active');
 				$modal.fadeOut('fast', function(){
 					$modal.remove();
 					$backdrop.addClass('hide');

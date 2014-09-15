@@ -13,7 +13,8 @@
 				</select>
 			</div>
 		</li>
+		<li class="js-form-container">
+			<em>Select an activity type</em>
+		</li>
 	</ul>
-	<div class="js-form-container">
-	</div>
 </div>
