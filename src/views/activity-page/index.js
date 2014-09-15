@@ -60,6 +60,12 @@ function ActivityList(){
 			.style('background-color', function(a) {return a.color; })
 			.attr('class', 'icon color-box');
 
+		activityElements
+			.exit()
+			.transition()
+			.duration(600)
+			.style('opacity',0)
+			.remove();
 
 		// all elements
 		activityElements
