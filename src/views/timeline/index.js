@@ -27,16 +27,16 @@ function Timeline(){
 	self.$element = $(template({}));
 	self.$element.find('#select-container').append(activityFilter.$element);
 
-	longClick(self.$element, 'rect', function(){
-		var $this = $(this);
-		if (!$this.attr('id')){
-			$this = $this.next();
-		}
+	// longClick(self.$element, 'rect', function(){
+	// 	var $this = $(this);
+	// 	if (!$this.attr('id')){
+	// 		$this = $this.next();
+	// 	}
 
-		var id = $this.attr('id').replace(/^.*_/, '');
-		actionList.show(id);
-		//self.show();
-	});
+	// 	var id = $this.attr('id').replace(/^.*_/, '');
+	// 	actionList.show(id);
+	// 	//self.show();
+	// });
 
 	process.nextTick(function(){
 		var el = $('#timeline-container').closest('div.pane')[0],
@@ -61,6 +61,9 @@ function Timeline(){
 
 			show();
 		});
+
+
+
 	});
 
 	self.hide = function(){
@@ -122,7 +125,34 @@ function Timeline(){
 		})
 		.call(chart);
 			
-		
+		self.$element.find('#timeline-container svg rect')
+			.each(function(){
+				
+				var mc = new Hammer.Manager(this);
+				mc.add(new Hammer.Tap({event: 'doubletap', taps: 2}));
+				mc.add(new Hammer.Tap({event: 'singletap', taps: 1}));
+				mc.get('doubletap').recognizeWith('singletap');
+				mc.get('singletap').requireFailure('doubletap');
+
+				var getActivityIdFromEvent = function(ev){
+					var $el = $(ev.srcEvent.srcElement);
+					if (!$el.attr('id')){
+						$el = $el.next();
+					}
+
+					return $el.attr('id').replace(/^.*_/, '');
+				};
+
+				mc.on('singletap', function(ev){
+					window.alert('single tap: ' + getActivityIdFromEvent(ev));
+				});
+
+				mc.on('doubletap', function(ev){
+					ev.preventDefault();
+					actionList.show(getActivityIdFromEvent(ev));
+				});
+
+			});
 		//refresher = setTimeout(self.show.bind(self), 1000);
 	};
 }
