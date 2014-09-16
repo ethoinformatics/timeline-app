@@ -11,7 +11,7 @@ function longClick($root, selector, cb){
 			$(self).removeClass('active');
 
 			cb.apply(self, args);
-		}, 800);
+		}, 600);
 
 		var mouseUp = function(){
 			if (timeoutHandler){
