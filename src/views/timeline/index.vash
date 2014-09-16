@@ -5,7 +5,11 @@
 		 </button>
 	  </div>
 	<div class="content has-header">
-		<div id="timeline-container"></div>
+		<ul class="list">
+			<li id="select-container" class="item item-input item-select">
+			</li>
+			<li id="timeline-container"></li>
+		</ul>
 	</div>
 
 	<div class="bar bar-footer bar-stable">

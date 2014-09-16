@@ -6,7 +6,7 @@ var $ = require('jquery'),
 	moment =  require('moment'),
 	storage = require('jocal'),
 	longClick = require('long-click'),
-	ActivityFilter = require('./activity-filter'),
+	ActivityFilter = require('activity-filter'),
 	NewActivityDialog = require('./new-activity-dialog'),
 	pageTemplate = require('./index.vash'),
 	actionList = require('./action-list.js');
@@ -21,8 +21,8 @@ function getActivities(){
 
 function ActivityList(){
 	var self = this,
-	activityFilter = new ActivityFilter(),
-	vis;
+		activityFilter = new ActivityFilter(),
+		vis;
 
 	activityFilter.on('predicate-change', function(){
 		self.render();
