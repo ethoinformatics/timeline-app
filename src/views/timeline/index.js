@@ -3,50 +3,58 @@ require('./index.less');
 var $ = require('jquery'),
 	_ = require('lodash'),
 	Hammer = require('hammerjs'),
+	longClick = require('long-click'),
 	dateMath = require('date-math'),
 	d3 = require('d3'),
 	ActivityFilter = require('activity-filter'),
 	moment = require('moment'),
 	d3Timeline = require('./d3-timeline')(d3),
+	actionList = require('action-list'),
 	storage = require('jocal'),
 	template = require('./index.vash');
 
 
 var height = window.innerHeight -100,
-	widht = window.innerWidth;
-
-
-function getTimelineStart(activities){
-	var firstStartTime = _.chain(activities)
-		.map(function(a){
-			return new Date(a.starting_time).valueOf();
-		})
-		.min()
-		.value();
-
-	var startOfHour = moment().startOf('hour').valueOf();
-	return Math.min(firstStartTime, startOfHour);
-}
+	width = +window.innerWidth;
 
 
 function Timeline(){
 	var self = this,
 		activityFilter = new ActivityFilter();
 
+	var timeLineWidth = 2000;
 
 	self.$element = $(template({}));
 	self.$element.find('#select-container').append(activityFilter.$element);
 
+	longClick(self.$element, '.row-green-bar', function(){
+		var id = $(this).next().attr('id').replace(/^.*_/, '');
+		actionList.show(id);
+		//self.show();
+	});
+
 	process.nextTick(function(){
-		var el = $('#timeline-container').closest('div.pane')[0];
-		var options = {
-			};
-		var hammertime = new Hammer(el, options);
+		var el = $('#timeline-container').closest('div.pane')[0],
+			options = { },
+			hammertime = new Hammer(el, options),
+			show = _.throttle(self.show.bind(self), 100);
+
 		hammertime.get('pinch').set({enable:true});
 		hammertime.on('pinchin', function(ev){
+			if (timeLineWidth<10000)
+				timeLineWidth += ev.distance;
 
-			console.dir(ev);
-			alert('got a pinch');
+			show();
+		});
+
+		hammertime.on('pinchout', function(ev){
+			if (timeLineWidth>=width)
+				timeLineWidth -= ev.distance;
+
+			if (timeLineWidth<width)
+				timeLineWidth = width;
+
+			show();
 		});
 	});
 
@@ -81,6 +89,7 @@ function Timeline(){
 		self.$element.show();
 		self.$element.find('#timeline-container').empty();
 
+		$('#debug-container').text(timeLineWidth);
 
 		var vis = d3.select('#timeline-container')
 				.append('svg')
@@ -98,7 +107,7 @@ function Timeline(){
 				tickInterval: 1,
 				tickSize: 4
 			})
-			.width(5000)
+			.width(timeLineWidth)
 			.margin({left:0, right:0, top:0, bottom:0})
 
 

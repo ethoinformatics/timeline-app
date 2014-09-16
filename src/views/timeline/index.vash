@@ -8,6 +8,8 @@
 		<ul class="list">
 			<li id="select-container" class="item item-input item-select">
 			</li>
+			<li id="debug-container" class="item">
+			</li>
 			<li id="timeline-container"></li>
 		</ul>
 	</div>
