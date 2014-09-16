@@ -38,11 +38,12 @@ function Timeline(){
 	self.$element.find('#select-container').append(activityFilter.$element);
 
 	process.nextTick(function(){
+		var el = $('#timeline-container').closest('div.pane')[0];
 		var options = {
 			};
-		var hammertime = new Hammer($('#timeline-container')[0], options);
+		var hammertime = new Hammer(el, options);
 		hammertime.get('pinch').set({enable:true});
-		hammertime.on('pinch', function(ev){
+		hammertime.on('pinchin', function(ev){
 
 			console.dir(ev);
 			alert('got a pinch');
