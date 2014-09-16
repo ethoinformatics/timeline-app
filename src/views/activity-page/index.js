@@ -9,7 +9,7 @@ var $ = require('jquery'),
 	ActivityFilter = require('activity-filter'),
 	NewActivityDialog = require('./new-activity-dialog'),
 	pageTemplate = require('./index.vash'),
-	actionList = require('./action-list.js');
+	actionList = require('action-list');
 
 function relativeTime(date){
 	return moment(date).fromNow();

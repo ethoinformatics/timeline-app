@@ -45,6 +45,7 @@
     "modal": "./src/modal/index.js",
     "activity-types": "./src/activity-types/index.js",
     "activity-filter": "./src/activity-filter/index.js",
+    "action-list": "./src/action-list.js",
     "form-builder": "./src/form-builder/index.js",
     "long-click": "./src/long-click.js"
   }
