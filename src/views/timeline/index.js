@@ -27,8 +27,13 @@ function Timeline(){
 	self.$element = $(template({}));
 	self.$element.find('#select-container').append(activityFilter.$element);
 
-	longClick(self.$element, '.row-green-bar', function(){
-		var id = $(this).next().attr('id').replace(/^.*_/, '');
+	longClick(self.$element, 'rect', function(){
+		var $this = $(this);
+		if (!$this.attr('id')){
+			$this = $this.next();
+		}
+
+		var id = $this.attr('id').replace(/^.*_/, '');
 		actionList.show(id);
 		//self.show();
 	});
