@@ -19,7 +19,7 @@ function getActivities(){
 	return storage('activities') || [];
 }
 
-function ActivityList(){
+function ActivityPage(){
 	var self = this,
 		activityFilter = new ActivityFilter(),
 		vis;
@@ -152,4 +152,4 @@ function ActivityList(){
 	});
 }
 
-module.exports = ActivityList;
+module.exports = ActivityPage;
