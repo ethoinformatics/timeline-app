@@ -34,7 +34,7 @@ function NewActivityDialog(){
 			color: randomColor().toHex(),
 			data: data,
 			type: type.name,
-			starting_time: new Date(),
+			beginTime: Date.now(),
 		};
 
 		self.emit('new', data);

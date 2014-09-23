@@ -6,10 +6,10 @@ var $ = require('jquery'),
 function createPredicate(){
 	switch (this._activityState.toLowerCase()){
 		case 'current activities':
-			return function(activity){ return !activity.ending_time; };
+			return function(activity){ return !activity.endTime; };
 
 		case 'completed activities':
-			return function(activity){ return !!activity.ending_time; };
+			return function(activity){ return !!activity.endTime; };
 
 		case 'all activities':
 			return function(){ return true; };

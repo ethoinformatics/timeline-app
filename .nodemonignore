@@ -1,3 +1,4 @@
 public/**
 ionic/www/bundles/**
+ionic/**
 node_modules/**

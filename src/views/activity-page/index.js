@@ -71,11 +71,11 @@ function ActivityPage(){
 		activityElements
 			.select('.item-note')
 			.text(function(a){
-				if (a.ending_time){
-					return 'Ended ' + relativeTime(a.ending_time);
+				if (a.endTime){
+					return 'Ended ' + relativeTime(a.endTime);
 				}
 
-				return 'Started ' + relativeTime(a.starting_time);
+				return 'Started ' + relativeTime(a.beginTime);
 			});
 
 		activityElements
@@ -108,7 +108,7 @@ function ActivityPage(){
 			newActivityDialog.show();
 		});
 
-	longClick(self.$element, '.item[data-id]', function(){
+	self.$element.on('click', '.item[data-id]', function(){
 		var id = $(this).data('id');
 		actionList.show(id);
 	});
@@ -126,7 +126,7 @@ function ActivityPage(){
 			var activities = storage('activities') || [];
 			var activity = _.find(activities, function(a){ return a.id == id; });
 
-			activity.ending_time = new Date();
+			activity.endTime = Date.now();
 			storage('activities', activities);
 
 			self.render();
