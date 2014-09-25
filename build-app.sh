@@ -1,5 +1,8 @@
 #! /usr/bin/env bash
 
+failure(){
+	echo 'build failure' && exit 1;
+}
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -9,8 +12,8 @@ node bundler.js
 
 
 cd "$DIR"/ionic
-cordova platform rm android
-cordova platform add android
-cordova build android
+cordova platform rm android || failure
+cordova platform add android || failure
+cordova build android || failure
 
 echo 'great job.'
