@@ -1,6 +1,6 @@
-<div>
+<div class="activity-filter">
 	<div class="input-label">
-		Show
+		Activities
 	</div>
 	<select>
 		@model.activityStates.forEach(function(activityState){
