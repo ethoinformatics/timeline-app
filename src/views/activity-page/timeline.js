@@ -25,7 +25,7 @@ function updateModels(activities){
 }
 
 
-function zoomIn(myZoom){
+function adjustZoom(myZoom){
 	w = +window.innerWidth* (zoom*myZoom);
 	var scale = d3.scale.linear()
 		.domain([minTime, Date.now()])
@@ -43,31 +43,6 @@ function zoomIn(myZoom){
 		});
 	//minTime += getDelta();
 	//render();
-}
-function zoomOut(myZoom){
-	w = +window.innerWidth* (zoom*myZoom);
-	var scale = d3.scale.linear()
-		.domain([minTime, Date.now()])
-		.range([0, w]);
-
-	svg.selectAll('rect')
-		.transition()
-		.ease('linear')
-		.attr('x', function(d){ 
-			var x = scale(d.beginTime);
-			return Math.min(x, w-CURRENT_ACTIVITY_MIN_WIDTH);
-		})
-		.attr('width', function(d){ 
-			var w = scale(d.endTime || Date.now()) - scale(d.beginTime);
-			return Math.max(CURRENT_ACTIVITY_MIN_WIDTH, w);
-		});
-
-	//render();
-}
-function getDelta(){
-	var c = maxTime - minTime;
-
-	return c * 0.05;
 }
 
 function getUnit(){
@@ -95,38 +70,32 @@ function listenForPinch(){
 
 	var myZoom = 1;
 	hammertime.get('pinch').set({enable:true});
-	hammertime.on('pinchin', function(ev){
-		myZoom = ev.scale;
-		//$debug.text('in');
-		zoomOut(myZoom);
-	});
 
 	hammertime.on('pinchstart', function(ev){
 		myZoom = 1;
 		$debug.css('color', 'green');
 	});
 
-	hammertime.on('pinchend pinchcancel', function(ev){
-		$debug.css('color', 'red')
-			.text(myZoom);
+	hammertime.on('pinch', function(ev){
+		myZoom = ev.scale;
+		adjustZoom(myZoom);
+	});
+
+	hammertime.on('pinchend pinchcancel', function(){
+		$debug.css('color', 'red').text(myZoom);
 		zoom *= myZoom;
 		myZoom = 1;
-		zoomOut(1);
+		adjustZoom(1);
 	});
-	hammertime.on('pinchout', function(ev){
-		myZoom = ev.scale;
-		//$debug.text('out');
-		
-		zoomIn(myZoom);
-	});
+
+
 	options = {
-		  dragLockToAxis: true,
-		    dragBlockHorizontal: true
+		dragLockToAxis: true,
+		dragBlockHorizontal: true
 	};
 	hammertime = new Hammer(el, options);
 	hammertime.on("dragleft dragright swipeleft swiperight", function(ev){
-
-		alert('gota drag');
+		window.alert('gota drag');
 	});
 }
 
