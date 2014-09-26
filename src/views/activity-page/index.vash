@@ -1,4 +1,4 @@
-<div class="pane">
+<div id="activity-page" class="pane">
 	<div class="bar bar-header bar-stable">
 		<h1 class="title">Activity List</h1>
 		<button class="js-btn-add button button-positive">
@@ -9,7 +9,9 @@
 		<ul class="list">
 			<li id="select-container" class="item item-divider item-input item-select">
 			</li>
-			<li id="list-container" class="list">
+			<li id="debug-container" class="list">
+			</li>
+			<li id="timeline-container" class="list">
 			</li>
 		</ul>
 	</div>

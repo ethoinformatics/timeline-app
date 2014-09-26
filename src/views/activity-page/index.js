@@ -5,7 +5,7 @@ var $ = require('jquery'),
 	_ = require('lodash'),
 	moment =  require('moment'),
 	storage = require('jocal'),
-	longClick = require('long-click'),
+	renderTimeline = require('./timeline.js'),
 	ActivityFilter = require('activity-filter'),
 	NewActivityDialog = require('./new-activity-dialog'),
 	pageTemplate = require('./index.vash'),
@@ -33,6 +33,7 @@ function ActivityPage(){
 	self.render = function(){
 		var activities = getActivities();
 		var isVisble = activityFilter.createPredicate();
+		renderTimeline(activities.filter(isVisble));
 
 		if (!vis){
 			vis = d3.select('#list-container');

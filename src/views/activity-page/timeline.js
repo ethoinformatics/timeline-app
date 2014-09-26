@@ -4,15 +4,17 @@ var d3 = require('d3'),
 	Hammer = require('hammerjs'),
 	storage = require('jocal');
 
-var h = window.innerHeight - (44*4), // we have 4 bars that aren't part of the svg
+var h = window.innerHeight - (44*2), // we have some bars that aren't part of the svg
 	w = +window.innerWidth,
+	c = w/2,
 	svg,
 	timeAxis,
 	AXIS_HEIGHT = 35,
 	CURRENT_ACTIVITY_MIN_WIDTH = 6,
 	minTime,
 	maxTime,
-	lastActivities = [];
+	lastActivities = [],
+	zoom = 1;
 
 function updateModels(activities){
 	activities.forEach(function(a){
@@ -23,14 +25,44 @@ function updateModels(activities){
 }
 
 
-function zoomIn(){
-	minTime += getDelta();
-	render();
+function zoomIn(myZoom){
+	w = +window.innerWidth* (zoom*myZoom);
+	var scale = d3.scale.linear()
+		.domain([minTime, Date.now()])
+		.range([0, w]);
+	svg.selectAll('rect')
+		.transition()
+		.ease('linear')
+		.attr('x', function(d){ 
+			var x = scale(d.beginTime);
+			return Math.min(x, w-CURRENT_ACTIVITY_MIN_WIDTH);
+		})
+		.attr('width', function(d){ 
+			var w = scale(d.endTime || Date.now()) - scale(d.beginTime);
+			return Math.max(CURRENT_ACTIVITY_MIN_WIDTH, w);
+		});
+	//minTime += getDelta();
+	//render();
 }
-function zoomOut(){
-	minTime -= getDelta();
+function zoomOut(myZoom){
+	w = +window.innerWidth* (zoom*myZoom);
+	var scale = d3.scale.linear()
+		.domain([minTime, Date.now()])
+		.range([0, w]);
 
-	render();
+	svg.selectAll('rect')
+		.transition()
+		.ease('linear')
+		.attr('x', function(d){ 
+			var x = scale(d.beginTime);
+			return Math.min(x, w-CURRENT_ACTIVITY_MIN_WIDTH);
+		})
+		.attr('width', function(d){ 
+			var w = scale(d.endTime || Date.now()) - scale(d.beginTime);
+			return Math.max(CURRENT_ACTIVITY_MIN_WIDTH, w);
+		});
+
+	//render();
 }
 function getDelta(){
 	var c = maxTime - minTime;
@@ -59,14 +91,33 @@ function listenForPinch(){
 	var el = $('#timeline-container').closest('div.pane')[0],
 		options = { },
 		hammertime = new Hammer(el, options);
+	var $debug = $('#debug-container');
 
+	var myZoom = 1;
 	hammertime.get('pinch').set({enable:true});
 	hammertime.on('pinchin', function(ev){
-		zoomOut();
+		myZoom = ev.scale;
+		//$debug.text('in');
+		zoomOut(myZoom);
 	});
 
+	hammertime.on('pinchstart', function(ev){
+		myZoom = 1;
+		$debug.css('color', 'green');
+	});
+
+	hammertime.on('pinchend pinchcancel', function(ev){
+		$debug.css('color', 'red')
+			.text(myZoom);
+		zoom *= myZoom;
+		myZoom = 1;
+		zoomOut(1);
+	});
 	hammertime.on('pinchout', function(ev){
-		zoomIn();
+		myZoom = ev.scale;
+		//$debug.text('out');
+		
+		zoomIn(myZoom);
 	});
 	options = {
 		  dragLockToAxis: true,
@@ -83,26 +134,44 @@ function render(activities){
 	if (activities){
 		lastActivities = activities;
 	} else {
-		activities = lastActivities;
+		activities = lastActivities || storage('activities') || [];
 	}
 
 	if (!svg){
 		svg = d3.select('#timeline-container')
 			.append('svg')
 			.attr('width', w)
-			.attr('height', h);
+			.attr('height', h)
+			.attr('transform', 'translate(0,500)');
 
 		listenForPinch();
 		window.addEventListener('orientationchange', function(){
-			h = window.innerHeight - (44*4);
-			w = +window.innerWidth;
+			h = window.innerHeight - (44*2);
+			w = +window.innerWidth* zoom;
 
 			svg.attr('width', w)
-				.attr('height', h);
+				.attr('height', h)
+				.attr('transform', 'translate(0,100)');
 
-			render();
+			svg.selectAll('rect')
+				.transition()
+				.ease('linear')
+				.attr('x', function(d){ 
+					var x = scale(d.beginTime);
+					return Math.min(x, w-CURRENT_ACTIVITY_MIN_WIDTH);
+				})
+				.attr('width', function(d){ 
+					var w = scale(d.endTime || Date.now()) - scale(d.beginTime);
+					return Math.max(CURRENT_ACTIVITY_MIN_WIDTH, w);
+				});
+			//render();
 		});
 	}
+
+
+	h = window.innerHeight - (44*2);
+	w = +window.innerWidth* zoom;
+
 
 	activities = updateModels(activities);
 
@@ -115,7 +184,7 @@ function render(activities){
 	}
 
 	var scale = d3.scale.linear()
-		.domain([minTime, maxTime])
+		.domain([minTime, Date.now()])
 		.range([0, w]);
 
 	var yScale = d3.scale.ordinal()
@@ -139,8 +208,13 @@ function render(activities){
 			return Math.max(CURRENT_ACTIVITY_MIN_WIDTH, w);
 		});
 
-	rects
+		
+	var activityGroups = rects
 		.enter()
+		.append('g')
+		.attr('data-id', function(d){ return d.id; });
+
+	activityGroups
 		.append('rect')
 		.on('click', function(d){
 			//zoomIn();
