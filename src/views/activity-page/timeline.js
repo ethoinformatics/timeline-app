@@ -94,6 +94,7 @@ function listenForPinch(){
 
 	hammertime.on('pinchin pinchout', function(ev){
 		if (!zooming) return;
+		if (ev.scale*zoom<0.8) return;
 
 		myZoom = ev.scale;
 		adjustZoom(myZoom);
