@@ -1,6 +1,9 @@
 <div class="activity-filter">
 	<div class="input-label">
 		Activities
+		<span id="pan-container"></span>&nbsp;
+		<span id="w-container"></span>&nbsp;
+		<span id="debug-container"></span>&nbsp;
 	</div>
 	<select>
 		@model.activityStates.forEach(function(activityState){

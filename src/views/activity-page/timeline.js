@@ -1,10 +1,11 @@
 var d3 = require('d3'),
+	_ = require('lodash'),
 	$ = require('jquery'),
 	actionList = require('action-list'),
 	Hammer = require('hammerjs'),
 	storage = require('jocal');
 
-var HEADER_HEIGHT = 44*3,
+var HEADER_HEIGHT = 44*2,
 	h = window.innerHeight - HEADER_HEIGHT,
 	w = +window.innerWidth,
 	c = w/2,
@@ -28,18 +29,22 @@ function updateModels(activities){
 
 
 function adjustZoom(myZoom){
+	var per = pan/w;
+	var oldPan = pan;
 	w = +window.innerWidth* (zoom*myZoom);
 	c = (w/2)*-1;
 
-	var $debug = $('#debug-container');
-	$debug.text(c + ' = ' + w + '/2');
+
+	pan = per*w;
+	$debug.text('zooming');
+	$w.html('&nbsp;width: '+Math.round(w));
 	var scale = d3.scale.linear()
 		.domain([minTime, Date.now()])
 		.range([0, w]);
 	svg.selectAll('rect')
 		.transition()
 		.ease('linear')
-		//.attr('transform', 'translate('+c+', 0)')
+		.attr('transform', 'translate('+pan+', 0)')
 		.attr('x', function(d){
 			var x = scale(d.beginTime);
 			return Math.min(x, w-CURRENT_ACTIVITY_MIN_WIDTH);
@@ -50,15 +55,30 @@ function adjustZoom(myZoom){
 		});
 
 	timeAxis.scale(scale);
+	//timeAxis.ticks(3*zoom);
 	svg.select('.time-axis')
 		.transition()
 		.ease('linear')
-		//.attr('transform', 'translate('+c+', 0)')
+		.attr('transform', 'translate('+pan+', '+(h-AXIS_HEIGHT)+')')
 		.call(timeAxis);
-
-
-
 }
+
+function adjustTicksCount(){
+	return;
+	var scale = d3.scale.linear()
+		.domain([minTime, Date.now()])
+		.range([0, w]);
+
+	timeAxis.scale(scale);
+	timeAxis.ticks(3*zoom);
+	svg.select('.time-axis')
+		.transition()
+		.ease('linear')
+		.call(timeAxis);
+}
+
+
+//adjustTicksCount = _.throttle(
 
 function getUnit(){
 	var c = maxTime - minTime;
@@ -81,7 +101,6 @@ function listenForPinch(){
 	var el = $('#timeline-container').closest('div.pane')[0],
 		options = { },
 		hammertime = new Hammer(el, options);
-	var $debug = $('#debug-container');
 
 	var myZoom = 1, zooming = false;
 	hammertime.get('pinch').set({enable:true});
@@ -103,10 +122,11 @@ function listenForPinch(){
 	hammertime.on('pinchend pinchcancel', function(){
 		if (!zooming) return;
 
-		$debug.css('color', 'red').text(myZoom);
+		$debug.css('color', 'purple').text('zoomed');
 		zoom *= myZoom;
 		myZoom = 1;
 		zooming = false;
+		adjustTicksCount();
 	});
 
 
@@ -117,29 +137,71 @@ function listenForPinch(){
 		panning = true;
 	});
 
-	hammertime.on('panright panleft', function(ev){
+	hammertime.on('panleft', function(ev){
 		if (!panning) return;
-		var dir = ev.direction == 2 ? -1 : 1;
-		myPan = ev.distance*dir;
-		$debug.text(myPan);
+
+		var maxPan = w-(window.innerWidth*0.95);
+
+		if (Math.abs(pan-ev.distance)>maxPan){
+			snapBack = maxPan*-1;
+			$debug.css('color', 'red').text('MAX PANLEFT');
+		}
+
+		myPan = ev.distance*-1;
+		handlePan();
+	});
+
+	var resistance = 1, snapBack = false;
+	hammertime.on('panright', function(ev){
+		if (!panning) return;
+
+		var maxPan = window.innerWidth*0.05;
+
+		if ((pan+ev.distance)>maxPan){
+			snapBack = maxPan;
+			$debug.css('color', 'red').text('MAX PANRIGHT');
+		} 
+
+		myPan = ev.distance;
+		handlePan();
+	});
+
+	hammertime.on('panend pancancel', function(){
+		if (!panning) return;
+
+		panning = false;
+		pan += myPan;
+		myPan = 0;
+		$debug.css('color', 'purple').text('panned');
+
+		if (snapBack!==false){
+			$debug.css('color', 'red').text('snapback: ' + snapBack);
+			pan = snapBack;
+			snapBack = false;
+			handlePan('elastic', 600);
+		}
+	});
+
+	function handlePan(easing, duration){
+		duration = duration || 250;
+		easing = easing || 'linear';
+
+		$pan
+			.css('color', 'orange')
+			.html('&nbsp;pan: '+Math.round(pan+myPan));
+
 		svg.selectAll('rect')
 			.transition()
-			.ease('linear')
+			.duration(duration)
+			.ease(easing)
 			.attr('transform', 'translate('+(pan+myPan)+', 0)');
 
 		svg.select('.time-axis')
 			.transition()
-			.ease('linear')
+			.duration(duration)
+			.ease(easing)
 			.attr('transform', 'translate('+(pan+myPan)+', '+(h-AXIS_HEIGHT)+')');
-	});
-	hammertime.on('panend pancancel', function(){
-		if (!panning) return;
-
-		$debug.css('color', 'red').text('not panning');
-		panning = false;
-		pan += myPan;
-		myPan = 0;
-	});
+	}
 
 	// options = {
 	// 	dragLockToAxis: true,
@@ -151,7 +213,12 @@ function listenForPinch(){
 	// });
 }
 
+var $debug, $pan, $w;
 function render(activities){
+	$debug = $('#debug-container');
+	$pan = $('#pan-container');
+	$w = $('#w-container');
+
 	if (activities){
 		lastActivities = activities;
 	} else {
@@ -217,6 +284,7 @@ function render(activities){
 	rects
 		.transition()
 		.attr('height', yScale.rangeBand())
+		.attr('transform', 'translate('+pan+', 0)')
 		.attr('y', function(d, i){ return yScale(i); })
 		.attr('x', function(d){ 
 			var x = scale(d.beginTime);
@@ -269,14 +337,13 @@ function render(activities){
 		timeAxis = d3.svg.axis()
 			.scale(scale)
 			.orient('bottom')
-			.ticks(3)
 			.tickFormat(function(d){
 				return f(new Date(d));
 			});
 
 		svg.append('g')
 			.attr('class', 'time-axis')
-			.attr('transform', 'translate(0, '+(h-AXIS_HEIGHT)+')')
+			.attr('transform', 'translate('+pan+', '+(h-AXIS_HEIGHT)+')')
 			.call(timeAxis);
 
 	} else {
@@ -284,7 +351,7 @@ function render(activities){
 		timeAxis.scale(scale);
 		svg.select('.time-axis')
 			.transition()
-			.attr('transform', 'translate(0, '+(h-AXIS_HEIGHT)+')')
+			.attr('transform', 'translate('+pan+', '+(h-AXIS_HEIGHT)+')')
 			.call(timeAxis);
 	}
 }
