@@ -28,7 +28,11 @@ function updateModels(activities){
 }
 
 
-function adjustZoom(myZoom){
+function adjustZoom(myZoom, easing, duration){
+	myZoom = myZoom || 1;
+	duration = duration || 250;
+	easing = easing || 'linear';
+
 	var per = pan/w;
 	var oldPan = pan;
 	w = +window.innerWidth* (zoom*myZoom);
@@ -36,14 +40,15 @@ function adjustZoom(myZoom){
 
 
 	pan = per*w;
-	$debug.text('zooming');
 	$w.html('&nbsp;width: '+Math.round(w));
 	var scale = d3.scale.linear()
 		.domain([minTime, Date.now()])
 		.range([0, w]);
+
 	svg.selectAll('rect')
 		.transition()
-		.ease('linear')
+		.duration(duration)
+		.ease(easing)
 		.attr('transform', 'translate('+pan+', 0)')
 		.attr('x', function(d){
 			var x = scale(d.beginTime);
@@ -58,7 +63,8 @@ function adjustZoom(myZoom){
 	//timeAxis.ticks(3*zoom);
 	svg.select('.time-axis')
 		.transition()
-		.ease('linear')
+		.duration(duration)
+		.ease(easing)
 		.attr('transform', 'translate('+pan+', '+(h-AXIS_HEIGHT)+')')
 		.call(timeAxis);
 }
@@ -113,7 +119,11 @@ function listenForPinch(){
 
 	hammertime.on('pinchin pinchout', function(ev){
 		if (!zooming) return;
-		if (ev.scale*zoom<0.8) return;
+		if (ev.scale*zoom<0.8) {
+			snapBack = 1;
+
+			$debug.css('color', 'red').text('MAX ZOOM');
+		}
 
 		myZoom = ev.scale;
 		adjustZoom(myZoom);
@@ -126,6 +136,13 @@ function listenForPinch(){
 		zoom *= myZoom;
 		myZoom = 1;
 		zooming = false;
+		if (snapBack!==false){
+			$debug.css('color', 'red').text('snapback: ' + snapBack);
+			zoom = snapBack;
+			snapBack = false;
+			pan = 0;
+			adjustZoom(1, 'elastic', 600);
+		}
 		adjustTicksCount();
 	});
 
