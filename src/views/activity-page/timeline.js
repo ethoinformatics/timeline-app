@@ -68,24 +68,29 @@ function listenForPinch(){
 		hammertime = new Hammer(el, options);
 	var $debug = $('#debug-container');
 
-	var myZoom = 1;
+	var myZoom = 1, zooming = false;
 	hammertime.get('pinch').set({enable:true});
 
 	hammertime.on('pinchstart', function(ev){
 		myZoom = 1;
+		zooming = true;
 		$debug.css('color', 'green');
 	});
 
-	hammertime.on('pinch', function(ev){
+	hammertime.on('pinchin pinchout', function(ev){
+		if (!zooming) return;
+
 		myZoom = ev.scale;
 		adjustZoom(myZoom);
 	});
 
 	hammertime.on('pinchend pinchcancel', function(){
+		if (!zooming) return;
+
 		$debug.css('color', 'red').text(myZoom);
 		zoom *= myZoom;
 		myZoom = 1;
-		adjustZoom(1);
+		zooming = false;
 	});
 
 
