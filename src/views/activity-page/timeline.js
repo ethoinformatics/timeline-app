@@ -15,7 +15,8 @@ var HEADER_HEIGHT = 44*3,
 	minTime,
 	maxTime,
 	lastActivities = [],
-	zoom = 1;
+	zoom = 1,
+	pan = 0;
 
 function updateModels(activities){
 	activities.forEach(function(a){
@@ -28,13 +29,18 @@ function updateModels(activities){
 
 function adjustZoom(myZoom){
 	w = +window.innerWidth* (zoom*myZoom);
+	c = (w/2)*-1;
+
+	var $debug = $('#debug-container');
+	$debug.text(c + ' = ' + w + '/2');
 	var scale = d3.scale.linear()
 		.domain([minTime, Date.now()])
 		.range([0, w]);
 	svg.selectAll('rect')
 		.transition()
 		.ease('linear')
-		.attr('x', function(d){ 
+		//.attr('transform', 'translate('+c+', 0)')
+		.attr('x', function(d){
 			var x = scale(d.beginTime);
 			return Math.min(x, w-CURRENT_ACTIVITY_MIN_WIDTH);
 		})
@@ -47,7 +53,11 @@ function adjustZoom(myZoom){
 	svg.select('.time-axis')
 		.transition()
 		.ease('linear')
+		//.attr('transform', 'translate('+c+', 0)')
 		.call(timeAxis);
+
+
+
 }
 
 function getUnit(){
@@ -99,14 +109,45 @@ function listenForPinch(){
 	});
 
 
-	options = {
-		dragLockToAxis: true,
-		dragBlockHorizontal: true
-	};
-	hammertime = new Hammer(el, options);
-	hammertime.on("dragleft dragright swipeleft swiperight", function(ev){
-		window.alert('gota drag');
+	var myPan = 0, panning = false;
+
+	hammertime.on('panstart', function(ev){
+		$debug.css('color', 'green').text('panning');
+		panning = true;
 	});
+
+	hammertime.on('panright panleft', function(ev){
+		if (!panning) return;
+		var dir = ev.direction == 2 ? -1 : 1;
+		myPan = ev.distance*dir;
+		$debug.text(myPan);
+		svg.selectAll('rect')
+			.transition()
+			.ease('linear')
+			.attr('transform', 'translate('+(pan+myPan)+', 0)');
+
+		svg.select('.time-axis')
+			.transition()
+			.ease('linear')
+			.attr('transform', 'translate('+(pan+myPan)+', '+(h-AXIS_HEIGHT)+')');
+	});
+	hammertime.on('panend pancancel', function(){
+		if (!panning) return;
+
+		$debug.css('color', 'red').text('not panning');
+		panning = false;
+		pan += myPan;
+		myPan = 0;
+	});
+
+	// options = {
+	// 	dragLockToAxis: true,
+	// 	dragBlockHorizontal: true
+	// };
+	// hammertime = new Hammer(el, options);
+	// hammertime.on("dragleft dragright swipeleft swiperight", function(ev){
+	// 	window.alert('gota drag');
+	// });
 }
 
 function render(activities){
@@ -120,8 +161,7 @@ function render(activities){
 		svg = d3.select('#timeline-container')
 			.append('svg')
 			.attr('width', w)
-			.attr('height', h)
-			.attr('transform', 'translate(0,500)');
+			.attr('height', h);
 
 		listenForPinch();
 		window.addEventListener('orientationchange', function(){
@@ -129,10 +169,9 @@ function render(activities){
 			w = +window.innerWidth* zoom;
 
 			svg.attr('width', w)
-				.attr('height', h)
-				.attr('transform', 'translate(0,100)');
+				.attr('height', h);
 
-			svg.selectAll('rect')
+			svg.selectAll('g.activity')
 				.transition()
 				.ease('linear')
 				.attr('x', function(d){ 
@@ -191,6 +230,7 @@ function render(activities){
 	var activityGroups = rects
 		.enter()
 		.append('g')
+		.classed('activity', true)
 		.attr('data-id', function(d){ return d.id; });
 
 	activityGroups
