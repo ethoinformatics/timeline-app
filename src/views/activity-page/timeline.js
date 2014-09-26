@@ -4,7 +4,8 @@ var d3 = require('d3'),
 	Hammer = require('hammerjs'),
 	storage = require('jocal');
 
-var h = window.innerHeight - (44*2), // we have some bars that aren't part of the svg
+var HEADER_HEIGHT = 44*3,
+	h = window.innerHeight - HEADER_HEIGHT,
 	w = +window.innerWidth,
 	c = w/2,
 	svg,
@@ -41,8 +42,12 @@ function adjustZoom(myZoom){
 			var w = scale(d.endTime || Date.now()) - scale(d.beginTime);
 			return Math.max(CURRENT_ACTIVITY_MIN_WIDTH, w);
 		});
-	//minTime += getDelta();
-	//render();
+
+	timeAxis.scale(scale);
+	svg.select('.time-axis')
+		.transition()
+		.ease('linear')
+		.call(timeAxis);
 }
 
 function getUnit(){
@@ -120,7 +125,7 @@ function render(activities){
 
 		listenForPinch();
 		window.addEventListener('orientationchange', function(){
-			h = window.innerHeight - (44*2);
+			h = window.innerHeight - HEADER_HEIGHT;
 			w = +window.innerWidth* zoom;
 
 			svg.attr('width', w)
@@ -143,7 +148,7 @@ function render(activities){
 	}
 
 
-	h = window.innerHeight - (44*2);
+	h = window.innerHeight - HEADER_HEIGHT;
 	w = +window.innerWidth* zoom;
 
 
