@@ -12,6 +12,7 @@ var HEADER_HEIGHT = 44*2,
 	svg,
 	timeAxis,
 	AXIS_HEIGHT = 35,
+	VISIBLE_WIDTH = window.innerWidth,
 	CURRENT_ACTIVITY_MIN_WIDTH = 6,
 	minTime,
 	maxTime,
@@ -69,40 +70,6 @@ function adjustZoom(myZoom, easing, duration){
 		.call(timeAxis);
 }
 
-function adjustTicksCount(){
-	return;
-	var scale = d3.scale.linear()
-		.domain([minTime, Date.now()])
-		.range([0, w]);
-
-	timeAxis.scale(scale);
-	timeAxis.ticks(3*zoom);
-	svg.select('.time-axis')
-		.transition()
-		.ease('linear')
-		.call(timeAxis);
-}
-
-
-//adjustTicksCount = _.throttle(
-
-function getUnit(){
-	var c = maxTime - minTime;
-
-	var seconds = c/1000;
-	if (seconds<60)
-		return seconds;
-
-	var minutes = seconds/60;
-	if (minutes<60)
-		return 'minutes';
-
-	var hours = minutes/60;
-	if (hours<48)
-		return 'hours';
-
-	return 'days';
-}
 function listenForPinch(){
 	var el = $('#timeline-container').closest('div.pane')[0],
 		options = { },
@@ -114,11 +81,10 @@ function listenForPinch(){
 	hammertime.on('pinchstart', function(ev){
 		myZoom = 1;
 		zooming = true;
-		$debug.css('color', 'green');
 	});
 
 	hammertime.on('pinchin pinchout', function(ev){
-		if (!zooming) return;
+		if (!zooming || isListMode) return;
 		if (ev.scale*zoom<0.8) {
 			snapBack = 1;
 
@@ -130,7 +96,7 @@ function listenForPinch(){
 	});
 
 	hammertime.on('pinchend pinchcancel', function(){
-		if (!zooming) return;
+		if (!zooming || isListMode) return;
 
 		$debug.css('color', 'purple').text('zoomed');
 		zoom *= myZoom;
@@ -143,48 +109,89 @@ function listenForPinch(){
 			pan = 0;
 			adjustZoom(1, 'elastic', 600);
 		}
-		adjustTicksCount();
 	});
 
 
-	var myPan = 0, panning = false;
+	var myPan = 0, panning = false, isListMode = false;
+	var MAX_PERCENT = 0.02;
 
-	hammertime.on('panstart', function(ev){
-		$debug.css('color', 'green').text('panning');
+	hammertime.on('panstart', function(){
 		panning = true;
 	});
 
 	hammertime.on('panleft', function(ev){
-		if (!panning) return;
+		if (!panning || isListMode) return;
 
-		var maxPan = w-(window.innerWidth*0.95);
+		var maxPan = w-(VISIBLE_WIDTH*(1-MAX_PERCENT));
 
 		if (Math.abs(pan-ev.distance)>maxPan){
+			myPan = logScale(ev.distance);
 			snapBack = maxPan*-1;
 			$debug.css('color', 'red').text('MAX PANLEFT');
+		} else {
+			myPan = ev.distance;
 		}
 
-		myPan = ev.distance*-1;
+		myPan *= -1;
 		handlePan();
 	});
 
-	var resistance = 1, snapBack = false;
+	var snapBack = false, showList = false;
+	var maxPan = window.innerWidth*MAX_PERCENT;
+	var logScale = d3.scale.log()
+		.clamp(true)
+		.domain([maxPan, VISIBLE_WIDTH])
+		.range([maxPan, VISIBLE_WIDTH/8]);
+
 	hammertime.on('panright', function(ev){
-		if (!panning) return;
+		if (!panning || isListMode) return;
 
-		var maxPan = window.innerWidth*0.05;
+		var totalPan = myPan + pan;
 
-		if ((pan+ev.distance)>maxPan){
+		if (snapBack){
+			myPan = logScale(ev.distance);
+		} else {
+			myPan = ev.distance;
+		}
+
+		if (totalPan>=maxPan){
 			snapBack = maxPan;
-			$debug.css('color', 'red').text('MAX PANRIGHT');
-		} 
 
-		myPan = ev.distance;
+			
+			// $debug.css('color', 'cyan')
+			// 	.text(totalPan-maxPan + ' vs ' + (VISIBLE_WIDTH/8)*.9);
+
+			if ((totalPan-maxPan) >= (VISIBLE_WIDTH/8)*.92){
+				svg.selectAll('g.activity')
+					.attr('transform', 'translate(0,0)')
+					.attr('x', null)
+					.attr('y', null);
+
+				var COLOR_STRIPE_WIDTH = 6;
+
+				svg
+					.attr('width', VISIBLE_WIDTH)
+					.selectAll('rect')
+					.transition()
+					.duration(1000)
+					.attr('transform', 'translate(0,0)')
+					.attr('width', COLOR_STRIPE_WIDTH)
+					.attr('x', VISIBLE_WIDTH-COLOR_STRIPE_WIDTH)
+
+				svg.selectAll('.time-axis')
+					.style('display', 'none');
+
+				isListMode = true;
+				return;
+			}
+
+		}
+
 		handlePan();
 	});
 
 	hammertime.on('panend pancancel', function(){
-		if (!panning) return;
+		if (!panning || isListMode) return;
 
 		panning = false;
 		pan += myPan;
@@ -196,10 +203,15 @@ function listenForPinch(){
 			pan = snapBack;
 			snapBack = false;
 			handlePan('elastic', 600);
+
+			svg.selectAll('g.activity')
+				.transition()
+				.style('opacity', 1);
 		}
 	});
 
 	function handlePan(easing, duration){
+		if (isListMode) return;
 		duration = duration || 250;
 		easing = easing || 'linear';
 
@@ -219,15 +231,6 @@ function listenForPinch(){
 			.ease(easing)
 			.attr('transform', 'translate('+(pan+myPan)+', '+(h-AXIS_HEIGHT)+')');
 	}
-
-	// options = {
-	// 	dragLockToAxis: true,
-	// 	dragBlockHorizontal: true
-	// };
-	// hammertime = new Hammer(el, options);
-	// hammertime.on("dragleft dragright swipeleft swiperight", function(ev){
-	// 	window.alert('gota drag');
-	// });
 }
 
 var $debug, $pan, $w;
@@ -256,17 +259,17 @@ function render(activities){
 			svg.attr('width', w)
 				.attr('height', h);
 
-			svg.selectAll('g.activity')
-				.transition()
-				.ease('linear')
-				.attr('x', function(d){ 
-					var x = scale(d.beginTime);
-					return Math.min(x, w-CURRENT_ACTIVITY_MIN_WIDTH);
-				})
-				.attr('width', function(d){ 
-					var w = scale(d.endTime || Date.now()) - scale(d.beginTime);
-					return Math.max(CURRENT_ACTIVITY_MIN_WIDTH, w);
-				});
+			// svg.selectAll('g.activity')
+			// 	.transition()
+			// 	.ease('linear')
+			// 	.attr('x', function(d){ 
+			// 		var x = scale(d.beginTime);
+			// 		return Math.min(x, w-CURRENT_ACTIVITY_MIN_WIDTH);
+			// 	})
+			// 	.attr('width', function(d){ 
+			// 		var w = scale(d.endTime || Date.now()) - scale(d.beginTime);
+			// 		return Math.max(CURRENT_ACTIVITY_MIN_WIDTH, w);
+			// 	});
 			//render();
 		});
 	}
@@ -322,7 +325,6 @@ function render(activities){
 	activityGroups
 		.append('rect')
 		.on('click', function(d){
-			//zoomIn();
 			actionList.show(d.id);
 		})
 		.attr('width', 0)
