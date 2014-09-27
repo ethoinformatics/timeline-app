@@ -58,7 +58,24 @@ function adjustZoom(easing, duration){
 		.call(timeAxis);
 }
 
-function listenForPinch(){
+function handlePan(easing, duration){
+	duration = duration || 250;
+	easing = easing || 'linear';
+
+	svg.selectAll('rect')
+		.transition()
+		.duration(duration)
+		.ease(easing)
+		.attr('transform', 'translate('+(pan)+', 0)');
+
+	svg.select('.time-axis')
+		.transition()
+		.duration(duration)
+		.ease(easing)
+		.attr('transform', 'translate('+(pan)+', '+(h-AXIS_HEIGHT)+')');
+}
+
+function listenForGestures(){
 	var el = $('#timeline-container').closest('div.pane')[0];
 	var ee = gestures(el);
 
@@ -87,27 +104,6 @@ function listenForPinch(){
 		pan = ev.pan;
 		handlePan();
 	});
-
-	var isListMode = false;
-
-	function handlePan(easing, duration){
-		if (isListMode) return;
-		duration = duration || 250;
-		easing = easing || 'linear';
-
-
-		svg.selectAll('rect')
-			.transition()
-			.duration(duration)
-			.ease(easing)
-			.attr('transform', 'translate('+(pan)+', 0)');
-
-		svg.select('.time-axis')
-			.transition()
-			.duration(duration)
-			.ease(easing)
-			.attr('transform', 'translate('+(pan)+', '+(h-AXIS_HEIGHT)+')');
-	}
 }
 
 var $debug, $pan, $w;
@@ -128,7 +124,7 @@ function render(activities){
 			.attr('width', w)
 			.attr('height', h);
 
-		listenForPinch();
+		listenForGestures();
 		window.addEventListener('orientationchange', function(){
 		});
 	}
