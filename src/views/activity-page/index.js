@@ -35,64 +35,6 @@ function ActivityPage(){
 		var isVisble = activityFilter.createPredicate();
 		renderTimeline(activities.filter(isVisble));
 
-		if (!vis){
-			vis = d3.select('#list-container');
-		}
-
-		var activityElements = vis.selectAll('div')
-			.data(activities, function(a){ return a.id; });
-
-		// create new elements
-		var newActivityElements = activityElements
-			.enter()
-			.append('div')
-			.attr('data-id', function(a){return a.id;});
-
-		newActivityElements
-			.append('span')
-			.text(function(a){ return a.type; });
-
-		newActivityElements
-			.append('span')
-			.attr('class', 'item-note');
-
-		newActivityElements
-			.append('i')
-			.style('background-color', function(a) {return a.color; })
-			.attr('class', 'icon color-box');
-
-		activityElements
-			.exit()
-			.transition()
-			.duration(600)
-			.style('opacity',0)
-			.remove();
-
-		// all elements
-		activityElements
-			.select('.item-note')
-			.text(function(a){
-				if (a.endTime){
-					return 'Ended ' + relativeTime(a.endTime);
-				}
-
-				return 'Started ' + relativeTime(a.beginTime);
-			});
-
-		activityElements
-			.attr('class', function(a){
-				var classes = ['item', 'item-icon-right', 'activity'];
-
-				classes.push(a.ending_time ? 'activity-completed' : 'activity-current');
-
-				return classes.join(' ');
-			});
-
-		activityElements
-			.style('display', function(a){
-				if (isVisble(a)) return '';
-				return 'none';
-			});
 	};
 
 	self.$element.find('.js-btn-add')

@@ -1,110 +1,58 @@
 var d3 = require('d3'),
-	_ = require('lodash'),
 	$ = require('jquery'),
 	actionList = require('action-list'),
-	gestures = require('./gestures.js'),
 	storage = require('jocal');
 
 var HEADER_HEIGHT = 44*2,
 	h = window.innerHeight - HEADER_HEIGHT,
 	w = +window.innerWidth,
-	c = w/2,
 	svg,
 	timeAxis,
+	timeScale,
 	AXIS_HEIGHT = 35,
-	VISIBLE_WIDTH = window.innerWidth,
 	CURRENT_ACTIVITY_MIN_WIDTH = 6,
-	minTime,
-	maxTime,
-	lastActivities = [],
-	zoom = 1,
-	pan = 0;
+	zoom,
+	lastActivities = [];
 
-function adjustZoom(easing, duration){
-	duration = duration || 250;
-	easing = easing || 'linear';
+function ensureTimeScale(activities){
+	var minTime = d3.min(activities, function(d){ return d.beginTime; }),
+		maxTime = d3.max(activities, function(d){ return d.endTime || Date.now(); });
 
-	var per = pan/w;
-	w = +window.innerWidth* (zoom);
-	c = (w/2)*-1;
+	if (!timeScale) timeScale = d3.scale.linear();
 
-	pan = per*w;
-	$w.html('&nbsp;width: '+Math.round(w));
-	var scale = d3.scale.linear()
-		.domain([minTime, Date.now()])
+	timeScale = timeScale
+		.domain([minTime, maxTime])
 		.range([0, w]);
 
-	svg.selectAll('rect')
-		.transition()
-		.duration(duration)
-		.ease(easing)
-		.attr('transform', 'translate('+pan+', 0)')
+	return timeScale;
+}
+
+function setBarPosition(selection){
+	selection
 		.attr('x', function(d){
-			var x = scale(d.beginTime);
+			var x = timeScale(d.beginTime);
 			return Math.min(x, w-CURRENT_ACTIVITY_MIN_WIDTH);
 		})
 		.attr('width', function(d){ 
-			var w = scale(d.endTime || Date.now()) - scale(d.beginTime);
+			var w = timeScale(d.endTime || Date.now()) - timeScale(d.beginTime);
 			return Math.max(CURRENT_ACTIVITY_MIN_WIDTH, w);
 		});
+}
 
-	timeAxis.scale(scale);
-
+function onZoom(){
 	svg.select('.time-axis')
 		.transition()
-		.duration(duration)
-		.ease(easing)
-		.attr('transform', 'translate('+pan+', '+(h-AXIS_HEIGHT)+')')
 		.call(timeAxis);
-}
 
-function handlePan(easing, duration){
-	duration = duration || 250;
-	easing = easing || 'linear';
-
-	svg.selectAll('rect')
+	svg.selectAll('g.activity rect')
 		.transition()
-		.duration(duration)
-		.ease(easing)
-		.attr('transform', 'translate('+(pan)+', 0)');
+		.call(setBarPosition);
 
-	svg.select('.time-axis')
-		.transition()
-		.duration(duration)
-		.ease(easing)
-		.attr('transform', 'translate('+(pan)+', '+(h-AXIS_HEIGHT)+')');
+
+	$debug.html('&nbsp;scale: ' + zoom.scale());
 }
 
-function listenForGestures(){
-	var el = $('#timeline-container').closest('div.pane')[0];
-	var ee = gestures(el);
 
-	ee.on('zoom-change', function(ev){
-		zoom = ev.zoom;
-		adjustZoom();
-	});
-
-	ee.on('zoom-snap', function(ev){
-		pan = 0;
-		zoom = ev.zoom;
-		adjustZoom('elastic', 600);
-	});
-
-	ee.on('pan-change', function(ev){
-		pan = ev.pan;
-		handlePan();
-	});
-
-	ee.on('pan-snap', function(ev){
-		pan = ev.pan;
-		handlePan('elastic', 600);
-	});
-
-	ee.on('pan-rip', function(ev){
-		pan = ev.pan;
-		handlePan();
-	});
-}
 
 var $debug, $pan, $w;
 function render(activities){
@@ -118,54 +66,45 @@ function render(activities){
 		activities = lastActivities || storage('activities') || [];
 	}
 
+	timeScale = ensureTimeScale(activities);
+
 	if (!svg){
+		zoom = d3.behavior.zoom()
+			.x(timeScale)
+			.scaleExtent([0.6,50])
+			.on('zoom', onZoom);
+
 		svg = d3.select('#timeline-container')
 			.append('svg')
 			.attr('width', w)
+			.attr('height', h)
+			.call(zoom);
+
+		svg
+			.append('rect')
+			.style('opacity', 0)
+			.attr('width', w)
 			.attr('height', h);
 
-		listenForGestures();
 		window.addEventListener('orientationchange', function(){
 		});
 	}
 
-	h = window.innerHeight - HEADER_HEIGHT;
-	w = +window.innerWidth;
 
-	if (!minTime){
-		minTime = d3.min(activities, function(d){ return d.beginTime; });
-	}
-	
-	if (!maxTime){
-		maxTime = Date.now();
-	}
-
-	var scale = d3.scale.linear()
-		.domain([minTime, Date.now()])
-		.range([0, w]);
 
 	var yScale = d3.scale.ordinal()
 		.domain(d3.range(activities.length))
 		.rangeRoundBands([0,(h-AXIS_HEIGHT)], 0.05);
 
 
-	var rects = svg.selectAll('rect')
+	var rects = svg.selectAll('g.activity rect')
 		.data(activities, function(d){ return d.id; });
 
 	rects
 		.transition()
 		.attr('height', yScale.rangeBand())
-		.attr('transform', 'translate('+pan+', 0)')
 		.attr('y', function(d, i){ return yScale(i); })
-		.attr('x', function(d){ 
-			var x = scale(d.beginTime);
-			return Math.min(x, w-CURRENT_ACTIVITY_MIN_WIDTH);
-		})
-		.attr('width', function(d){ 
-			var w = scale(d.endTime || Date.now()) - scale(d.beginTime);
-			return Math.max(CURRENT_ACTIVITY_MIN_WIDTH, w);
-		});
-
+		.call(setBarPosition);
 		
 	var activityGroups = rects
 		.enter()
@@ -176,6 +115,7 @@ function render(activities){
 	activityGroups
 		.append('rect')
 		.on('click', function(d){
+			d3.event.stopPropagation();
 			actionList.show(d.id);
 		})
 		.attr('width', 0)
@@ -185,15 +125,8 @@ function render(activities){
 		.transition()
 		.delay(function(d,i){ return i*50;})
 		.attr('fill', function(d){ return d.color;})
-		.attr('x', function(d){ 
-			var x = scale(d.beginTime);
-			return Math.min(x, w-CURRENT_ACTIVITY_MIN_WIDTH);
-		})
-		.attr('width', function(d){ 
-			var w = scale(d.endTime || Date.now()) - scale(d.beginTime);
-			return Math.max(CURRENT_ACTIVITY_MIN_WIDTH, w);
-		});
-	
+		.call(setBarPosition);
+
 	rects
 		.exit()
 		.transition()
@@ -205,7 +138,7 @@ function render(activities){
 	if (!timeAxis){
 		var f = d3.time.format('%a %I:%M %p');
 		timeAxis = d3.svg.axis()
-			.scale(scale)
+			.scale(timeScale)
 			.orient('bottom')
 			.tickFormat(function(d){
 				return f(new Date(d));
@@ -213,15 +146,15 @@ function render(activities){
 
 		svg.append('g')
 			.attr('class', 'time-axis')
-			.attr('transform', 'translate('+pan+', '+(h-AXIS_HEIGHT)+')')
+			.attr('transform', 'translate(0, '+(h-AXIS_HEIGHT)+')')
 			.call(timeAxis);
 
 	} else {
 		
-		timeAxis.scale(scale);
+		timeAxis.scale(timeScale);
 		svg.select('.time-axis')
 			.transition()
-			.attr('transform', 'translate('+pan+', '+(h-AXIS_HEIGHT)+')')
+			.attr('transform', 'translate(0, '+(h-AXIS_HEIGHT)+')')
 			.call(timeAxis);
 	}
 }
