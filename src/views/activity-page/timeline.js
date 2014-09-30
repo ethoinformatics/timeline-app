@@ -35,10 +35,15 @@ function setHorizontalPosition(selection){
 			return x;
 		})
 		.attr('width', function(d){ 
-			var begin = timeScale(new Date(d.beginTime));
-			if (d.endTime) return timeScale(new Date(d.endTime)) - begin;
+			var begin = timeScale(new Date(d.beginTime)), v;
 
-			return timeScale(new Date()) - begin;
+			if (d.endTime) {
+				v = timeScale(new Date(d.endTime)) - begin;
+			} else {
+				v = timeScale(new Date()) - begin;
+			}
+
+			return Math.max(v, 6);
 		});
 
 	return selection;
