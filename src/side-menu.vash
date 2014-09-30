@@ -1,0 +1,45 @@
+<!-- <div id="menu-container" > -->
+<!-- 	<ion-side-menus> -->
+<!-- 		<ion-side-menu-content id="main-content"> -->
+<!-- 			Content! -->
+<!-- 			<button ng-click="toggleLeftSideMenu()"> -->
+<!-- 				Toggle Left Side Menu -->
+<!-- 			</button> -->
+<!-- 		</ion-side-menu-content> -->
+<!-- 		<ion-side-menu side="left"> -->
+<!-- 			Left Menu! -->
+<!-- 		<ion-side-menu> -->
+<!-- 	</ion-side-menus> -->
+<!-- </div> -->
+
+<ion-side-menus>
+
+  <ion-pane ion-side-menu-content>
+      <ion-nav-bar class="bar-stable nav-title-slide-ios7">
+	        <ion-nav-back-button class="button-clear"><i class="icon ion-chevron-left"></i> Back</ion-nav-back-button>
+	  </ion-nav-bar>
+				    <ion-nav-view name="ionic-main-content" animation="slide-left-right"></ion-nav-view>
+					  </ion-pane>
+
+					    <ion-side-menu side="left" ng-controller="ethoSideMenuController">
+						    <header class="bar bar-header bar-stable">
+								
+								<button ng-click="toggleLeftSideMenu()" class="button button-icon icon ion-navicon"></button>
+
+								      <h1 id="left-header-title" class="title">Ethoinformatics</h1>
+											<button class="js-btn-add button button-positive">
+												New
+											 </button>
+							</header>
+										      <ion-content class="has-header">
+											  		<ion-nav-view name="ionic-left-content" animation="slide-left-right"></ion-nav-view>
+					<ion-view title="relay admin">
+						<ion-nav-buttons side="left">
+								<button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
+									</ion-nav-buttons>
+										<ion-content id="main-content">
+											</ion-content>
+					</ion-view>
+													    </ion-content>
+														  </ion-side-menu>
+														  </ion-side-menus>

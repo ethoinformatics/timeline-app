@@ -58,7 +58,6 @@ function onZoom(){
 		.call(timeAxis);
 
 	svg.selectAll('g.activity rect.foreground')
-		.transition()
 		.call(setHorizontalPosition);
 
 	svg.selectAll('g.activity rect.background')

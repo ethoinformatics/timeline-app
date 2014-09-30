@@ -40,9 +40,7 @@ function ActivityPage(){
 	window.addEventListener('orientationchange', function(){
 		self.render();
 	});
-	self.$element.find('.js-btn-add')
-		.on('click', function(){
-
+	$('body').on('click','.js-btn-add', function(){
 			var newActivityDialog = new NewActivityDialog();
 			newActivityDialog.on('new', function(data){
 				var activities = getActivities();
