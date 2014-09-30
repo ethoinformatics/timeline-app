@@ -37,6 +37,9 @@ function ActivityPage(){
 
 	};
 
+	window.addEventListener('orientationchange', function(){
+		self.render();
+	});
 	self.$element.find('.js-btn-add')
 		.on('click', function(){
 
