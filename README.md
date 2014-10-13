@@ -8,7 +8,7 @@ timeline-app
 
 ##Publishing the android app
   1. ensure that nodejs and android dev tools are installed
-  2. cd to `timeline-app`.  Increament the version in ionic/config.xml 
+  2. cd to `timeline-app`.  Increment the version in ionic/config.xml 
   3. run `./build-app.sh`
   4. Now the app is built and can be published to hockey app.
   3. get the hockeyapp token and run `export HOCKEY_TOKEN='the toke here'`
