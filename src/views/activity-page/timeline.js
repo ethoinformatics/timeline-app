@@ -158,10 +158,10 @@ function render(activities){
 	newGroups
 		.append('rect')
 		.classed('foreground', true)
-		.on('click', function(d){
-			d3.event.stopPropagation();
-			actionList.show(d.id);
-		})
+		//.on('click', function(d){
+			//d3.event.stopPropagation();
+			//actionList.show(d.id);
+		//})
 		.attr('width', 0)
 		.call(setVerticalPosition)
 		.transition()

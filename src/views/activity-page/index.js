@@ -6,8 +6,10 @@ var $ = require('jquery'),
 	moment =  require('moment'),
 	storage = require('jocal'),
 	renderTimeline = require('./timeline.js'),
+	activityTypes = require('activity-types'),
 	ActivityFilter = require('activity-filter'),
 	NewActivityDialog = require('./new-activity-dialog'),
+	ActivityDetailsModal = require('activity-details'),
 	pageTemplate = require('./index.vash'),
 	actionList = require('action-list');
 
@@ -57,12 +59,22 @@ function ActivityPage(){
 			newActivityDialog.show();
 		});
 
-	self.$element.on('click', '.item[data-id]', function(){
+	self.$element.on('click', '.activity[data-id]', function(){
+		debugger;
 		var id = $(this).data('id');
 		var activities = storage('activities') || [];
 		var activity = _.find(activities, function(a){ return a.id == id; });
+		
 
-		actionList.show(id);
+
+		// todo: fix this so that we search by key
+		var type = _.find(activityTypes, function(a){return a.name == activity.type;});
+		type = type || activityTypes[1]; // todo: fix this
+
+		var m = new ActivityDetailsModal(type, activity);
+
+		m.show();
+		//actionList.show(id);
 	});
 
 

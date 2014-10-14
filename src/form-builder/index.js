@@ -29,6 +29,17 @@ module.exports = function(metadata, data){
 	});
 
 	return {
+		setData: function(formData){
+			$root
+				.find('*[data-name]')
+				.each(function(){
+					var $this = $(this),
+						name = $this.data('name'),
+						value = formData[name];
+
+						$this.val(value);
+				});
+		},
 		getData: function(){
 			var formData = {};
 			$root

@@ -11,13 +11,14 @@ function Details(type, activity){
 	var self = this;
 	EventEmitter.call(self);
 	//var type = _.find(activityTypes, function(a){return a.name == activity.type;});
+	var title = activity ? 'Edit Activity' : 'Create Activity';
 
 	this.show = function(){
 		if (_.isFunction(type.ctor)){
 
 			var objForm = new type.ctor();
 
-			var m = new Modal('Create activity', objForm.$element);
+			var m = new Modal(title, objForm.$element);
 			m.on('ok', function(){
 				var data = {
 					id: ezuuid(),
@@ -32,8 +33,11 @@ function Details(type, activity){
 			m.show();
 		} else if (_.isObject(type.fields)){
 			var form = formBuilder(type.fields);
+			if (activity){
+				form.setData(activity.data);
+			}
 
-			var m = new Modal('Create activity', form.$element);
+			var m = new Modal(title, form.$element);
 			m.on('ok', function(){
 				var data = {
 					id: ezuuid(),
