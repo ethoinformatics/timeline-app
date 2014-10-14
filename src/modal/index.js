@@ -6,8 +6,9 @@ var $ = require('jquery'),
 	$backdrop;
 
 
-function Modal(title, $content){
+function Modal(title, $content, options){
 	var self = this;
+	options = Object(options);
 	EventEmitter.call(self);
 
 	if (!$backdrop) {
@@ -18,6 +19,7 @@ function Modal(title, $content){
 	this.show = function(myTitle, $myContent){
 		myTitle = myTitle || title;
 		$myContent = $myContent || $content;
+
 		var $modal = $(modalTemplate({title: myTitle}));
 		$modal.find('.modal-body')
 			.empty()
@@ -53,6 +55,12 @@ function Modal(title, $content){
 		$backdrop.find('.js-container')
 			.empty()
 			.append($modal);
+
+		if (options.hideOkay){
+			$modal.find('.js-button-bar').hide();
+		} else {
+			$modal.find('.js-button-bar').show();
+		}
 
 		$modal.fadeIn();
 	};

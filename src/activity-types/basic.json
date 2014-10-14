@@ -1,0 +1,14 @@
+{
+	"title": {
+		"label": "Title",
+		"type": "text"
+	},
+	"notes": {
+		"label": "Notes",
+		"type": "long-text"
+	},
+	"sampleId": {
+		"label": "Sample ID",
+		"type": "text"
+	}
+}

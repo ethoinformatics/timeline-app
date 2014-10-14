@@ -1,13 +1,13 @@
+require('./index.less');
+
 var $ = require('jquery'),
 	EventEmitter = require('events').EventEmitter,
-	randomColor = require('rgba-generate')(.8),
 	_ = require('lodash'),
 	util = require('util'),
-	ezuuid = require('ezuuid'),
 	Modal = require('modal'),
-	formBuilder = require('form-builder'),
 	template = require('index.vash'),
-	activityTypes = require('activity-types');
+	activityTypes = require('activity-types'),
+	ActivityDetailsModal = require('activity-details');
 
 function NewActivityDialog(){
 	var self = this;
@@ -16,57 +16,21 @@ function NewActivityDialog(){
 	var $element = $(template({
 			activityTypes: activityTypes,
 		})),
-		modal = new Modal('New Activity', $element),
-		objForm,
-		type;
-
-	
-	modal.on('ok', function(){
-		var data;
-
-		if (objForm) 
-			data = objForm.getData();
-		else
-			data = {};
-
-		data = {
-			id: ezuuid(),
-			color: randomColor().toHex(),
-			data: data,
-			type: type.name,
-			beginTime: Date.now(),
-		};
-
-		self.emit('new', data);
-	});
+		modal = new Modal('New Activity', $element, {hideOkay:true});
 
 	$element
-		.find('.js-type-select')
-		.on('change', function(){
+		.find('.js-new-activity')
+		.on('click', function(){
 			var $this = $(this),
 				key = $this.val();
 
-			objForm = null;
+			var type = _.find(activityTypes, function(a){return a.key == key;});
+			var m = new ActivityDetailsModal(type);
+			m.on('new', function(data){
+				self.emit('new', data);
+			});
+			m.show();
 
-			type = _.find(activityTypes, function(a){return a.key == key;});
-
-			if (_.isFunction(type.ctor)){
-
-				objForm = new type.ctor();
-
-				$element.find('.js-form-container')
-					.empty()
-					.append(objForm.$element);
-
-			} else if (_.isObject(type.fields)){
-				var form = formBuilder(type.fields);
-
-				$element.find('.js-form-container')
-					.empty()
-					.append(form.$element);
-			} else {
-				window.alert('bad activity type: ' + key);
-			}
 		});
 
 	this.show = function(){

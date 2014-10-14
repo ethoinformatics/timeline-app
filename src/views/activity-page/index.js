@@ -40,9 +40,14 @@ function ActivityPage(){
 	window.addEventListener('orientationchange', function(){
 		self.render();
 	});
+
 	$('body').on('click','.js-btn-add', function(){
 			var newActivityDialog = new NewActivityDialog();
+
 			newActivityDialog.on('new', function(data){
+				console.log('new in activity-page');
+				console.dir(data);
+
 				var activities = getActivities();
 				activities.push(data);
 				storage('activities', activities);
@@ -54,6 +59,9 @@ function ActivityPage(){
 
 	self.$element.on('click', '.item[data-id]', function(){
 		var id = $(this).data('id');
+		var activities = storage('activities') || [];
+		var activity = _.find(activities, function(a){ return a.id == id; });
+
 		actionList.show(id);
 	});
 

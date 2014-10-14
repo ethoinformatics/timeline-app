@@ -7,7 +7,7 @@
 		<div class="modal-body">
 		</div>
 
-		<div class="list">
+		<div class="list js-button-bar">
 			<label class="item">
 			  <button class="js-ok button button-block button-positive" type="button">Ok</button>
 			</label>

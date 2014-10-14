@@ -1,27 +1,38 @@
 var angular = require('angular'),
 	$ = require('jquery'),
+	q = require('q'),
 	activityId,
 	id = 0,
 	EventEmitter = require('events').EventEmitter,
 	eventEmitter = new EventEmitter();
+
 var template = require('./side-menu.vash');
 
 var mod = angular.module('ethoSideMenu', ['ionic']);
 
 mod.controller('ethoSideMenuController', function($scope, $ionicSideMenuDelegate){
-	debugger
-		 $scope.toggleLeftSideMenu = function() {
-			 alert('hi');
-			     $ionicSideMenuDelegate.toggleLeft();
-		};
+	$scope.toggleLeftSideMenu = function() {
+		console.dir('hi');
+		$ionicSideMenuDelegate.toggleLeft();
+	};
 });
 
-module.exports = function(){
-	var $el = $(template({}));
+
+function SideMenu(){
+	var self = new EventEmitter();
+
+	self.$element = $(template({}));
 
 	process.nextTick(function(){
-		angular.bootstrap($el[0], ['ethoSideMenu']);
+		angular.bootstrap($('.js-side-menu')[0], ['ethoSideMenu']);
+		self.emit('ready');
 	});
 
-	return $el;
-};
+	self.$element.on('click', '.js-upload', function(ev){
+			self.emit('upload-click', ev);
+		});
+
+	return self;
+}
+
+module.exports = SideMenu;

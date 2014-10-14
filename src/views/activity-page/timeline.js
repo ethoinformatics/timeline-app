@@ -13,7 +13,8 @@ var HEADER_HEIGHT = 44*2,
 	AXIS_HEIGHT = 35,
 	CURRENT_ACTIVITY_MIN_WIDTH = 6,
 	zoom,
-	lastActivities = [];
+	lastActivities = [],
+	color = d3.scale.category20b();
 
 function ensureTimeScale(activities){
 	var minTime = d3.min(activities, function(d){ return d.beginTime; }),
@@ -88,6 +89,10 @@ function render(activities){
 	} else {
 		activities = lastActivities || storage('activities') || [];
 	}
+
+	activities.forEach(function(activity, i){
+		activity.color = activity.color || color(i);
+	});
 
 	timeScale = ensureTimeScale(activities);
 

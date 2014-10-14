@@ -3,6 +3,7 @@ var $ = require('jquery'),
 	walker = require('merle'),
 	templates = {
 		text: require('./text-field.vash'),
+		'long-text': require('./long-text-field.vash'),
 	};
 
 
@@ -15,14 +16,15 @@ module.exports = function(metadata, data){
 	walker(metadata, function(){
 		if (!this.value.type) return;
 
+		var template = templates[this.value.type] || templates.text;
 		// just use text for everything at the moment
 		var model = Object.create(this.value);
 		model.name = this.name;
 		model.label = model.label || model.name;
 		model.value = data[model.name];
 
-		var $input = templates.text(model);
-			
+		var $input = template(model);
+
 		$root.append($input);
 	});
 

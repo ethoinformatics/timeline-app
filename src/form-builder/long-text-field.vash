@@ -1,0 +1,5 @@
+
+<li class="item item-input item-stacked-label">
+	<span class="input-label">@model.label</span>
+	<textarea data-name="@model.name" value="@model.value"></textarea>
+</li>

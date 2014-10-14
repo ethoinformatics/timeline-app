@@ -4,7 +4,7 @@
   "description": "This sample uses browserify to organize the code in to modules, vash for client side rendering of templates and jQuery for everything else",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/.bin/nodemon -e js,vash ./bundler.js",
+    "start": "./node_modules/.bin/nodemon -e js,vash,less ./bundler.js",
     "deploy": "cp -r public/* ./dist/"
   },
   "repository": {
@@ -44,6 +44,7 @@
     "dom-ready": "./src/dom-ready.js",
     "modal": "./src/modal/index.js",
     "activity-types": "./src/activity-types/index.js",
+    "activity-details": "./src/views/activity-details/index.js",
     "activity-filter": "./src/activity-filter/index.js",
     "action-list": "./src/action-list.js",
     "form-builder": "./src/form-builder/index.js"
