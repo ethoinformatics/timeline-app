@@ -21,8 +21,11 @@ function UploadDialog(){
 		url = url.replace('//', '//'+$userName.val() + ':' + $password.val() + '@');
 		console.dir(url);
 
-		debugger
-		db.upload(url);
+		db.upload(url)
+			.then(function(){
+				window.alert('success');
+				modal.hide();
+			});
 
 	});
 }
