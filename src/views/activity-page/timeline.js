@@ -1,7 +1,7 @@
 var d3 = require('d3'),
 	$ = require('jquery'),
-	actionList = require('action-list'),
-	storage = require('jocal');
+	_ = require('lodash'),
+	db = require('local-database');
 
 var HEADER_HEIGHT = 44*2,
 	h = window.innerHeight - HEADER_HEIGHT,
@@ -11,7 +11,6 @@ var HEADER_HEIGHT = 44*2,
 	timeScale,
 	verticalScale,
 	AXIS_HEIGHT = 35,
-	CURRENT_ACTIVITY_MIN_WIDTH = 6,
 	zoom,
 	lastActivities = [],
 	color = d3.scale.category20b();
@@ -53,7 +52,7 @@ function setHorizontalPosition(selection){
 function setVerticalPosition(selection){
 	selection
 		.attr('height', verticalScale.rangeBand())
-		.attr('y', function(d, i){ return verticalScale(i); })
+		.attr('y', function(d, i){ return verticalScale(i); });
 
 	return selection;
 }
@@ -74,9 +73,27 @@ function onZoom(){
 }
 
 
+function render(activities){
+	// stop being so lazy, or i mean be lazier
+
+	db.getActivities()
+		.then(function(dbActivities){
+			if (activities){
+				lastActivities = activities;
+			} else {
+				activities = lastActivities || dbActivities;
+			}
+
+			activities.forEach(function(activity, i){
+				activity.color = activity.color || color(i);
+			});
+
+			doRender(activities);
+		});
+}
 
 var $debug, $pan, $w;
-function render(activities){
+function doRender(activities){
 	h = window.innerHeight - HEADER_HEIGHT,
 	w = +window.innerWidth,
 
@@ -84,15 +101,8 @@ function render(activities){
 	$pan = $('#pan-container');
 	$w = $('#w-container');
 
-	if (activities){
-		lastActivities = activities;
-	} else {
-		activities = lastActivities || storage('activities') || [];
-	}
 
-	activities.forEach(function(activity, i){
-		activity.color = activity.color || color(i);
-	});
+	activities = _.sortBy(activities,function(a){return new Date(a.beginTime);});
 
 	timeScale = ensureTimeScale(activities);
 
@@ -132,19 +142,19 @@ function render(activities){
 
 
 	var groups = svg.selectAll('g.activity')
-		.data(activities, function(d){ return d.id; });
+		.data(activities, function(d){ return d._id; });
 
 		
 	groups.select('rect.background')
-		.call(setVerticalPosition)
+		.call(setVerticalPosition);
 	groups.select('rect.foreground')
-		.call(setVerticalPosition)
+		.call(setVerticalPosition);
 
 	var newGroups = groups
 		.enter()
 		.append('g')
 		.classed('activity', true)
-		.attr('data-id', function(d){ return d.id; })
+		.attr('data-id', function(d){ return d._id; });
 	
 	// background bar
 	newGroups
@@ -152,7 +162,7 @@ function render(activities){
 		.classed('background', true)
 		.attr('x', 0)
 		.attr('width', w)
-		.call(setVerticalPosition)
+		.call(setVerticalPosition);
 
 	// colored graph bar
 	newGroups
@@ -166,7 +176,7 @@ function render(activities){
 		.call(setVerticalPosition)
 		.transition()
 		.attr('fill', function(d){ return d.color;})
-		.call(setHorizontalPosition)
+		.call(setHorizontalPosition);
 
 
 	

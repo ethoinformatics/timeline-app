@@ -31,6 +31,7 @@
     "mkdirp": "^0.5.0",
     "moment": "^2.8.2",
     "node-lessify": "0.0.4",
+    "pouchdb": "^3.0.6",
     "q": "^1.0.1",
     "reactive": "^1.2.0",
     "rgba-generate": "^1.0.0",
@@ -46,7 +47,9 @@
     "activity-types": "./src/activity-types/index.js",
     "activity-details": "./src/views/activity-details/index.js",
     "activity-filter": "./src/activity-filter/index.js",
-    "action-list": "./src/action-list.js",
-    "form-builder": "./src/form-builder/index.js"
+	"local-database": "./src/local-database.js",
+    "form-builder": "./src/form-builder/index.js",
+    "long-click": "./src/long-click.js",
+    "sample-data": "./src/sample-data.json"
   }
 }

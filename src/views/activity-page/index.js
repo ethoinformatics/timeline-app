@@ -1,30 +1,21 @@
 require('./index.less');
 
 var $ = require('jquery'),
-	d3 = require('d3'),
 	_ = require('lodash'),
-	moment =  require('moment'),
-	storage = require('jocal'),
+	q = require('q'),
+	db = require('local-database'),
 	renderTimeline = require('./timeline.js'),
 	activityTypes = require('activity-types'),
 	ActivityFilter = require('activity-filter'),
 	NewActivityDialog = require('./new-activity-dialog'),
 	ActivityDetailsModal = require('activity-details'),
-	pageTemplate = require('./index.vash'),
-	actionList = require('action-list');
+	sampleData = require('sample-data'),
+	pageTemplate = require('./index.vash');
 
-function relativeTime(date){
-	return moment(date).fromNow();
-}
-
-function getActivities(){
-	return storage('activities') || [];
-}
 
 function ActivityPage(){
 	var self = this,
-		activityFilter = new ActivityFilter(),
-		vis;
+		activityFilter = new ActivityFilter();
 
 	activityFilter.on('predicate-change', function(){
 		self.render();
@@ -33,10 +24,24 @@ function ActivityPage(){
 	self.$element = $(pageTemplate({}));
 	self.$element.find('#select-container').append(activityFilter.$element);
 	self.render = function(){
-		var activities = getActivities();
-		var isVisble = activityFilter.createPredicate();
-		renderTimeline(activities.filter(isVisble));
+		db.getActivities()
+			.then(function(activities){
+				var isVisble = activityFilter.createPredicate();
 
+				if (_.isEmpty(activities)){
+					var data = _.first(sampleData, 15);
+					var promises = data.map(function(d){
+						return db.saveActivity(d);
+					});
+
+					q.all(promises)
+						.then(function(){
+							renderTimeline(activities.filter(isVisble));
+						});
+				} else {
+					renderTimeline(activities.filter(isVisble));
+				}
+			});
 	};
 
 	window.addEventListener('orientationchange', function(){
@@ -50,31 +55,40 @@ function ActivityPage(){
 				console.log('new in activity-page');
 				console.dir(data);
 
-				var activities = getActivities();
-				activities.push(data);
-				storage('activities', activities);
-
-				self.render();
+				db.saveActivity(data)
+					.then(function(result){
+						self.render();
+					})
+					.catch(function(err){
+						console.error(err);
+						window.alert('could not save :/');
+					});
 			});
+
 			newActivityDialog.show();
 		});
 
+	// longClick(self.$element, '.activity[data-id]', function(){
+	// 	self.$element
+	// 		.find('.actvity[data-id]')
+	// 		.removeClass('selected');
+
+	// 	$(this).addClass('selected');
+	// 	alert('aha');
+	// });
 	self.$element.on('click', '.activity[data-id]', function(){
-		debugger;
 		var id = $(this).data('id');
-		var activities = storage('activities') || [];
-		var activity = _.find(activities, function(a){ return a.id == id; });
-		
+		db.getActivityById(id)
+			.then(function(activity){
+				// todo: fix this so that we search by key
+				var type = _.find(activityTypes, function(a){return a.name == activity.type;});
+				type = type || activityTypes[1]; // todo: fix this
 
+				var m = new ActivityDetailsModal(type, activity);
 
-		// todo: fix this so that we search by key
-		var type = _.find(activityTypes, function(a){return a.name == activity.type;});
-		type = type || activityTypes[1]; // todo: fix this
-
-		var m = new ActivityDetailsModal(type, activity);
-
-		m.show();
-		//actionList.show(id);
+				m.show();
+			})
+			.catch(console.error.bind(console));
 	});
 
 
@@ -83,36 +97,8 @@ function ActivityPage(){
 		self.$element.show();
 	};
 
-	function loadMenu(){
-		var menu = actionList.load();
-
-		menu.on('stop-activity', function(id){
-			var activities = storage('activities') || [];
-			var activity = _.find(activities, function(a){ return a.id == id; });
-
-			activity.endTime = Date.now();
-			storage('activities', activities);
-
-			self.render();
-		});
-
-		menu.on('edit-activity', function(id){
-			alert(id);
-		});
-
-		menu.on('delete-activity', function(id){
-			var activities = storage('activities') || [];
-			_.remove(activities, function(a){ return a.id == id; });
-			storage('activities', activities);
-
-			self.render();
-		});
-	}
-
-
 	process.nextTick(function(){
 		self.render();
-		loadMenu();
 	});
 }
 
