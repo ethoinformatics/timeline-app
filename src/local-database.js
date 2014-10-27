@@ -13,7 +13,6 @@ module.exports.saveActivity = function(activity){
 module.exports.getActivityById = function(id){
 	return q.denodeify(db.allDocs.bind(db, {include_docs:true, key: id}))()
 		.then(function(result){
-			debugger
 			return result.rows[0].doc;
 		});
 };

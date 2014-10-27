@@ -57,6 +57,27 @@ function setVerticalPosition(selection){
 	return selection;
 }
 
+function setTextPosition(selection){
+	selection
+		.attr('x', function(d){
+			var x = timeScale(new Date(d.beginTime));
+			var begin = timeScale(new Date(d.beginTime)), v;
+
+			var txtWidth = this.getComputedTextLength();
+
+			if (d.endTime) {
+				v = timeScale(new Date(d.endTime)) - begin;
+			} else {
+				v = timeScale(new Date()) - begin;
+			}
+
+			v = Math.max(v, 6) + x + 10;
+			v = Math.max(v, 40);
+
+			return Math.min(v, w-(txtWidth+40));
+		});
+}
+
 function onZoom(){
 	svg.selectAll('.time-axis')
 		.transition()
@@ -69,6 +90,36 @@ function onZoom(){
 		.attr('x', 0)
 		.attr('width', timeScale.range()[1]);
 
+	svg.selectAll('g.activity text')
+		.call(setTextPosition);
+
+	svg.selectAll('g.activity .left-arrow')
+		.attr('visibility', function(d){
+			var x = timeScale(new Date(d.beginTime));
+			var begin = timeScale(new Date(d.beginTime)), v;
+
+			if (d.endTime) {
+				v = timeScale(new Date(d.endTime)) - begin;
+			} else {
+				v = timeScale(new Date()) - begin;
+			}
+
+			if (x+v > 0){
+				return 'hidden';
+			} else {
+				return 'visible';
+			}
+		});
+
+	svg.selectAll('g.activity .right-arrow')
+		.attr('visibility', function(d){
+			var x = timeScale(new Date(d.beginTime));
+			if (x < w){
+				return 'hidden';
+			} else {
+				return 'visible';
+			}
+		});
 	//$debug.html('&nbsp;scale: ' + zoom.scale());
 }
 
@@ -156,6 +207,7 @@ function doRender(activities){
 		.classed('activity', true)
 		.attr('data-id', function(d){ return d._id; });
 	
+	
 	// background bar
 	newGroups
 		.append('rect')
@@ -179,6 +231,47 @@ function doRender(activities){
 		.call(setHorizontalPosition);
 
 
+	var barHeight = verticalScale.rangeBand();
+	console.dir(barHeight);
+
+	var arc = d3.svg.symbol()
+		.type('triangle-up')
+		.size(function(){
+			return (barHeight*barHeight)/4;
+		});
+
+	newGroups
+		.append('path')
+		.classed('left-arrow', true)
+		.attr('d', arc)
+		.attr('transform', function(d, i){ 
+			var h = verticalScale(i) + (barHeight/2);
+			return 'translate(20,' + h +') rotate(-90)';
+		})
+		.attr('fill', function(d){ return d.color;})
+
+	newGroups
+		.append('path')
+		.classed('right-arrow', true)
+		.attr('d', arc)
+		.attr('transform', function(d, i){ 
+			var h = verticalScale(i) + (barHeight/2);
+			var x = w - 20;
+			return 'translate('+x+','+  h +') rotate(90)';
+		})
+		.attr('fill', function(d){ return d.color;})
+
+	newGroups
+		.append('text')
+		.style('opacity', 0.3)
+		.attr('fill', function(){ return 'black';/*d.color;*/})
+		.attr('font-size', verticalScale.rangeBand())
+		.attr('y', function(d, i){ 
+			var h = barHeight;
+			return verticalScale(i) +h -4;
+		})
+		.text(function(d){return d.data.title || 'no title'; })
+		.call(setTextPosition);
 	
 	// activityGroups
 	// 	.append('text')
