@@ -37,3 +37,17 @@ module.exports.upload = function(url){
 
 	return d.promise;
 };
+
+module.exports.download = function(url){
+	var d = q.defer();
+	var opts = {live: false};
+
+	db.replicate.from(url, opts, function(err, result){
+		if (err) d.reject(err);
+		d.resolve(result);
+		//window.alert('oops');
+		console.error(err);
+	});
+
+	return d.promise;
+};

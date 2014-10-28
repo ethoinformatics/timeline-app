@@ -1,5 +1,4 @@
 var d3 = require('d3'),
-	$ = require('jquery'),
 	_ = require('lodash'),
 	db = require('local-database');
 
@@ -80,22 +79,18 @@ function setTextPosition(selection){
 
 function onZoom(){
 	svg.selectAll('.time-axis')
-		.transition()
+		//.transition()
 		.call(timeAxis);
 
-	svg.selectAll('g.activity rect.foreground')
-		.call(setHorizontalPosition);
+	foreground.call(setHorizontalPosition);
+	text.call(setTextPosition);
 
-	svg.selectAll('g.activity rect.background')
-		.attr('x', 0)
-		.attr('width', timeScale.range()[1]);
+	setArrowVisibility();
+}
 
-	svg.selectAll('g.activity text')
-		.call(setTextPosition);
-
-	svg.selectAll('g.activity .left-arrow')
+function setArrowVisibility(){
+	leftArrow
 		.attr('visibility', function(d){
-			var x = timeScale(new Date(d.beginTime));
 			var begin = timeScale(new Date(d.beginTime)), v;
 
 			if (d.endTime) {
@@ -104,23 +99,14 @@ function onZoom(){
 				v = timeScale(new Date()) - begin;
 			}
 
-			if (x+v > 0){
-				return 'hidden';
-			} else {
-				return 'visible';
-			}
+			return begin+v > 0 ? 'hidden' : 'visible';
 		});
 
-	svg.selectAll('g.activity .right-arrow')
+	rightArrow
 		.attr('visibility', function(d){
 			var x = timeScale(new Date(d.beginTime));
-			if (x < w){
-				return 'hidden';
-			} else {
-				return 'visible';
-			}
+			return x < w ? 'hidden' : 'visible';
 		});
-	//$debug.html('&nbsp;scale: ' + zoom.scale());
 }
 
 
@@ -143,15 +129,10 @@ function render(activities){
 		});
 }
 
-var $debug, $pan, $w;
+var foreground, background, leftArrow, rightArrow,text;
 function doRender(activities){
 	h = window.innerHeight - HEADER_HEIGHT,
 	w = +window.innerWidth,
-
-	$debug = $('#debug-container');
-	$pan = $('#pan-container');
-	$w = $('#w-container');
-
 
 	activities = _.sortBy(activities,function(a){return new Date(a.beginTime);});
 
@@ -232,13 +213,11 @@ function doRender(activities){
 
 
 	var barHeight = verticalScale.rangeBand();
-	console.dir(barHeight);
+	var triangleSize = (barHeight*barHeight)/4;
 
 	var arc = d3.svg.symbol()
 		.type('triangle-up')
-		.size(function(){
-			return (barHeight*barHeight)/4;
-		});
+		.size(triangleSize);
 
 	newGroups
 		.append('path')
@@ -248,7 +227,7 @@ function doRender(activities){
 			var h = verticalScale(i) + (barHeight/2);
 			return 'translate(20,' + h +') rotate(-90)';
 		})
-		.attr('fill', function(d){ return d.color;})
+		.attr('fill', function(d){ return d.color;});
 
 	newGroups
 		.append('path')
@@ -259,16 +238,16 @@ function doRender(activities){
 			var x = w - 20;
 			return 'translate('+x+','+  h +') rotate(90)';
 		})
-		.attr('fill', function(d){ return d.color;})
+		.attr('fill', function(d){ return d.color;});
 
 	newGroups
 		.append('text')
 		.style('opacity', 0.3)
 		.attr('fill', function(){ return 'black';/*d.color;*/})
-		.attr('font-size', verticalScale.rangeBand())
+		.attr('font-size', verticalScale.rangeBand()/2)
 		.attr('y', function(d, i){ 
-			var h = barHeight;
-			return verticalScale(i) +h -4;
+			var h = barHeight * 3/4;
+			return verticalScale(i) +h ;
 		})
 		.text(function(d){return d.data.title || 'no title'; })
 		.call(setTextPosition);
@@ -305,6 +284,14 @@ function doRender(activities){
 			.attr('transform', 'translate(0, '+(h-AXIS_HEIGHT)+')')
 			.call(timeAxis);
 	}
+
+	background = svg.selectAll('g.activity rect.background');
+	foreground = svg.selectAll('g.activity rect.foreground');
+	leftArrow = svg.selectAll('g.activity .left-arrow');
+	rightArrow = svg.selectAll('g.activity .right-arrow');
+	text = svg.selectAll('g.activity text');
+
+	setArrowVisibility();
 }
 
 module.exports = render;
