@@ -1,7 +1,6 @@
 var Modal = require('modal'),
 	_ = require('lodash'),
 	ezuuid = require('ezuuid'),
-	activityTypes = require('activity-types'),
 	formBuilder = require('form-builder'),
 	util = require('util'),
 	EventEmitter = require('events').EventEmitter,
@@ -10,10 +9,12 @@ var Modal = require('modal'),
 function Details(type, activity){
 	var self = this;
 	EventEmitter.call(self);
-	//var type = _.find(activityTypes, function(a){return a.name == activity.type;});
-	var title = activity ? 'Edit Activity' : 'Create Activity';
+
 
 	this.show = function(){
+		var title = activity ? 'Edit ' : 'Create ';
+		title += type.name;
+
 		if (_.isFunction(type.ctor)){
 
 			var objForm = new type.ctor();

@@ -4,11 +4,11 @@ var $ = require('jquery'),
 	_ = require('lodash'),
 	q = require('q'),
 	db = require('local-database'),
-	renderTimeline = require('./timeline.js'),
-	activityTypes = require('activity-types'),
+	renderTimeline = require('./d3-timeline.js'),
+	formTypes = require('form-types'),
 	ActivityFilter = require('activity-filter'),
-	NewActivityDialog = require('./new-activity-dialog'),
-	ActivityDetailsModal = require('activity-details'),
+	NewActivityDialog = require('../create-new-dialog'),
+	FormDialog = require('form-dialog'),
 	sampleData = require('sample-data'),
 	pageTemplate = require('./index.vash');
 
@@ -81,10 +81,10 @@ function ActivityPage(){
 		db.getActivityById(id)
 			.then(function(activity){
 				// todo: fix this so that we search by key
-				var type = _.find(activityTypes, function(a){return a.name == activity.type;});
-				type = type || activityTypes[1]; // todo: fix this
+				var type = _.find(formTypes, function(a){return a.name == activity.type;});
+				type = type || formTypes[1]; // todo: fix this
 
-				var m = new ActivityDetailsModal(type, activity);
+				var m = new FormDialog(type, activity);
 
 				m.show();
 			})

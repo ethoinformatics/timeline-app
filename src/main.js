@@ -1,5 +1,5 @@
 var $ = require('jquery'),
-	ActivityPage = require('./views/activity-page/'),
+	ActivityPage = require('./views/timeline-page/'),
 	UploadDialog = require('./views/upload-dialog/'),
 	updateAppCheck = require('./update-app-check'),
 	ready = require('dom-ready');

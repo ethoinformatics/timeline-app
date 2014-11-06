@@ -1,0 +1,11 @@
+{
+	"field1": {
+		"type": "text"
+	},
+	"field2": {
+		"type": "text"
+	},
+	"field3": {
+		"type": "text"
+	}
+}

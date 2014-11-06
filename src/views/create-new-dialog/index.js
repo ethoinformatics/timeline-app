@@ -6,17 +6,17 @@ var $ = require('jquery'),
 	util = require('util'),
 	Modal = require('modal'),
 	template = require('index.vash'),
-	activityTypes = require('activity-types'),
-	ActivityDetailsModal = require('activity-details');
+	formTypes = require('form-types'),
+	FormDialog = require('form-dialog');
 
 function NewActivityDialog(){
 	var self = this;
 	EventEmitter.call(self);
 
 	var $element = $(template({
-			activityTypes: activityTypes,
+			activityTypes: formTypes,
 		})),
-		modal = new Modal('New Activity', $element, {hideOkay:true});
+		modal = new Modal('Create New', $element, {hideOkay:true});
 
 	$element
 		.find('.js-new-activity')
@@ -24,8 +24,8 @@ function NewActivityDialog(){
 			var $this = $(this),
 				key = $this.val();
 
-			var type = _.find(activityTypes, function(a){return a.key == key;});
-			var m = new ActivityDetailsModal(type);
+			var type = _.find(formTypes, function(a){return a.key == key;});
+			var m = new FormDialog(type);
 			m.on('new', function(data){
 				self.emit('new', data);
 			});
