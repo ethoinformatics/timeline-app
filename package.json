@@ -1,5 +1,5 @@
 {
-  "name": "sample-ui-browserify",
+  "name": "etho-timeline",
   "version": "0.0.0",
   "description": "This sample uses browserify to organize the code in to modules, vash for client side rendering of templates and jQuery for everything else",
   "main": "index.js",

@@ -7,7 +7,7 @@ var $ = require('jquery'),
 	renderTimeline = require('./d3-timeline.js'),
 	formTypes = require('form-types'),
 	ActivityFilter = require('activity-filter'),
-	NewActivityDialog = require('../create-new-dialog'),
+	CreateNewDialog = require('../create-new-dialog'),
 	FormDialog = require('form-dialog'),
 	sampleData = require('sample-data'),
 	pageTemplate = require('./index.vash');
@@ -49,7 +49,7 @@ function ActivityPage(){
 	});
 
 	$('body').on('click','.js-btn-add', function(){
-			var newActivityDialog = new NewActivityDialog();
+			var newActivityDialog = new CreateNewDialog();
 
 			newActivityDialog.on('new', function(data){
 				console.log('new in activity-page');
