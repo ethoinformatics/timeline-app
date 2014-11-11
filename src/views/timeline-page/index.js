@@ -5,7 +5,6 @@ var $ = require('jquery'),
 	q = require('q'),
 	db = require('local-database'),
 	renderTimeline = require('./d3-timeline.js'),
-	formTypes = require('form-types'),
 	ActivityFilter = require('activity-filter'),
 	CreateNewDialog = require('../create-new-dialog'),
 	FormDialog = require('form-dialog'),
@@ -56,7 +55,7 @@ function ActivityPage(){
 				console.dir(data);
 
 				db.saveActivity(data)
-					.then(function(result){
+					.then(function(){
 						self.render();
 					})
 					.catch(function(err){
@@ -81,12 +80,14 @@ function ActivityPage(){
 		db.getActivityById(id)
 			.then(function(activity){
 				// todo: fix this so that we search by key
-				var type = _.find(formTypes, function(a){return a.name == activity.type;});
-				type = type || formTypes[1]; // todo: fix this
+				// var type = _.find(formTypes, function(a){return a.name == activity.type;});
+				// type = type || formTypes[1]; // todo: fix this
 
-				var m = new FormDialog(type, activity);
+				// var m = new FormDialog(type, activity);
 
-				m.show();
+				// m.show();
+				//
+				alert('hello');
 			})
 			.catch(console.error.bind(console));
 	});

@@ -5,16 +5,17 @@ var $ = require('jquery'),
 	_ = require('lodash'),
 	util = require('util'),
 	Modal = require('modal'),
-	template = require('index.vash'),
-	formTypes = require('form-types'),
+	template = require('./index.vash'),
+	app = require('app'),
 	FormDialog = require('form-dialog');
 
 function NewActivityDialog(){
 	var self = this;
 	EventEmitter.call(self);
 
+	var formDomains = app.getDomains('form-fields');
 	var $element = $(template({
-			activityTypes: formTypes,
+			activityTypes: formDomains,
 		})),
 		modal = new Modal('Create New', $element, {hideOkay:true});
 
@@ -22,10 +23,12 @@ function NewActivityDialog(){
 		.find('.js-new-activity')
 		.on('click', function(){
 			var $this = $(this),
-				key = $this.val();
+				domainName = $this.val();
 
-			var type = _.find(formTypes, function(a){return a.key == key;});
-			var m = new FormDialog(type);
+			var domain = app.getDomain(domainName);
+			var formService = domain.getService('form-fields');
+
+			var m = new FormDialog(domain, formService);
 			m.on('new', function(data){
 				self.emit('new', data);
 			});

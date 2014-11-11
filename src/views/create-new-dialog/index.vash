@@ -1,7 +1,7 @@
 <div class="button-container">
 	@model.activityTypes.forEach(function(activityType, i){
-		<button type="button" class="js-new-activity button button-calm button-block" value="@activityType.key" class="js-new-record">
-			@activityType.name
+		<button type="button" class="js-new-activity button button-calm button-block" value="@activityType.name" class="js-new-record">
+			@activityType.label
 		</button>
 	})
 </div>

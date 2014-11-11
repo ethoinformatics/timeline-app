@@ -1,17 +1,3 @@
-<!-- <div id="menu-container" > -->
-<!-- 	<ion-side-menus> -->
-<!-- 		<ion-side-menu-content id="main-content"> -->
-<!-- 			Content! -->
-<!-- 			<button ng-click="toggleLeftSideMenu()"> -->
-<!-- 				Toggle Left Side Menu -->
-<!-- 			</button> -->
-<!-- 		</ion-side-menu-content> -->
-<!-- 		<ion-side-menu side="left"> -->
-<!-- 			Left Menu! -->
-<!-- 		<ion-side-menu> -->
-<!-- 	</ion-side-menus> -->
-<!-- </div> -->
-
 <ion-nav-view>
 	<ion-side-menus class="js-side-menu" ng-controller="ethoSideMenuController">
 		<ion-pane ion-side-menu-content drag-content="false">

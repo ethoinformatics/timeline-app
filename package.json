@@ -1,5 +1,5 @@
 {
-  "name": "etho-timeline",
+  "name": "ethoinformatics-app",
   "version": "0.0.0",
   "description": "This sample uses browserify to organize the code in to modules, vash for client side rendering of templates and jQuery for everything else",
   "main": "index.js",
@@ -44,7 +44,6 @@
     "angular": "./src/angular.js",
     "dom-ready": "./src/dom-ready.js",
     "modal": "./src/modal/index.js",
-    "form-types": "./src/form-types/index.js",
     "form-dialog": "./src/views/form-dialog/index.js",
     "activity-filter": "./src/activity-filter/index.js",
 	"local-database": "./src/local-database.js",

@@ -2,10 +2,13 @@ var $ = require('jquery'),
 	ActivityPage = require('./views/timeline-page/'),
 	UploadDialog = require('./views/upload-dialog/'),
 	updateAppCheck = require('./update-app-check'),
+	SideMenu = require('./side-menu.js'),
 	ready = require('dom-ready');
 
-var SideMenu = require('./side-menu.js');
 ready(function appLoad(){
+	var app = require('app');
+	console.dir(app);
+
 	var $body = $('body'),
 		sideMenu = new SideMenu(),
 		uploadDialog = new UploadDialog(),
@@ -23,4 +26,3 @@ ready(function appLoad(){
 
 	updateAppCheck();
 });
-
