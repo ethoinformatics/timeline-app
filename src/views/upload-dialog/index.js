@@ -1,6 +1,6 @@
 var template = require('./index.vash'),
 	$ = require('jquery'),
-	db = require('local-database'),
+	//db = require('local-database'),
 	Modal = require('modal');
 
 function UploadDialog(){

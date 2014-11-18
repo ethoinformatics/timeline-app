@@ -1,32 +1,37 @@
 var _ = require('lodash'),
-	GLOBAL_KEY = 'GLOBAL_KEY',
 	DOMAIN_SETTINGS_KEY = 'DOMAIN_SETTING_KEY',
-	lookup = Object.create(null);
+	lookup = Object.create(null),
+	domainDefaults = Object.create(null),
+	EntityManager = require('./src/services/entity-manager');
 
-lookup[GLOBAL_KEY] = Object.create(null);
+// register global/default services here
+domainDefaults['entity-manager'] = { ctor: EntityManager };
+
+function getService(domainName, serviceName){
+	var d = lookup[domainName],
+		service = d[serviceName];
+
+	if (service && _.isFunction(service.ctor)){
+		service = new service.ctor(domainName);
+	}
+
+	return service;
+}
+
 
 var registry = {
 	setDomainService: function(domainName, serviceName, args){
 		lookup[domainName][serviceName] = args;
 	},
-	setGlobalService: function(serviceName, args){
-		lookup[GLOBAL_KEY][serviceName] = args;
-	},
-	getService: function(domainName, serviceName){
-		var d = lookup[domainName];
-		if (d && serviceName in d) return d[serviceName];
-
-		return lookup[GLOBAL_KEY].serviceName;
-	},
 	getDomains: function(serviceName){
-		var domainNames = Object.keys(lookup)
-			.filter(function(k){ return k!=GLOBAL_KEY; });
+		var domainNames = Object.keys(lookup),
+			self = this;
 
 		return domainNames.filter(function(n){ 
 				return !serviceName || !!lookup[n][serviceName];
 			})
 			.map(function(n){ 
-				return lookup[n][DOMAIN_SETTINGS_KEY];
+				return self.createDomain(n);
 			});
 	},
 	getDomain: function(domainName){
@@ -35,19 +40,23 @@ var registry = {
 
 		if (!domain) return;
 
-		domain = _.cloneDeep(domain);
-		var myLookup = lookup[domainName];
-		domain.getService = function(serviceName){
-			return myLookup[serviceName];
-		};
-
-		return domain;
+		return this.createDomain(domainName);
 	},
+	getService: getService,
 	createDomain: function(opts){
+		if (!opts) return;
+		if (typeof opts === 'string') opts = {name: opts};
+
 		opts.label = opts.label || opts.name;
 
-		lookup[opts.name] = lookup[opts.name] || {name: opts.name};
+		lookup[opts.name] = lookup[opts.name] || Object.create(domainDefaults);
+		lookup[opts.name].name = opts.name;
 		lookup[opts.name][DOMAIN_SETTINGS_KEY] = opts;
+
+		var domain = Object.create(opts);
+		domain.getService = getService.bind(this, opts.name);
+
+		return domain;
 	},
 };
 

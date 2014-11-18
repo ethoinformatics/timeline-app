@@ -44,7 +44,6 @@ function Details(domain, fields, entity){
 					id: ezuuid(),
 					color: randomColor().toHex(),
 					data: form.getData(),
-					type: domain.name, // todo: remove
 					domainName: domain.name,
 					beginTime: Date.now(),
 				};

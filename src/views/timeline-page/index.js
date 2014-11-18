@@ -3,12 +3,12 @@ require('./index.less');
 var $ = require('jquery'),
 	_ = require('lodash'),
 	q = require('q'),
-	db = require('local-database'),
-	renderTimeline = require('./d3-timeline.js'),
+	app = require('app'),
+	renderTimeline = require('d3-timeline'),
 	ActivityFilter = require('activity-filter'),
 	CreateNewDialog = require('../create-new-dialog'),
 	FormDialog = require('form-dialog'),
-	sampleData = require('sample-data'),
+	//sampleData = require('sample-data'),
 	pageTemplate = require('./index.vash');
 
 
@@ -23,23 +23,20 @@ function ActivityPage(){
 	self.$element = $(pageTemplate({}));
 	self.$element.find('#select-container').append(activityFilter.$element);
 	self.render = function(){
-		db.getActivities()
-			.then(function(activities){
-				var isVisble = activityFilter.createPredicate();
+		var isVisble = activityFilter.createPredicate();
+		var fetchPromises = app.getDomains('activity')
+			.concat(app.getDomains('event'))
+			.map(function(domain){
+				var entityManager = domain.getService('entity-manager');
+				return entityManager.getAll();
+			});
 
-				if (_.isEmpty(activities)){
-					var data = _.first(sampleData, 15);
-					var promises = data.map(function(d){
-						return db.saveActivity(d);
-					});
+		q.all(fetchPromises)
+			.then(function(results){
+				var entities = _.flatten(results)
+					.filter(isVisble);
 
-					q.all(promises)
-						.then(function(){
-							renderTimeline(activities.filter(isVisble));
-						});
-				} else {
-					renderTimeline(activities.filter(isVisble));
-				}
+				renderTimeline(entities);
 			});
 	};
 
@@ -51,10 +48,9 @@ function ActivityPage(){
 			var newActivityDialog = new CreateNewDialog();
 
 			newActivityDialog.on('new', function(data){
-				console.log('new in activity-page');
-				console.dir(data);
+				var entityManager = app.getService(data.type, 'entity-manager');
 
-				db.saveActivity(data)
+				entityManager.save(data)
 					.then(function(){
 						self.render();
 					})
