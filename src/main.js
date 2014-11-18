@@ -3,7 +3,9 @@ var $ = require('jquery'),
 	UploadDialog = require('./views/upload-dialog/'),
 	updateAppCheck = require('./update-app-check'),
 	SideMenu = require('./side-menu.js'),
-	ready = require('dom-ready');
+	ready = require('dom-ready'),
+	activityLocationWatch = require('./activity-location-watch');
+
 
 ready(function appLoad(){
 	var app = require('app');
@@ -25,4 +27,9 @@ ready(function appLoad(){
 	});
 
 	updateAppCheck();
+	activityLocationWatch();
+
 });
+
+
+

@@ -12,7 +12,7 @@ var $ = require('jquery'),
 	pageTemplate = require('./index.vash');
 
 
-function ActivityPage(){
+function TimelinePage(){
 	var self = this,
 		activityFilter = new ActivityFilter();
 
@@ -48,7 +48,7 @@ function ActivityPage(){
 			var newActivityDialog = new CreateNewDialog();
 
 			newActivityDialog.on('new', function(data){
-				var entityManager = app.getService(data.type, 'entity-manager');
+				var entityManager = app.getService(data.domainName, 'entity-manager');
 
 				entityManager.save(data)
 					.then(function(){
@@ -99,4 +99,4 @@ function ActivityPage(){
 	});
 }
 
-module.exports = ActivityPage;
+module.exports = TimelinePage;

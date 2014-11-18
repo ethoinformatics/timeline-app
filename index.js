@@ -61,7 +61,8 @@ var registry = {
 };
 
 function App(){
-	var self = this;
+	var self = this,
+		settings = Object.create(null);
 
 	self.register = function(serviceName){
 		var args = _.rest(arguments);
@@ -74,19 +75,25 @@ function App(){
 		registry.createDomain(opts);
 
 		return {
-			register: function(serviceName){
-				var args = _.rest(arguments);
-
-				registry.setDomainService(opts.name, serviceName, args);
+			register: function(serviceName, service){
+				registry.setDomainService(opts.name, serviceName, service);
 			},
 		};
 
 	};
 
-	self.set = function(setting, value){
-		// todo
+	self.setting = function(settingName, value){
+		if (value !== undefined){
+			settings[settingName] = value;
+		} 
+
+		return settings[settingName];
 	};
-	self.getRegistry = function(){ return registry; };
+
+	self.getRegistry = function(){ 
+		registry.setting = self.setting.bind(self);
+		return registry; 
+	};
 }
 
 module.exports = new App();

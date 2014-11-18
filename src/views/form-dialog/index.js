@@ -2,6 +2,7 @@ var Modal = require('modal'),
 	_ = require('lodash'),
 	ezuuid = require('ezuuid'),
 	formBuilder = require('form-builder'),
+	geolocation = require('geolocation'),
 	util = require('util'),
 	EventEmitter = require('events').EventEmitter,
 	randomColor = require('rgba-generate')(0.8);
@@ -48,8 +49,22 @@ function Details(domain, fields, entity){
 					beginTime: Date.now(),
 				};
 
-				self.emit('new', data);
+				var activityService = domain.getService('activity');
+				if (activityService){
+					activityService.start(data);
+					return self.emit('new', data);
+				}
+
+				var eventService = domain.getService('activity');
+				if (eventService){
+					return geolocation.once(function(loc){
+						eventService.create(data);
+						eventService.locationUpdate(data, loc);
+						self.emit('new', data);
+					});
+				}
 			});
+
 			m.show();
 		// } else {
 		// 	return window.alert('bad activity type: ' + key);

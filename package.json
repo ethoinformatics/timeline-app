@@ -40,6 +40,7 @@
   "browser": {
     "angular": "./src/angular.js",
     "dom-ready": "./src/dom-ready.js",
+    "geolocation": "./src/geolocation.js",
     "modal": "./src/views/modal/index.js",
     "form-dialog": "./src/views/form-dialog/index.js",
     "activity-filter": "./src/views/activity-filter/index.js",
