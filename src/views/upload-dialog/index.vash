@@ -7,11 +7,11 @@
 <ul class="list">
 	<li class="item item-input item-stacked-label">
 		<span class="input-label">Couch URL</span>
-		<input class="js-url" type="text" value="http://ec2-54-84-90-63.compute-1.amazonaws.com:5984/timeline_app_test"></input>
+		<input class="js-url" type="text" value="@model.url"></input>
 	</li>
 	<li class="item item-input item-stacked-label">
 		<span class="input-label">Username</span>
-		<input class="js-username" type="text" value="ro"></input>
+		<input class="js-username" type="text" value="@model.username"></input>
 	</li>
 	<li class="item item-input item-stacked-label">
 		<span class="input-label">Password</span>

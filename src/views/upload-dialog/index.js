@@ -1,11 +1,14 @@
 var template = require('./index.vash'),
 	$ = require('jquery'),
-	//db = require('local-database'),
+	app = require('app'),
 	Modal = require('modal');
 
 function UploadDialog(){
 	var self = this,
-		$element = $(template({ })),
+		$element = $(template({
+			url: app.setting('couch-base-url'),
+			username: app.setting('couch-username'),
+		})),
 		modal = new Modal('Upload', $element, {hideOkay:true});
 
 	self.show = function(){
