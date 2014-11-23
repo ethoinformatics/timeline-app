@@ -2,10 +2,12 @@ var _ = require('lodash'),
 	DOMAIN_SETTINGS_KEY = 'DOMAIN_SETTING_KEY',
 	lookup = Object.create(null),
 	domainDefaults = Object.create(null),
-	EntityManager = require('./src/services/entity-manager');
+	EntityManager = require('./src/services/entity-manager'),
+	DescriptionManager = require('./src/services/description-manager');
 
 // register global/default services here
 domainDefaults['entity-manager'] = { ctor: EntityManager };
+domainDefaults['description-manager'] = { ctor: DescriptionManager };
 
 function getService(domainName, serviceName){
 	var d = lookup[domainName],
@@ -97,3 +99,4 @@ function App(){
 }
 
 module.exports = new App();
+console.dir('exported app');

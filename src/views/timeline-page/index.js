@@ -20,7 +20,6 @@ function TimelinePage(){
 		self.render();
 	});
 
-	debugger
 	var timeline = createTimeline({
 		getEventTimestamp: function(d){
 			var domain = app.getDomain(d.domainName);
@@ -42,9 +41,9 @@ function TimelinePage(){
 		},
 		getLabel: function(d){
 			var domain = app.getDomain(d.domainName);
-			var service = domain.getService('description');
+			var service = domain.getService('description-manager');
 
-			return service ? service.getLabel(d) : 'no label';
+			return service ? service.getShortDescription(d) : 'no label';
 		},
 	});
 
@@ -102,7 +101,6 @@ function TimelinePage(){
 	// 	alert('aha');
 	// });
 	timeline.on('activity-click', function(d){
-		debugger
 		var domain = app.getDomain(d.domainName);
 		var m = new FormDialog(domain, d);
 
