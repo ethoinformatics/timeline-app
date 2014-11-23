@@ -115,6 +115,8 @@ function TimelinePage(){
 		});
 
 		m.on('delete', function(entity){
+			if (!confirm('Are you sure?')) return;
+
 			entityManager.remove(entity)
 				.then(function(){
 					m.hide();
