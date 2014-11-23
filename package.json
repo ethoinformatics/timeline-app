@@ -19,7 +19,7 @@
   "homepage": "https://github.com/ethoinformatics/sample-ui-browserify",
   "dependencies": {
     "browserify": "^6.3.2",
-    "d3-timeline": "git+ssh://git@github.com/ethoinformatics/d3-timeline#master",
+    "d3-timeline": "git+ssh://git@github.com/ethoinformatics/d3-timeline#b53d26133bccbcb98625d1f091d603db779d3452",
     "date-math": "0.0.1",
     "ezuuid": "0.0.1",
     "jocal": "0.0.1",
@@ -28,7 +28,7 @@
     "merle": "^0.1.5",
     "mkdirp": "^0.5.0",
     "moment": "^2.8.2",
-    "node-lessify": "0.0.4",
+    "node-lessify": "0.0.5",
     "pouchdb": "^3.0.6",
     "q": "^1.0.1",
     "rgba-generate": "^1.0.0",
