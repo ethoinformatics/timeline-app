@@ -12,7 +12,7 @@ var DEFAULTS = {
 };
 
 function Modal(options){
-	var self = this;
+	var self = this, $modal;
 
 	options = _.extend({}, DEFAULTS, options);
 
@@ -24,11 +24,16 @@ function Modal(options){
 		$('body').append($backdrop);
 	}
 
+	this.hide = this.close = function(){
+		if (!$modal) return;
+		$modal.find('.js-close').click();
+	};
+
 	this.show = function(myTitle, $myContent){
 		myTitle = myTitle || options.title;
 		$myContent = $myContent || options.$content;
 
-		var $modal = $(modalTemplate({title: myTitle}));
+		$modal = $(modalTemplate({title: myTitle}));
 		$modal.find('.modal-body')
 			.empty()
 			.append($myContent);

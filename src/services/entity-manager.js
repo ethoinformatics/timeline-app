@@ -3,7 +3,7 @@ var PouchDb = require('pouchdb'),
 	_ = require('lodash'),
 	q = require('q');
 
-function EntityManager(domainName){
+function CrudManager(domainName){
 	var db = new PouchDb(domainName),
 		self = this;
 
@@ -17,6 +17,10 @@ function EntityManager(domainName){
 			.then(function(result){
 				return result.rows[0].doc;
 			});
+	};
+
+	self.remove = function(doc){
+		return q.denodeify(db.remove.bind(db, doc, {}))();
 	};
 
 	self.getAll = function(){
@@ -55,4 +59,4 @@ function EntityManager(domainName){
 	};
 }
 
-module.exports = EntityManager;
+module.exports = CrudManager;

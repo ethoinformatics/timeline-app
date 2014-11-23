@@ -1,5 +1,6 @@
 var Modal = require('modal'),
 	_ = require('lodash'),
+	$ = require('jquery'),
 	ezuuid = require('ezuuid'),
 	formBuilder = require('form-builder'),
 	geolocation = require('geolocation'),
@@ -11,7 +12,7 @@ function Details(domain, entity){
 	var self = this;
 	EventEmitter.call(self);
 
-
+	var modal;
 	this.show = function(){
 		var title = entity ? 'Edit ' : 'Create ';
 		title += domain.label;
@@ -21,16 +22,54 @@ function Details(domain, entity){
 			form.setData(entity);
 		}
 
-		var m = new Modal({
+		var $btnSave = $('<button class="button button-balanced button-block">Save</button>');
+		var $buttonBar = $('<div class="button-bar"></div>');
+		var $btnDelete = $('<button class="button button-assertive">Delete</button>');
+		if (entity){
+			$buttonBar.append($btnDelete);
+		}
+
+		var $content = $('<div></div>')
+				.append(form.$element)
+				.append($btnSave)
+				.append($buttonBar);
+
+		$btnDelete.click(function(ev){
+			ev.preventDefault();
+			self.emit('delete', entity);
+		});
+
+
+		if (domain.getService('event')){
+
+		} else if (domain.getService('activity')){
+
+			if (entity){
+				var $btnStop = $('<button class="button">Stop</button>');
+				$buttonBar.append($btnStop);
+				$btnStop.click(function(ev){
+					ev.preventDefault();
+					window.alert('stop click');
+				});
+			}
+		}
+
+		modal = new Modal({
 				title: title, 
-				$content: form.$element,
+				$content: $content,
+				hideOkay: true,
 			});
 
-		m.on('ok', function(){
-			var data = {
+		$btnDelete.click(function(ev){
+
+
+		});
+		$btnSave.click(function(ev){
+			ev.preventDefault();
+
+			var data = entity || {
 						id: ezuuid(),
 						color: randomColor().toHex(),
-						data: form.getData(),
 						domainName: domain.name,
 						beginTime: Date.now(),
 					};
@@ -39,23 +78,28 @@ function Details(domain, entity){
 
 			var activityService = domain.getService('activity');
 			if (activityService){
-				activityService.start(data);
-				return self.emit('new', data);
+				if (!entity){
+					activityService.start(data);
+				}
+				return self.emit('save', data);
 			}
 
 			var eventService = domain.getService('activity');
 			if (eventService){
 				return geolocation.once(function(loc){
-					eventService.create(data);
+					if (!entity){
+						eventService.create(data);
+					}
 					eventService.locationUpdate(data, loc);
-					self.emit('new', data);
+					self.emit('save', data);
 				});
 			}
 		});
 
-		m.show();
+		modal.show();
 	};
 	this.hide = function(){
+		modal.hide();
 	};
 }
 

@@ -101,8 +101,26 @@ function TimelinePage(){
 	// 	alert('aha');
 	// });
 	timeline.on('activity-click', function(d){
-		var domain = app.getDomain(d.domainName);
-		var m = new FormDialog(domain, d);
+		var domain = app.getDomain(d.domainName),
+			entityManager = domain.getService('entity-manager'),
+			m = new FormDialog(domain, d);
+
+		m.on('save', function(entity){
+			entityManager.save(entity)
+				.then(function(){
+
+					m.hide();
+					timeline.update();
+				}).done();
+		});
+
+		m.on('delete', function(entity){
+			entityManager.remove(entity)
+				.then(function(){
+					m.hide();
+					timeline.activities.remove(entity);
+				}).done();
+		});
 
 		m.show();
 	});
