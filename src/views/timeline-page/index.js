@@ -4,7 +4,7 @@ var $ = require('jquery'),
 	_ = require('lodash'),
 	q = require('q'),
 	app = require('app'),
-	renderTimeline = require('d3-timeline'),
+	createTimeline = require('d3-timeline'),
 	ActivityFilter = require('activity-filter'),
 	CreateNewDialog = require('../create-new-dialog'),
 	FormDialog = require('form-dialog'),
@@ -20,8 +20,38 @@ function TimelinePage(){
 		self.render();
 	});
 
+	debugger
+	var timeline = createTimeline({
+		getEventTimestamp: function(d){
+			var domain = app.getDomain(d.domainName);
+			var service = domain.getService('event');
+
+			return service.getTimestamp(d);
+		},
+		getActivityBegin: function(d){
+			var domain = app.getDomain(d.domainName);
+			var service = domain.getService('activity');
+
+			return service.getBeginTime(d);
+		},
+		getActivityEnd: function(d){
+			var domain = app.getDomain(d.domainName);
+			var service = domain.getService('activity');
+
+			return service.getEndTime(d);
+		},
+		getLabel: function(d){
+			var domain = app.getDomain(d.domainName);
+			var service = domain.getService('description');
+
+			return service ? service.getLabel(d) : 'no label';
+		},
+	});
+
 	self.$element = $(pageTemplate({}));
 	self.$element.find('#select-container').append(activityFilter.$element);
+	self.$element.find('#timeline-container').append(timeline.element);
+
 	self.render = function(){
 		var isVisble = activityFilter.createPredicate();
 		var fetchPromises = app.getDomains('activity')
@@ -36,7 +66,7 @@ function TimelinePage(){
 				var entities = _.flatten(results)
 					.filter(isVisble);
 
-				renderTimeline(entities);
+				timeline.activities.add(entities);
 			});
 	};
 
@@ -52,7 +82,7 @@ function TimelinePage(){
 
 				entityManager.save(data)
 					.then(function(){
-						self.render();
+						timeline.activities.add(data);
 					})
 					.catch(function(err){
 						console.error(err);
@@ -71,21 +101,12 @@ function TimelinePage(){
 	// 	$(this).addClass('selected');
 	// 	alert('aha');
 	// });
-	self.$element.on('click', '.activity[data-id]', function(){
-		var id = $(this).data('id');
-		db.getActivityById(id)
-			.then(function(activity){
-				// todo: fix this so that we search by key
-				// var type = _.find(formTypes, function(a){return a.name == activity.type;});
-				// type = type || formTypes[1]; // todo: fix this
+	timeline.on('activity-click', function(d){
+		debugger
+		var domain = app.getDomain(d.domainName);
+		var m = new FormDialog(domain, d);
 
-				// var m = new FormDialog(type, activity);
-
-				// m.show();
-				//
-				alert('hello');
-			})
-			.catch(console.error.bind(console));
+		m.show();
 	});
 
 

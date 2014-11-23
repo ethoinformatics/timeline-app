@@ -17,18 +17,20 @@ function NewActivityDialog(){
 	var $element = $(template({
 			activityTypes: formDomains,
 		})),
-		modal = new Modal('Create New', $element, {hideOkay:true});
+		modal = new Modal({
+			title: 'Create New',
+			$content: $element,
+			hideOkay: true
+		});
 
 	$element
 		.find('.js-new-activity')
 		.on('click', function(){
 			var $this = $(this),
-				domainName = $this.val();
+				domainName = $this.val(),
+				domain = app.getDomain(domainName),
+				m = new FormDialog(domain);
 
-			var domain = app.getDomain(domainName);
-			var formService = domain.getService('form-fields');
-
-			var m = new FormDialog(domain, formService);
 			m.on('new', function(data){
 				self.emit('new', data);
 			});

@@ -1,13 +1,21 @@
 var $ = require('jquery'),
 	EventEmitter = require('events').EventEmitter,
 	backdropTemplate = require('./backdrop.vash'),
+	_ = require('lodash'),
 	util = require('util'),
 	modalTemplate = require('./modal.vash'),
 	$backdrop;
 
 
-function Modal(title, $content, options){
+var DEFAULTS = {
+	hideOkay: false,
+};
+
+function Modal(options){
 	var self = this;
+
+	options = _.extend({}, DEFAULTS, options);
+
 	options = Object(options);
 	EventEmitter.call(self);
 
@@ -17,8 +25,8 @@ function Modal(title, $content, options){
 	}
 
 	this.show = function(myTitle, $myContent){
-		myTitle = myTitle || title;
-		$myContent = $myContent || $content;
+		myTitle = myTitle || options.title;
+		$myContent = $myContent || options.$content;
 
 		var $modal = $(modalTemplate({title: myTitle}));
 		$modal.find('.modal-body')
