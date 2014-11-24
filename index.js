@@ -49,6 +49,11 @@ var registry = {
 		if (!opts) return;
 		if (typeof opts === 'string') opts = {name: opts};
 
+		var domainData = lookup[opts.name];
+		if (domainData){
+			opts = _.extend(domainData[DOMAIN_SETTINGS_KEY] || {}, opts);
+		}
+
 		opts.label = opts.label || opts.name;
 
 		lookup[opts.name] = lookup[opts.name] || Object.create(domainDefaults);
@@ -99,4 +104,3 @@ function App(){
 }
 
 module.exports = new App();
-console.dir('exported app');
