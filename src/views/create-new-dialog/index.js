@@ -17,29 +17,33 @@ function NewActivityDialog(){
 	var $element = $(template({
 			activityTypes: formDomains,
 		})),
-		modal = new Modal({
+		selectTypeModal = new Modal({
 			title: 'Create New',
 			$content: $element,
 			hideOkay: true
-		});
+		}),
+		formModal;
 
 	$element
 		.find('.js-new-activity')
 		.on('click', function(){
 			var $this = $(this),
 				domainName = $this.val(),
-				domain = app.getDomain(domainName),
-				m = new FormDialog(domain);
+				domain = app.getDomain(domainName);
 
-			m.on('new', function(data){
+			formModal = new FormDialog(domain);
+			formModal.on('save', function(data){
 				self.emit('new', data);
 			});
-			m.show();
+
+			formModal.show();
 
 		});
 
-	this.show = function(){
-		modal.show();
+	this.show = selectTypeModal.show.bind(selectTypeModal);
+	this.hide = function(){
+		if (selectTypeModal) selectTypeModal.hide();
+		if (formModal) formModal.hide();
 	};
 }
 

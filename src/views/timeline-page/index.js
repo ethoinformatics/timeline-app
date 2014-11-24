@@ -82,6 +82,7 @@ function TimelinePage(){
 				entityManager.save(data)
 					.then(function(){
 						timeline.activities.add(data);
+						newActivityDialog.hide();
 					})
 					.catch(function(err){
 						console.error(err);
