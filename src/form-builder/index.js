@@ -1,5 +1,6 @@
 var $ = require('jquery'),
 	_ = require('lodash'),
+	template = require('./index.vash'),
 	walker = require('merle'),
 	templates = {
 		text: require('./text-field.vash'),
@@ -10,8 +11,7 @@ var $ = require('jquery'),
 module.exports = function(metadata, data){
 	data = Object(data);
 
-	var $root = $('<ul></ul')
-		.addClass('list');
+	var $root = $(template({}));
 
 	walker(metadata, function(){
 		if (!this.value.type) return;

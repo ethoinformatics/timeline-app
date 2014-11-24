@@ -9,7 +9,7 @@ var $ = require('jquery'),
 	app = require('app'),
 	FormDialog = require('form-dialog');
 
-function NewActivityDialog(){
+function NewEntityDialog(){
 	var self = this;
 	EventEmitter.call(self);
 
@@ -18,7 +18,7 @@ function NewActivityDialog(){
 			activityTypes: formDomains,
 		})),
 		selectTypeModal = new Modal({
-			title: 'Create New',
+			title: 'Create',
 			$content: $element,
 			hideOkay: true
 		}),
@@ -47,5 +47,5 @@ function NewActivityDialog(){
 	};
 }
 
-util.inherits(NewActivityDialog, EventEmitter);
-module.exports = NewActivityDialog;
+util.inherits(NewEntityDialog, EventEmitter);
+module.exports = NewEntityDialog;

@@ -1,0 +1,25 @@
+<ul class="list">
+	<li>
+		<div class="js-header">
+		</div>
+	</li>
+	<li>
+		@{
+			
+		}
+		<div class="tabs-striped tabs-background-dark tabs-color-stable">
+			<div class="js-tabs tabs">
+				@model.tabs.forEach(function(tab){
+					<a class="tab-item">
+						<i class="icon @tab.icon"></i>
+					</a>
+				})
+
+			</div>
+		</div>
+	</li>
+	<li>
+		<div class="js-toolbar">
+		</div>
+	</li
+<div>

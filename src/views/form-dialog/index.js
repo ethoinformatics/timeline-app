@@ -6,7 +6,20 @@ var Modal = require('modal'),
 	geolocation = require('geolocation'),
 	util = require('util'),
 	EventEmitter = require('events').EventEmitter,
-	randomColor = require('rgba-generate')(0.8);
+	randomColor = require('rgba-generate')(0.8),
+	formTemplates = {
+			event: require('./event.vash'),
+			activity: require('./activity.vash'),
+			generic: require('./generic.vash'),
+		};
+
+
+function getTemplate(domain){
+	if (domain.getService('event')) return formTemplates.event;
+	if (domain.getService('activity')) return formTemplates.activity;
+
+	return formTemplates.generic;
+}
 
 function Details(domain, entity){
 	var self = this;
@@ -27,12 +40,17 @@ function Details(domain, entity){
 		var $btnDelete = $('<button class="button button-assertive">Delete</button>');
 		if (entity){
 			$buttonBar.append($btnDelete);
+		} else {
 		}
 
-		var $content = $('<div></div>')
-				.append(form.$element)
-				.append($btnSave)
-				.append($buttonBar);
+		var template = getTemplate(domain);
+		var $content = $(template({
+				isNew: !entity,
+				entity: entity,
+			}));
+
+		$content.find('.js-form')
+			.append(form.$element);
 
 		$btnDelete.click(function(ev){
 			ev.preventDefault();
@@ -49,7 +67,7 @@ function Details(domain, entity){
 				$buttonBar.append($btnStop);
 				$btnStop.click(function(ev){
 					ev.preventDefault();
-					window.alert('stop click');
+
 				});
 			}
 		}
@@ -60,10 +78,6 @@ function Details(domain, entity){
 				hideOkay: true,
 			});
 
-		$btnDelete.click(function(ev){
-
-
-		});
 		$btnSave.click(function(ev){
 			ev.preventDefault();
 

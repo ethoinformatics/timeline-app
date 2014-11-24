@@ -1,0 +1,15 @@
+<div class="activity-form">
+	<div class="js-header header">
+		i am event
+	</div>
+	<div class="js-form form">
+		
+	</div>
+	<button type="button" class="js-save button button-balanced button-block">Save</button>
+	<div class="button-bar">
+		@if (!model.isNew){
+		<button type="button" class="js-delete button button-outline button-assertive button-block">Delete</button>
+		}
+	</div>
+
+</div>

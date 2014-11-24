@@ -1,0 +1,17 @@
+<div class="activity-form">
+	<div class="js-header header">
+		i am activity
+	</div>
+	 <div class="js-form tabs-striped tabs-top tabs-background-positive tabs-light">
+		<div class="tabs">
+		
+		</div>
+	</div>
+	<button type="button" class="js-save button button-balanced button-block">Save</button>
+	<div class="button-bar">
+		@if (!model.isNew){
+		<button type="button" class="js-delete button-assertive button button-outline">Delete</button>
+		<button type="button" class="js-stop button button-outline button-positive">Stop</button>
+		}
+	</div>
+</div>
