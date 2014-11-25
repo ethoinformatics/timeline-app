@@ -13,18 +13,18 @@ vash.helpers.field = function(fieldName, field, data){
 	var t = templates[field.type] || templates.text;
 
 	return t({
-		name: field.name,
+		name: fieldName,
 		label: field.label || fieldName,
-		value: data ? data[field.name] : undefined,
+		value: data ? data[fieldName] : undefined,
 	});
 };
 
 module.exports = function(metadata, data){
 	data = Object(data);
 
-	console.dir(metadata);
 	var $root = $(template({
 		tabs: metadata,
+		entity: data,
 	}));
 
 	var $tabButtons = $root.find('.js-tabs *[data-index]');
@@ -38,6 +38,7 @@ module.exports = function(metadata, data){
 		$($tabs[$this.data('index')]).show();
 		
 	});
+
 	return {
 		setData: function(formData){
 			$root

@@ -30,29 +30,28 @@ function Details(domain, entity){
 		var title = entity ? 'Edit ' : 'Create ';
 		title += domain.label;
 
-		debugger
 		var fields = domain.getService('form-fields');
-		var form = formBuilder(fields);
+		var form = formBuilder(fields, entity);
 		if (entity){
 			form.setData(entity);
 		}
 
-		var $btnSave = $('<button class="button button-balanced button-block">Save</button>');
-		var $buttonBar = $('<div class="button-bar"></div>');
-		var $btnDelete = $('<button class="button button-assertive">Delete</button>');
+
 		if (entity){
-			$buttonBar.append($btnDelete);
 		} else {
 		}
 
 		var template = getTemplate(domain);
 		var $content = $(template({
 				isNew: !entity,
-				entity: entity,
 			}));
 
 		$content.find('.js-form')
 			.append(form.$element);
+
+		var $btnSave = $content.find('.js-save');
+		var $btnDelete = $content.find('.js-delete');
+		var $btnStop = $content.find('.js-stop');
 
 		$btnDelete.click(function(ev){
 			ev.preventDefault();
@@ -60,22 +59,13 @@ function Details(domain, entity){
 		});
 
 
-		if (domain.getService('event')){
+		$btnStop.click(function(ev){
+			ev.preventDefault();
 
-		} else if (domain.getService('activity')){
-
-			if (entity){
-				var $btnStop = $('<button class="button">Stop</button>');
-				$buttonBar.append($btnStop);
-				$btnStop.click(function(ev){
-					ev.preventDefault();
-
-				});
-			}
-		}
+		});
 
 		modal = new Modal({
-				title: title, 
+				title: title,
 				$content: $content,
 				hideOkay: true,
 			});

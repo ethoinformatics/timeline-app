@@ -2,7 +2,6 @@
 	 <div class="js-form">
 	</div>
 	<div class="js-header header">
-		i am activity
 	</div>
 	<button type="button" class="js-save button button-balanced button-block">Save</button>
 	<div class="button-bar">
