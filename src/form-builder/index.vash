@@ -1,25 +1,25 @@
-<ul class="list">
-	<li>
-		<div class="js-header">
-		</div>
-	</li>
-	<li>
-		@{
-			
-		}
-		<div class="tabs-striped tabs-background-dark tabs-color-stable">
+<div class="form-builder">
+	<div style="height:44px">
+		<div class="tabs-striped tabs-top tabs-icon-top tabs-background-dark tabs-color-positive">
 			<div class="js-tabs tabs">
-				@model.tabs.forEach(function(tab){
-					<a class="tab-item">
+				@model.tabs.forEach(function(tab, i){
+					<a data-index="@i" class="tab-item @(i===0?'active':'')">
 						<i class="icon @tab.icon"></i>
+						@(tab.label || tab.name || '')
 					</a>
 				})
-
 			</div>
 		</div>
-	</li>
-	<li>
-		<div class="js-toolbar">
+	</div>
+	@model.tabs.forEach(function(tab, i){
+	<div class="js-tab-container tab-container">
+		<div data-index="@i" class="js-tab content" style="display:@(i===0?'block':'none')">
+			<ul class="list">
+			@Object.keys(tab.fields).forEach(function(fieldName){
+				@html.raw(html.field(fieldName, tab.fields[fieldName], @model.entity))
+			})
+			</ul>
 		</div>
-	</li
-<div>
+	</div>
+	})
+</div>

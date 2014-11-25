@@ -1,11 +1,8 @@
 <div class="activity-form">
+	 <div class="js-form">
+	</div>
 	<div class="js-header header">
 		i am activity
-	</div>
-	 <div class="js-form tabs-striped tabs-top tabs-background-positive tabs-light">
-		<div class="tabs">
-		
-		</div>
 	</div>
 	<button type="button" class="js-save button button-balanced button-block">Save</button>
 	<div class="button-bar">

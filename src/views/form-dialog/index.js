@@ -30,7 +30,9 @@ function Details(domain, entity){
 		var title = entity ? 'Edit ' : 'Create ';
 		title += domain.label;
 
-		var form = formBuilder(domain.getService('form-fields'));
+		debugger
+		var fields = domain.getService('form-fields');
+		var form = formBuilder(fields);
 		if (entity){
 			form.setData(entity);
 		}

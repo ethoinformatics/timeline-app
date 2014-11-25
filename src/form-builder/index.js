@@ -1,33 +1,43 @@
+require('./index.less');
+
 var $ = require('jquery'),
 	_ = require('lodash'),
 	template = require('./index.vash'),
-	walker = require('merle'),
+	vash = require('vash-runtime'),
 	templates = {
 		text: require('./text-field.vash'),
 		'long-text': require('./long-text-field.vash'),
 	};
 
+vash.helpers.field = function(fieldName, field, data){
+	var t = templates[field.type] || templates.text;
+
+	return t({
+		name: field.name,
+		label: field.label || fieldName,
+		value: data ? data[field.name] : undefined,
+	});
+};
 
 module.exports = function(metadata, data){
 	data = Object(data);
 
-	var $root = $(template({}));
+	console.dir(metadata);
+	var $root = $(template({
+		tabs: metadata,
+	}));
 
-	walker(metadata, function(){
-		if (!this.value.type) return;
+	var $tabButtons = $root.find('.js-tabs *[data-index]');
+	var $tabs = $root.find('.js-tab-container *[data-index]');
+	$tabButtons.click(function(){
+		var $this = $(this);
 
-		var template = templates[this.value.type] || templates.text;
-		// just use text for everything at the moment
-		var model = Object.create(this.value);
-		model.name = this.name;
-		model.label = model.label || model.name;
-		model.value = data[model.name];
-
-		var $input = template(model);
-
-		$root.append($input);
+		$tabButtons.removeClass('active');
+		$this.addClass('active');
+		$tabs.hide();
+		$($tabs[$this.data('index')]).show();
+		
 	});
-
 	return {
 		setData: function(formData){
 			$root

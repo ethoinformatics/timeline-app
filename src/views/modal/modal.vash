@@ -1,5 +1,5 @@
 <div style="display:none;" class="modal">
-	<div class="bar bar-header bar-stable">
+	<div class="bar bar-header bar-dark">
 	  <h1 class="title">@model.title</h1>
 	  <button class="js-close button icon ion-close"></button>
 	</div>
