@@ -76,7 +76,7 @@ function TimelinePage(){
 
 				entityManager.save(data)
 					.then(function(){
-						timeline.activities.add(data);
+						timeline.add(data);
 						newActivityDialog.hide();
 					})
 					.catch(function(err){
@@ -116,7 +116,7 @@ function TimelinePage(){
 			entityManager.remove(entity)
 				.then(function(){
 					m.hide();
-					timeline.activities.remove(entity);
+					timeline.remove(entity);
 				}).done();
 		});
 
