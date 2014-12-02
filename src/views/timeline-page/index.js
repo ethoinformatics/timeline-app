@@ -21,19 +21,13 @@ function TimelinePage(){
 	});
 
 	var timeline = createTimeline({
-		getEventTimestamp: function(d){
-			var domain = app.getDomain(d.domainName);
-			var service = domain.getService('event');
-
-			return service.getTimestamp(d);
-		},
-		getActivityBegin: function(d){
+		getBegin: function(d){
 			var domain = app.getDomain(d.domainName);
 			var service = domain.getService('activity');
 
 			return service.getBeginTime(d);
 		},
-		getActivityEnd: function(d){
+		getEnd: function(d){
 			var domain = app.getDomain(d.domainName);
 			var service = domain.getService('activity');
 
@@ -65,8 +59,9 @@ function TimelinePage(){
 				var entities = _.flatten(results)
 					.filter(isVisble);
 
-				timeline.activities.add(entities);
-			});
+				timeline.add(entities);
+			})
+			.done();
 	};
 
 	window.addEventListener('orientationchange', function(){
