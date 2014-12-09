@@ -40,8 +40,7 @@ function Details(domain, entity){
 		var title = entity ? 'Edit ' : 'Create ';
 		title += domain.label;
 
-		var fields = domain.getService('form-fields');
-		var form = formBuilder(fields, entity);
+		var form = formBuilder(domain, entity);
 		if (entity){
 			form.setData(entity);
 		}
@@ -63,16 +62,16 @@ function Details(domain, entity){
 		var $btnDelete = $content.find('.js-delete');
 		var $btnStop = $content.find('.js-stop');
 		var $btnAddChild = $content.find('.js-add-child');
-		var childrenDomains = domain.getService('children-domains');
-		// if (!childrenDomains){
-		// 	$btnAddChild.hide();
-		// }
+		var childrenDomains = domain.getService('child-domains');
+		if (!childrenDomains){
+			$btnAddChild.hide();
+		}
 
 		$btnAddChild.click(function(ev){
 			ev.preventDefault();
 			var descMgr = domain.getService('description-manager');
 			var title = 'Add a child to ' + descMgr.getShortDescription(entity);
-			var childrenDomains = domain.getService('children-domains');
+			var childrenDomains = domain.getService('child-domains');
 
 
 			if (_.isEmpty(childrenDomains)){

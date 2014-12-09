@@ -19,7 +19,8 @@ vash.helpers.field = function(fieldName, field, data){
 	});
 };
 
-module.exports = function(metadata, data){
+module.exports = function(domain, data){
+	var metadata = domain.getService('form-fields');
 	var isNew = !data;
 	data = Object(data);
 
@@ -40,7 +41,7 @@ module.exports = function(metadata, data){
 		
 	});
 
-	if (isNew){
+	if (isNew || _.isEmpty(domain.getService('child-domains'))){
 		$tabButtons.filter('.js-children-tab-item').hide();
 	}
 	return {
