@@ -20,6 +20,7 @@ vash.helpers.field = function(fieldName, field, data){
 };
 
 module.exports = function(metadata, data){
+	var isNew = !data;
 	data = Object(data);
 
 	var $root = $(template({
@@ -39,6 +40,9 @@ module.exports = function(metadata, data){
 		
 	});
 
+	if (isNew){
+		$tabButtons.filter('.js-children-tab-item').hide();
+	}
 	return {
 		setData: function(formData){
 			$root

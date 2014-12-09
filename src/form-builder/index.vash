@@ -1,6 +1,6 @@
 <div class="form-builder">
 	<div style="height:44px">
-		<div class="tabs-striped tabs-top tabs-icon-top tabs-background-dark tabs-color-positive">
+		<div class="tabs-striped tabs-top tabs-icon-top tabs-background-dark tabs-color-light">
 			<div class="js-tabs tabs">
 				@model.tabs.forEach(function(tab, i){
 					<a data-index="@i" class="tab-item @(i===0?'active':'')">
@@ -8,6 +8,10 @@
 						@(tab.label || tab.name || '')
 					</a>
 				})
+				<a data-index="@model.tabs.length" class="js-children-tab-item tab-item">
+					<i class="icon ion-folder"></i>
+					Children
+				</a>
 			</div>
 		</div>
 	</div>

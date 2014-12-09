@@ -1,3 +1,5 @@
+require('./index.less');
+
 var $ = require('jquery'),
 	EventEmitter = require('events').EventEmitter,
 	backdropTemplate = require('./backdrop.vash'),
@@ -33,10 +35,18 @@ function Modal(options){
 		myTitle = myTitle || options.title;
 		$myContent = $myContent || options.$content;
 
-		$modal = $(modalTemplate({title: myTitle}));
+		$modal = $(modalTemplate({
+			title: myTitle,
+			showBackButton: !!options.backAction,
+		}));
 		$modal.find('.modal-body')
 			.empty()
 			.append($myContent);
+		$modal.find('.js-back')
+			.on('click', function(ev){
+				ev.preventDefault();
+				options.backAction();
+			});
 
 		$modal.find('.js-close')
 			.on('click', function(ev){

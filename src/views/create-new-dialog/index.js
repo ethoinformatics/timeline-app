@@ -9,18 +9,21 @@ var $ = require('jquery'),
 	app = require('app'),
 	FormDialog = require('form-dialog');
 
-function NewEntityDialog(){
+function NewEntityDialog(opt){
 	var self = this;
 	EventEmitter.call(self);
+	opt = Object(opt);
 
-	var formDomains = app.getDomains('form-fields');
+	var title =  opt.title || 'Create';
+	var formDomains = opt.domains || app.getDomains('form-fields');
 	var $element = $(template({
 			activityTypes: formDomains,
 		})),
 		selectTypeModal = new Modal({
-			title: 'Create',
+			title: title,
 			$content: $element,
-			hideOkay: true
+			hideOkay: true,
+			backAction: opt.backAction,
 		}),
 		formModal;
 
@@ -32,6 +35,10 @@ function NewEntityDialog(){
 				domain = app.getDomain(domainName);
 
 			formModal = new FormDialog(domain);
+
+			if (opt.backAction)
+				formModal.setBackAction(opt.backAction);
+
 			formModal.on('save', function(data){
 				self.emit('new', data);
 			});

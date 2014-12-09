@@ -17,6 +17,7 @@ function DescriptionManager(domainName){
 	var domain = app.getDomain(domainName);
 	self.getShortDescription = function(entity){
 		var service = domain.getService('short-description');
+
 		return getLabel(service, entity);
 	};
 

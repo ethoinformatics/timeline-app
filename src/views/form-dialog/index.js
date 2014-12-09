@@ -1,3 +1,5 @@
+require('./index.less');
+
 var Modal = require('modal'),
 	_ = require('lodash'),
 	$ = require('jquery'),
@@ -5,6 +7,7 @@ var Modal = require('modal'),
 	formBuilder = require('form-builder'),
 	geolocation = require('geolocation'),
 	util = require('util'),
+	app = require('app'),
 	EventEmitter = require('events').EventEmitter,
 	randomColor = require('rgba-generate')(0.8),
 	formTemplates = {
@@ -26,6 +29,13 @@ function Details(domain, entity){
 	EventEmitter.call(self);
 
 	var modal;
+
+	var NewModalCtor, _backAction;
+
+	// gross hack, fix this.
+	this.setNewModal = function(ModalCtor){ NewModalCtor = ModalCtor; };
+	this.setBackAction = function(backAction){ _backAction = backAction; };
+
 	this.show = function(){
 		var title = entity ? 'Edit ' : 'Create ';
 		title += domain.label;
@@ -52,6 +62,60 @@ function Details(domain, entity){
 		var $btnSave = $content.find('.js-save');
 		var $btnDelete = $content.find('.js-delete');
 		var $btnStop = $content.find('.js-stop');
+		var $btnAddChild = $content.find('.js-add-child');
+		var childrenDomains = domain.getService('children-domains');
+		// if (!childrenDomains){
+		// 	$btnAddChild.hide();
+		// }
+
+		$btnAddChild.click(function(ev){
+			ev.preventDefault();
+			var descMgr = domain.getService('description-manager');
+			var title = 'Add a child to ' + descMgr.getShortDescription(entity);
+			var childrenDomains = domain.getService('children-domains');
+
+
+			if (_.isEmpty(childrenDomains)){
+				childrenDomains = app.getDomains('form-fields');
+			} else {
+				childrenDomains = childrenDomains.map(function(childDomainName){
+					return app.getDomain(childDomainName);
+				});
+			}
+
+			var m = new NewModalCtor({
+				title: title,
+				backAction: self.show.bind(self),
+				domains: childrenDomains,
+			});
+
+			m.on('save', function(child){
+				debugger
+				entity.children = entity.children || [];
+				entity.children.push(child);
+
+				// entityManager.save(entity)
+				// 	.then(function(){
+
+				// 		m.hide();
+				// 		timeline.update();
+				// 	}).done();
+			});
+			m.on('new', function(child){
+				entity.children = entity.children || [];
+				entity.children.push(child);
+
+				//m.hide();
+				self.show();
+				// entityManager.save(entity)
+				// 	.then(function(){
+
+				// 		m.hide();
+				// 		timeline.update();
+				// 	}).done();
+			});
+			m.show();
+		});
 
 		$btnDelete.click(function(ev){
 			ev.preventDefault();
@@ -68,6 +132,7 @@ function Details(domain, entity){
 				title: title,
 				$content: $content,
 				hideOkay: true,
+			  	backAction: _backAction,
 			});
 
 		$btnSave.click(function(ev){

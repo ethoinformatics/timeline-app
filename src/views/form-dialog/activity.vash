@@ -3,11 +3,14 @@
 	</div>
 	<div class="js-header header">
 	</div>
-	<button type="button" class="js-save button button-balanced button-block">Save</button>
-	<div class="button-bar">
-		@if (!model.isNew){
-		<button type="button" class="js-delete button-assertive button button-outline">Delete</button>
-		<button type="button" class="js-stop button button-outline button-positive">Stop</button>
-		}
+	<div class="button-container">
+		<button type="button" class="js-save button button-balanced button-block">Save</button>
+		<div class="button-bar">
+			@if (!model.isNew){
+			<button type="button" class="js-delete button-small button-tool button button-assertive">Delete</button>
+			<button type="button" class="js-stop button-small button button-tool button-royal">Stop</button>
+			<button type="button" class="js-add-child button-small button button-tool button-positive">Add child</button>
+			}
+		</div>
 	</div>
 </div>
