@@ -6,10 +6,12 @@
 	<div class="js-form form">
 		
 	</div>
-	<button type="button" class="js-save button button-balanced button-block">Save</button>
-	<div class="button-bar">
-		@if (!model.isNew){
-		<button type="button" class="js-delete button-assertive button button-outline button-block">Delete</button>
-		}
+	<div class="button-container">
+		<button type="button" class="js-save button button-balanced button-block">Save</button>
+		<div class="button-bar">
+			@if (!model.isNew){
+			<button type="button" class="js-delete button-assertive button button-tool button-block">Delete</button>
+			}
+		</div>
 	</div>
 </div>

@@ -101,6 +101,7 @@ function TimelinePage(){
 			entityManager = domain.getService('entity-manager'),
 			m = new FormDialog(domain, d);
 
+		m.setNewModal(CreateNewDialog);
 		m.on('save', function(entity){
 			entityManager.save(entity)
 				.then(function(){
