@@ -1,0 +1,15 @@
+<div class="js-Breadcrumb">
+	<div class="breadcrumb flat">
+		@model.crumbs.forEach(function(crumb){
+			<a href="#">@crumb.label</a>
+		})
+		<a href="#"></a>
+	</div>
+</div>
+<div class="button-container">
+	@model.activityTypes.forEach(function(activityType, i){
+		<button type="button" class="js-new-activity button button-calm button-block" value="@activityType.name" class="js-new-record">
+			@activityType.label
+		</button>
+	})
+</div>

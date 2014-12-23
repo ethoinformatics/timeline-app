@@ -1,0 +1,25 @@
+<div class="activity-form">
+	<div class="js-Breadcrumb">
+		<div class="breadcrumb flat">
+			@model.crumbs.forEach(function(crumb){
+				<a href="#">@crumb.label</a>
+			})
+			<a href="#"></a>
+		</div>
+	</div>
+
+	 <div class="js-form">
+		<div class="toolbar">
+			<button type="button" class="js-child-add child-add button button-balanced button-small">Add</button>
+		</div>
+	</div>
+	<div class="js-framework-timeline-container framework-timeline-container">
+	</div>
+	<div class="button-container">
+		<div class="button-bar">
+			<button type="button" class="js-view-stop button button-balanced">Stop</button>
+			<button type="button" class="js-view-edit button button-energized">Edit</button>
+			<button type="button" class="js-view-remove button button-assertive">Remove</button>
+		</div>
+	</div>
+</div>

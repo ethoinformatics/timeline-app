@@ -1,5 +1,5 @@
 <div class="form-builder">
-	<div style="height:44px">
+	<div style="height:44px; @(model.tabs.length === 1 ? 'display:none;':'')">
 		<div class="tabs-striped tabs-top tabs-icon-top tabs-background-dark tabs-color-light">
 			<div class="js-tabs tabs">
 				@model.tabs.forEach(function(tab, i){

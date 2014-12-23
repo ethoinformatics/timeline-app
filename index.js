@@ -59,11 +59,20 @@ var registry = {
 		lookup[opts.name] = lookup[opts.name] || Object.create(domainDefaults);
 		lookup[opts.name].name = opts.name;
 		lookup[opts.name][DOMAIN_SETTINGS_KEY] = opts;
+		lookup[opts.name]['children-domains'] = lookup[opts.name]['children-domains'] || [];
 
 		var domain = Object.create(opts);
 		domain.getService = getService.bind(this, opts.name);
+		domain.getChildren = this.getChildDomains.bind(this, opts.name);
 
 		return domain;
+	},
+	setChildDomain: function(parentDomainName, childDomain){
+		debugger
+		lookup[parentDomainName]['children-domains'].push(childDomain.name);
+	},
+	getChildDomains: function(parentDomainName){
+		return lookup[parentDomainName]['children-domains'].map(this.getDomain.bind(this));
 	},
 };
 
@@ -79,14 +88,19 @@ function App(){
 	self.createDomain = function(opts){
 		if (typeof opts === 'string') opts = {name: opts};
 
-		registry.createDomain(opts);
+		var domain = registry.createDomain(opts);
 
 		return {
+			_isEthoinfoDomain: true,
+			name: domain.name,
 			register: function(serviceName, service){
-				registry.setDomainService(opts.name, serviceName, service);
+				if (serviceName._isEthoinfoDomain){
+					registry.setChildDomain(opts.name, serviceName);
+				} else{
+					registry.setDomainService(opts.name, serviceName, service);
+				}
 			},
 		};
-
 	};
 
 	self.setting = function(settingName, value){
@@ -97,9 +111,9 @@ function App(){
 		return settings[settingName];
 	};
 
-	self.getRegistry = function(){ 
+	self.getRegistry = function(){
 		registry.setting = self.setting.bind(self);
-		return registry; 
+		return registry;
 	};
 }
 

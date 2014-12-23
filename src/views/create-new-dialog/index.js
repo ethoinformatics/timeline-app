@@ -1,58 +1,128 @@
 require('./index.less');
 
-var $ = require('jquery'),
-	EventEmitter = require('events').EventEmitter,
+var Modal = require('modal'),
 	_ = require('lodash'),
+	q = require('q'),
+	$ = require('jquery'),
+	ezuuid = require('ezuuid'),
+	formBuilder = require('form-builder'),
+	geolocation = require('geolocation'),
 	util = require('util'),
-	Modal = require('modal'),
-	template = require('./index.vash'),
 	app = require('app'),
-	FormDialog = require('form-dialog');
+	EventEmitter = require('events').EventEmitter,
+	randomColor = require('rgba-generate')(0.8),
+	template = require('./index.vash');
 
-function NewEntityDialog(opt){
+function getTemplate(){ return template; }
+
+function CreateNewDialog(domain){
 	var self = this;
 	EventEmitter.call(self);
-	opt = Object(opt);
 
-	var title =  opt.title || 'Create';
-	var formDomains = opt.domains || app.getDomains('form-fields');
-	var $element = $(template({
-			activityTypes: formDomains,
-		})),
-		selectTypeModal = new Modal({
-			title: title,
-			$content: $element,
-			hideOkay: true,
-			backAction: opt.backAction,
-		}),
-		formModal;
+	var modal, crumbs = [];
 
-	$element
-		.find('.js-new-activity')
-		.on('click', function(){
-			var $this = $(this),
-				domainName = $this.val(),
-				domain = app.getDomain(domainName);
+	this.setCrumbs = function(myCrumbs){
+		crumbs = myCrumbs || [];
+	};
 
-			formModal = new FormDialog(domain);
+	this.show = function(){
+		var title =  'Create '+ domain.label;
 
-			if (opt.backAction)
-				formModal.setBackAction(opt.backAction);
+		var form = formBuilder.buildDataEntryForm(domain);
 
-			formModal.on('save', function(data){
-				self.emit('new', data);
+		var template = getTemplate(domain);
+		var $content = $(template({
+				isNew: true,
+				crumbs: crumbs,
+			}));
+
+		$content.find('.js-form')
+			.append(form.$element);
+
+		var $btnSnapshot = $content.find('.js-snapshot');
+		var $btnFollow = $content.find('.js-follow');
+
+		modal = new Modal({
+				title: title,
+				$content: $content,
+				hideOkay: true,
+			  	backAction: _backAction,
 			});
 
-			formModal.show();
+		function _handleSave(keepOpen){
+			var now = Date.now(),
+				d = q.defer();
 
-		});
+			var data = {
+					id: ezuuid(),
+					color: randomColor().toHex(),
+					domainName: domain.name,
+					beginTime: now,
+					endTime: keepOpen ? null : now,
+				};
 
-	this.show = selectTypeModal.show.bind(selectTypeModal);
+			data = _.extend(data, form.getData());
+
+			var activityService = domain.getService('activity');
+			if (activityService){
+				activityService.start(data);
+			}
+
+			var eventService = domain.getService('event');
+			if (eventService){
+				eventService.create(data);
+			}
+			d.resolve(data);
+
+			return d.promise;
+		}
+
+		function _createButtonClick(keepActivityRunning, ev){
+			console.log('gotta click');
+
+			var $this = $(this),
+				oldText = $this.text();
+
+			$this.parent()
+				.find('input,button')
+				.attr('disabled', 'disabled');
+
+			$this.text('Please wait...');
+
+			ev.preventDefault();
+			return _handleSave(keepActivityRunning)
+				.then(function(data){
+					console.dir('emiting created');
+					console.dir(data);
+					self.emit('created', data);
+				})
+				.catch(function(err){
+					console.dir('error in CreateNewDialog');
+					console.error(err);
+				})
+				.finally(function(){
+					$this.text(oldText);
+					$this.parent()
+						.find('input,button')
+						.removeAttr('disabled');
+				});
+		}
+
+		$btnSnapshot.click(_.partial(_createButtonClick, false));
+		$btnFollow.click(_.partial(_createButtonClick, true));
+
+		modal.show();
+	};
+
+	var _backAction;
+	this.setBackAction = function(){
+
+	};
 	this.hide = function(){
-		if (selectTypeModal) selectTypeModal.hide();
-		if (formModal) formModal.hide();
+		modal.hide();
 	};
 }
 
-util.inherits(NewEntityDialog, EventEmitter);
-module.exports = NewEntityDialog;
+
+util.inherits(CreateNewDialog, EventEmitter);
+module.exports = CreateNewDialog;
