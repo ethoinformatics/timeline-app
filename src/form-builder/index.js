@@ -6,7 +6,8 @@ var $ = require('jquery'),
 	vash = require('vash-runtime'),
 	templates = {
 		text: require('./text-field.vash'),
-		'long-text': require('./long-text-field.vash'),
+		select: require('./select.vash'),
+		textarea: require('./textarea-field.vash'),
 	};
 
 vash.helpers.field = function(fieldName, field, data){
@@ -15,11 +16,12 @@ vash.helpers.field = function(fieldName, field, data){
 	return t({
 		name: fieldName,
 		label: field.label || fieldName,
+		items: field.type === 'select' ? field.items || [] : [],
 		value: data ? data[fieldName] : undefined,
 	});
 };
 
-module.exports = function(domain, data){
+module.exports.buildDataEntryForm = function(domain, data){
 	var metadata = domain.getService('form-fields');
 	var isNew = !data;
 	data = Object(data);

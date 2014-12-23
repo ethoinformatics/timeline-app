@@ -42,9 +42,11 @@
     "dom-ready": "./src/dom-ready.js",
     "geolocation": "./src/geolocation.js",
     "modal": "./src/views/modal/index.js",
-    "form-dialog": "./src/views/form-dialog/index.js",
+    "create-new-dialog": "./src/views/create-new-dialog/index.js",
+    "view-existing-dialog": "./src/views/view-existing-dialog/index.js",
     "activity-filter": "./src/views/activity-filter/index.js",
     "form-builder": "./src/form-builder/index.js",
+    "timeline": "./src/timeline.js",
     "long-click": "./src/long-click.js",
     "sample-data": "./src/sample-data.json"
   }

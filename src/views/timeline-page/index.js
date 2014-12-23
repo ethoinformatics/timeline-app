@@ -4,10 +4,11 @@ var $ = require('jquery'),
 	_ = require('lodash'),
 	q = require('q'),
 	app = require('app'),
-	createTimeline = require('d3-timeline'),
+	createTimeline = require('timeline'),
 	ActivityFilter = require('activity-filter'),
-	CreateNewDialog = require('../create-new-dialog'),
-	FormDialog = require('form-dialog'),
+	CreateNewDialog = require('../create-select-dialog'),
+	ViewExistingDialog = require('../view-existing-dialog'),
+	//FormDialog = require('form-dialog'),
 	//sampleData = require('sample-data'),
 	pageTemplate = require('./index.vash');
 
@@ -21,24 +22,6 @@ function TimelinePage(){
 	});
 
 	var timeline = createTimeline({
-		getBegin: function(d){
-			var domain = app.getDomain(d.domainName);
-			var service = domain.getService('activity');
-
-			return service.getBeginTime(d);
-		},
-		getEnd: function(d){
-			var domain = app.getDomain(d.domainName);
-			var service = domain.getService('activity');
-
-			return service.getEndTime(d);
-		},
-		getLabel: function(d){
-			var domain = app.getDomain(d.domainName);
-			var service = domain.getService('description-manager');
-
-			return service ? service.getShortDescription(d) : 'no label';
-		},
 	});
 
 	self.$element = $(pageTemplate({}));
@@ -46,20 +29,22 @@ function TimelinePage(){
 	self.$element.find('#timeline-container').append(timeline.element);
 
 	self.render = function(){
+
 		var isVisble = activityFilter.createPredicate();
 		var fetchPromises = app.getDomains('activity')
-			.concat(app.getDomains('event'))
 			.map(function(domain){
 				var entityManager = domain.getService('entity-manager');
 				return entityManager.getAll();
 			});
 
-		q.all(fetchPromises)
+		return q.all(fetchPromises)
 			.then(function(results){
 				var entities = _.flatten(results)
 					.filter(isVisble);
 
 				timeline.add(entities);
+				
+				return entities;
 			})
 			.done();
 	};
@@ -71,17 +56,26 @@ function TimelinePage(){
 	$('body').on('click','.js-btn-add', function(){
 			var newActivityDialog = new CreateNewDialog();
 
-			newActivityDialog.on('new', function(data){
-				var entityManager = app.getService(data.domainName, 'entity-manager');
+			newActivityDialog.on('created', function(entity){
+				var domain = app.getDomain(entity.domainName);
+				var entityManager = domain.getService('entity-manager');
 
-				entityManager.save(data)
+				entityManager.save(entity)
 					.then(function(){
-						timeline.add(data);
-						newActivityDialog.hide();
+
+						console.log('wtf:!!!saved data: ');
+
+						var viewExistingDialog = new ViewExistingDialog({
+							entity: entity,
+						});
+						viewExistingDialog.show();
+						timeline.add(entity);
 					})
 					.catch(function(err){
-						console.error(err);
-						window.alert('could not save :/');
+						console.dir(err);
+					})
+					.finally(function(){
+						console.log('ok');
 					});
 			});
 
@@ -98,10 +92,12 @@ function TimelinePage(){
 	// });
 	timeline.on('activity-click', function(d){
 		var domain = app.getDomain(d.domainName),
-			entityManager = domain.getService('entity-manager'),
-			m = new FormDialog(domain, d);
+			entityManager = domain.getService('entity-manager');
 
-		m.setNewModal(CreateNewDialog);
+		var m = new ViewExistingDialog({
+			entity: d,
+		});
+
 		m.on('save', function(entity){
 			entityManager.save(entity)
 				.then(function(){
