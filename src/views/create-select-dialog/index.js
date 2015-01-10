@@ -38,7 +38,7 @@ function CreateSelectDialog(opt){
 				domainName = $this.val(),
 				domain = app.getDomain(domainName);
 
-			createNewDialog = new CreateNewDialog(domain);
+			createNewDialog = new CreateNewDialog({domain:domain});
 
 			var myCrumbs = _.chain(crumbs)
 				.clone()

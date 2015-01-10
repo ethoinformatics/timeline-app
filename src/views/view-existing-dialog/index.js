@@ -49,10 +49,11 @@ function ViewExistingDialog(opts){
 		var $content = $(template({
 				isNew: true,
 				crumbs: crumbs,
+				domainLabel: domain.label,
 			}));
 		var $tmp = $('<div>hi</div>');
 		var timeline = createTimeline({
-			height: window.innerHeight *.72,
+			height: window.innerHeight *0.72,
 		});
 		var children = entity.children || [];
 		timeline.add(children);

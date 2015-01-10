@@ -15,7 +15,9 @@ var Modal = require('modal'),
 
 function getTemplate(){ return template; }
 
-function CreateNewDialog(domain){
+function CreateNewDialog(opt){
+	var domain = opt.domain;
+
 	var self = this;
 	EventEmitter.call(self);
 
@@ -39,14 +41,13 @@ function CreateNewDialog(domain){
 		$content.find('.js-form')
 			.append(form.$element);
 
-		var $btnSnapshot = $content.find('.js-snapshot');
-		var $btnFollow = $content.find('.js-follow');
+		var $btnSave = $content.find('.js-save');
 
 		modal = new Modal({
 				title: title,
 				$content: $content,
 				hideOkay: true,
-			  	backAction: _backAction,
+			  	backAction: opt.backAction,
 			});
 
 		function _handleSave(keepOpen){
@@ -108,16 +109,16 @@ function CreateNewDialog(domain){
 				});
 		}
 
-		$btnSnapshot.click(_.partial(_createButtonClick, false));
-		$btnFollow.click(_.partial(_createButtonClick, true));
+		// $btnSnapshot.click(_.partial(_createButtonClick, false));
+		// $btnFollow.click(_.partial(_createButtonClick, true));
+		$btnSave.click(_.partial(_createButtonClick, true));
+		modal.on('closed', function(){
+			self.emit('closed');
+		});
 
 		modal.show();
 	};
 
-	var _backAction;
-	this.setBackAction = function(){
-
-	};
 	this.hide = function(){
 		modal.hide();
 	};

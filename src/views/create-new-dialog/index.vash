@@ -13,8 +13,7 @@
 	</div>
 	<div class="button-container">
 		<div class="button-bar">
-			<button type="button" class="js-snapshot button button-balanced button-block">Snapshot</button>
-			<button type="button" class="js-follow button button-balanced button-block">Follow</button>
+			<button type="button" class="js-save button button-balanced button-block">Save</button>
 		</div>
 	</div>
 </div>
