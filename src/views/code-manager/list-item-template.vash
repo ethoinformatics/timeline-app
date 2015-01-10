@@ -1,0 +1,4 @@
+<li data-id="@model.id" class="item item-icon-right">
+	@model.label
+	<i class="icon ion-close-circled assertive"></i>
+</li>
