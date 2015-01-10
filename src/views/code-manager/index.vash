@@ -1,5 +1,5 @@
 <div class="code-manager">
-	<ul class="list">
+	<ul class="js-list list">
 		<li class="item item-divider item-input item-select">
 			<div class="domain-select">
 				<div class="input-label">

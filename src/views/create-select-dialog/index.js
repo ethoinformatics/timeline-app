@@ -15,7 +15,6 @@ function CreateSelectDialog(opt){
 	opt = Object(opt);
 
 	var title =  opt.title || 'Create';
-	debugger
 	var formDomains = opt.domains || app.getDomains('form-fields');
 
 	var crumbs = opt.crumbs || [];
