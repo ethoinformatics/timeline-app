@@ -17,9 +17,9 @@
 	</div>
 	<div class="button-container">
 		<div class="button-bar">
-			<button type="button" class="js-view-stop button button-balanced">Stop</button>
-			<button type="button" class="js-view-edit button button-energized">Edit</button>
-			<button type="button" class="js-view-remove button button-assertive">Remove</button>
+			<button type="button" class="js-view-stop button button-balanced">Stop @model.domainLabel</button>
+			<button type="button" class="js-view-edit button button-energized">Edit @model.domainLabel</button>
+			<button type="button" class="js-view-remove button button-assertive">Remove @model.domainLabel</button>
 		</div>
 	</div>
 </div>

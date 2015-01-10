@@ -68,7 +68,6 @@ var registry = {
 		return domain;
 	},
 	setChildDomain: function(parentDomainName, childDomain){
-		debugger
 		lookup[parentDomainName]['children-domains'].push(childDomain.name);
 	},
 	getChildDomains: function(parentDomainName){

@@ -5,7 +5,7 @@
 				<header class="bar bar-header bar-stable" >
 					<button ng-click="toggleLeftSideMenu()" class="button button-icon icon ion-navicon"></button>
 					<h1 id="left-header-title" class="title">Ethoinformatics</h1>
-					<button class="js-btn-add button button-positive">New</button>
+					<button class="js-btn-top-level-add button button-balanced">New</button>
 				</header>
 				<div id="main-content" class="pane has-header">
 				</div>
@@ -22,6 +22,11 @@
 						<i class="icon ion-upload"></i>
 						Upload
 						<span class="item-note">Sync to a server</span>
+					</li>
+					<li class="js-code-manager item item-icon-left" menu-close>
+						<i class="icon ion-code-working"></i>
+						Codes
+						<span class="item-note">Manage coded fields</span>
 					</li>
 				</ul>
 			</ion-content>

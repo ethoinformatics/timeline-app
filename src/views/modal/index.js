@@ -28,24 +28,39 @@ function Modal(options){
 
 	this.hide = this.close = function(){
 		if (!$modal) return;
-		$modal.find('.js-close').click();
+		//$modal.find('.js-close').click();
+		$modal.hide();
+	};
+	this.remove = this.close = function(){
+		if (!$modal) return;
+		//$modal.find('.js-close').click();
+		$modal.remove();
 	};
 
-	this.show = function(myTitle, $myContent){
-		myTitle = myTitle || options.title;
-		$myContent = $myContent || options.$content;
+	this.show = function(){
+		var myTitle = myTitle || options.title,
+			$myContent = $myContent || options.$content;
+
+		if ($modal){
+			$backdrop.removeClass('hide');
+			$backdrop.addClass('active');
+			return $modal.fadeIn();
+		}
 
 		$modal = $(modalTemplate({
 			title: myTitle,
 			showBackButton: !!options.backAction,
 		}));
+
 		$modal.find('.modal-body')
 			.empty()
 			.append($myContent);
+
 		$modal.find('.js-back')
 			.on('click', function(ev){
 				ev.preventDefault();
-				options.backAction();
+				if (_.isFunction(options.backAction))
+					options.backAction();
 			});
 
 		$modal.find('.js-close')
@@ -54,8 +69,9 @@ function Modal(options){
 
 				$backdrop.removeClass('active');
 				$modal.fadeOut('fast', function(){
-					$modal.remove();
+					$modal.hide();
 					$backdrop.addClass('hide');
+					self.emit('closed');
 				});
 			});
 
@@ -76,7 +92,7 @@ function Modal(options){
 			.addClass('active');
 
 		$backdrop.find('.js-container')
-			.empty()
+			//.empty()
 			.append($modal);
 
 		if (options.hideOkay){

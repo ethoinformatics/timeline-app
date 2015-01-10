@@ -53,7 +53,7 @@ function TimelinePage(){
 		self.render();
 	});
 
-	$('body').on('click','.js-btn-add', function(){
+	$('body').on('click','.js-btn-top-level-add', function(){
 			var newActivityDialog = new CreateNewDialog();
 
 			newActivityDialog.on('created', function(entity){

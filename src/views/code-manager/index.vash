@@ -1,0 +1,25 @@
+<div class="code-manager">
+	<ul class="list">
+		<li class="item item-divider item-input item-select">
+			<div class="domain-select">
+				<div class="input-label">
+					Code domain
+					<span id="pan-container"></span>&nbsp;
+					<span id="w-container"></span>&nbsp;
+					<span id="debug-container"></span>&nbsp;
+				</div>
+				<select class="js-select-domain">
+					@model.domains.forEach(function(domain){
+						<option class="js-code-domain" value="@domain.name">@domain.label</option>
+					})
+				</select>
+			</div>
+		</li>
+		<li class="item item-divider item-input">
+			<div class="toolbar">
+				<button type="button" class="js-btn-add button button-balanced button-small">Add</button>
+			</div>
+		</li>
+	</ul>
+</div>
+

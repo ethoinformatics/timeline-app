@@ -32,6 +32,10 @@ function SideMenu(){
 			self.emit('upload-click', ev);
 		});
 
+	self.$element.on('click', '.js-code-manager', function(ev){
+			self.emit('code-manager-click', ev);
+		});
+
 	return self;
 }
 

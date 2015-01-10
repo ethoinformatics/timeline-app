@@ -1,6 +1,7 @@
 var $ = require('jquery'),
 	ActivityPage = require('./views/timeline-page/'),
 	UploadDialog = require('./views/upload-dialog/'),
+	CodeManager = require('./views/code-manager/'),
 	updateAppCheck = require('./update-app-check'),
 	SideMenu = require('./side-menu.js'),
 	ready = require('dom-ready'),
@@ -14,6 +15,7 @@ ready(function appLoad(){
 	var $body = $('body'),
 		sideMenu = new SideMenu(),
 		uploadDialog = new UploadDialog(),
+		codeManager = new CodeManager(),
 		activityPage = new ActivityPage();
 
 	$body.append(sideMenu.$element);
@@ -24,6 +26,9 @@ ready(function appLoad(){
 
 	sideMenu.on('upload-click', function(){
 		uploadDialog.show();
+	});
+	sideMenu.on('code-manager-click', function(){
+		codeManager.show();
 	});
 
 	updateAppCheck();
