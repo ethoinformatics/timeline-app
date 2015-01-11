@@ -3,10 +3,12 @@ require('./index.less');
 var $ = require('jquery'),
 	_ = require('lodash'),
 	template = require('./index.vash'),
+	app = require('app'),
 	vash = require('vash-runtime'),
 	templates = {
 		text: require('./text-field.vash'),
 		select: require('./select.vash'),
+		lookup: require('./select.vash'),
 		textarea: require('./textarea-field.vash'),
 	};
 
@@ -21,6 +23,8 @@ vash.helpers.field = function(fieldName, field, data){
 	});
 };
 
+
+
 module.exports.buildDataEntryForm = function(domain, data){
 	var metadata = domain.getService('form-fields');
 	var isNew = !data;
@@ -31,6 +35,35 @@ module.exports.buildDataEntryForm = function(domain, data){
 		entity: data,
 	}));
 
+	// find the coded fields, fetch their values, and finally populate the select elements.
+	_.chain(metadata)
+		.pluck('fields')
+		.map(function(o){ return _.pairs(o); })
+		.flatten(true)
+		.map(function(pair){
+			return _.extend({}, {name: pair[0]}, pair[1]);
+		})
+		.filter(function(field){ return /^lookup$/i.test(field.type); })
+		.value()
+		.forEach(function(field){
+			var $select = $root.find('select[data-name='+field.name+']'),
+				codeDomain = app.getDomain(field.domain),
+				descManager = codeDomain.getService('description-manager');
+
+			codeDomain
+				.getService('entity-manager')
+				.getAll()
+				.then(function(codeValues){
+					codeValues.forEach(function(codeValue){
+						var $opt = $('<option></option>')
+							.attr('value', codeValue._id)
+							.text(descManager.getShortDescription(codeValue));
+
+						$select.append($opt);
+					});
+				});
+		});
+
 	var $tabButtons = $root.find('.js-tabs *[data-index]');
 	var $tabs = $root.find('.js-tab-container *[data-index]');
 	$tabButtons.click(function(){
@@ -40,7 +73,6 @@ module.exports.buildDataEntryForm = function(domain, data){
 		$this.addClass('active');
 		$tabs.hide();
 		$($tabs[$this.data('index')]).show();
-		
 	});
 
 	if (isNew || _.isEmpty(domain.getService('child-domains'))){

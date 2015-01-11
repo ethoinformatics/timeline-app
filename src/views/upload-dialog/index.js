@@ -6,10 +6,14 @@ var template = require('./index.vash'),
 function UploadDialog(){
 	var self = this,
 		$element = $(template({
-			url: app.setting('couch-base-url'),
-			username: app.setting('couch-username'),
-		})),
-		modal = new Modal('Upload', $element, {hideOkay:true});
+				url: app.setting('couch-base-url'),
+				username: app.setting('couch-username'),
+			})),
+		modal = new Modal({
+				title:'Upload', 
+				$content:$element, 
+				hideOkay:true
+			});
 
 	self.show = function(){
 		modal.show();
