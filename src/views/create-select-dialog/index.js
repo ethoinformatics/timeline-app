@@ -37,16 +37,16 @@ function CreateSelectDialog(opt){
 				domainName = $this.val(),
 				domain = app.getDomain(domainName);
 
-			createNewDialog = new CreateNewDialog({domain:domain});
+			createNewDialog = new CreateNewDialog({
+					domain: domain,
+					backAction: opt.backAction,
+				});
 
 			var myCrumbs = _.chain(crumbs)
 				.clone()
 				.value();
+
 			createNewDialog.setCrumbs(myCrumbs);
-
-			if (opt.backAction)
-				createNewDialog.setBackAction(opt.backAction);
-
 
 			createNewDialog.on('created', function(data){
 				self.emit('created', data);

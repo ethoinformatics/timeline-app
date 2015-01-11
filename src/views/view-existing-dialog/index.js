@@ -43,6 +43,7 @@ function ViewExistingDialog(opts){
 		var title = _getLabel(entity);
 
 
+		var myDomains = domain.getChildren();
 		var form = formBuilder.buildDataEntryForm(domain);
 
 		var template = getTemplate(domain);
@@ -65,13 +66,11 @@ function ViewExistingDialog(opts){
 
 		var $btnSnapshot = $content.find('.js-snapshot');
 		var $btnFollow = $content.find('.js-follow');
-		// var $btnDelete = $content.find('.js-delete');
-		// var $btnStop = $content.find('.js-stop');
 		var $btnAddChild = $content.find('.js-child-add');
-		// var childrenDomains = domain.getService('child-domains');
-		// if (!childrenDomains){
-		// 	$btnAddChild.hide();
-		// }
+
+		if (_.size(myDomains) == 1){
+			$btnAddChild.text('Add ' + myDomains[0].label);
+		}
 
 		$btnAddChild.click(function(ev){
 			ev.preventDefault();
@@ -79,8 +78,6 @@ function ViewExistingDialog(opts){
 			var descMgr = domain.getService('description-manager');
 			var title = 'Add a child to ' + descMgr.getShortDescription(entity);
 
-			debugger
-			var myDomains = domain.getChildren();
 			var m = new CreateSelectDialog({
 				title: title,
 				backAction: self.show.bind(self),

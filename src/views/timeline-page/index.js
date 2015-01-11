@@ -13,6 +13,21 @@ var $ = require('jquery'),
 	pageTemplate = require('./index.vash');
 
 
+function _getTopLevelDomains(){
+	var domains = app.getDomains()
+		.filter(function(domain){
+			return !domain.getService('code-domain');
+		});
+
+	return domains.filter(function(d){
+		return !_.any(domains, function(otherDomain){
+			return !!_.find(otherDomain.getChildren(), function(d2){
+				return d2.name == d.name;
+			});
+		});
+	});
+}
+
 function TimelinePage(){
 	var self = this,
 		activityFilter = new ActivityFilter();
@@ -53,8 +68,11 @@ function TimelinePage(){
 		self.render();
 	});
 
+
 	$('body').on('click','.js-btn-top-level-add', function(){
-			var newActivityDialog = new CreateNewDialog();
+			var newActivityDialog = new CreateNewDialog({
+					domains: _getTopLevelDomains(),
+				});
 
 			newActivityDialog.on('created', function(entity){
 				var domain = app.getDomain(entity.domainName);
