@@ -54,13 +54,26 @@ module.exports.buildDataEntryForm = function(domain, data){
 				.getService('entity-manager')
 				.getAll()
 				.then(function(codeValues){
-					codeValues.forEach(function(codeValue){
-						var $opt = $('<option></option>')
-							.attr('value', codeValue._id)
-							.text(descManager.getShortDescription(codeValue));
+					_.chain(codeValues)
+						.map(function(codeValue){
+							return {
+									_id: codeValue._id,
+									text: descManager.getShortDescription(codeValue),
+								};
+						})
+						.sortBy('text')
+						.value()
+						.forEach(function(codeValue){
+							var $opt = $('<option></option>')
+								.attr('value', codeValue._id)
+								.text(codeValue.text);
 
-						$select.append($opt);
-					});
+							$select.append($opt);
+						});
+				})
+				.catch(function(err){
+					console.log('error loading codes for '+field.name);
+					console.error(err);
 				});
 		});
 
