@@ -19,8 +19,8 @@
 			<ion-content class="has-header">
 				<ul class="list">
 					<li class="js-upload item item-icon-left" menu-close>
-						<i class="icon ion-upload"></i>
-						Upload
+						<i class="icon ion-android-sync"></i>
+						Data sync
 						<span class="item-note">Sync to a server</span>
 					</li>
 					<li class="js-code-manager item item-icon-left" menu-close>
