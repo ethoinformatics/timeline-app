@@ -4,7 +4,8 @@ var PouchDb = require('pouchdb'),
 	q = require('q');
 
 function CrudManager(domainName){
-	var db = new PouchDb(domainName),
+	var databaseName = 'hello',
+		db = new PouchDb(databaseName),
 		self = this;
 
 	self.save = function(entity){
@@ -26,36 +27,15 @@ function CrudManager(domainName){
 	self.getAll = function(){
 		return q.denodeify(db.allDocs.bind(db, {include_docs: true, descending: true}))()
 			.then(function(result){
-				return _.pluck(result.rows, 'doc');
+				return _.chain(result.rows)
+					.pluck('doc')
+					.filter(function(row){
+						// todo: don't fetch everything
+						return row.domainName == domainName;
+					})
+					.value();
+					
 			});
-	};
-
-	self.upload = function(url){
-		var d = q.defer();
-		var opts = {live: false};
-
-		db.replicate.to(url, opts, function(err, result){
-			if (err) d.reject(err);
-			d.resolve(result);
-			//window.alert('oops');
-			console.error(err);
-		});
-
-		return d.promise;
-	};
-
-	self.download = function(url){
-		var d = q.defer();
-		var opts = {live: false};
-
-		db.replicate.from(url, opts, function(err, result){
-			if (err) d.reject(err);
-			d.resolve(result);
-			//window.alert('oops');
-			console.error(err);
-		});
-
-		return d.promise;
 	};
 }
 

@@ -1,23 +1,39 @@
-<div class="card">
-	<div class="item item-text-wrap">
-		Click upload to sync to couch.
+<div class="sync-dialog">
+	<div class="card">
+		<div class="js-status item item-text-wrap">
+			<div class="js-working message">
+				<i class="icon ion-loading-d"></i>
+				<span></span>
+			</div>
+			<div class="js-success message">
+				<i class="icon balanced ion-checkmark-circled"></i>
+				<span></span>
+			</div>
+			<div class="js-failure message">
+				<i class="icon assertive ion-alert-circled"></i>
+				<span></span>
+			</div>
+		</div>
 	</div>
-</div>
 
-<ul class="list">
-	<li class="item item-input item-stacked-label">
-		<span class="input-label">Couch URL</span>
-		<input class="js-url" type="text" value="@model.url"></input>
-	</li>
-	<li class="item item-input item-stacked-label">
-		<span class="input-label">Username</span>
-		<input class="js-username" type="text" value="@model.username"></input>
-	</li>
-	<li class="item item-input item-stacked-label">
-		<span class="input-label">Password</span>
-		<input class="js-password" type="password" value=""></input>
-	</li>
-	<li class="item">
-		<button class="js-upload button button-block button-positive">Upload</button>
-	</li>
-</ul>
+	<ul class="list">
+		<li class="item item-input item-stacked-label">
+			<span class="input-label">Couch URL</span>
+			<input class="js-url" type="text" value="@model.url"></input>
+		</li>
+		<li class="item item-input item-stacked-label">
+			<span class="input-label">Username</span>
+			<input class="js-username" type="text" value="@model.username"></input>
+		</li>
+		<li class="item item-input item-stacked-label">
+			<span class="input-label">Password</span>
+			<input class="js-password" type="password" value="@model.password"></input>
+		</li>
+		<li class="item">
+			<div class="button-bar">
+				<button class="js-download icon-left ion-android-download button button-block button-positive">Download</button>
+				<button class="js-upload icon-left ion-android-upload button button-block button-positive">Upload</button>
+			</div>
+		</li>
+	</ul>
+</div>
