@@ -38,39 +38,86 @@ function ViewExistingDialog(opts){
 	}
 
 	var modal;
+	var template = getTemplate(domain);
+	var $content = $(template({
+			isNew: true,
+			crumbs: crumbs,
+			domainLabel: domain.label,
+		}));
+
+	var timeline = createTimeline({
+		height: window.innerHeight *0.72,
+	});
+
+	var title = _getLabel(entity);
+	modal = new Modal({
+			title: title,
+			$content: $content,
+			hideOkay: true,
+			backAction: opts.backAction,
+		});
+
+
+	timeline.on('activity-click', function(d){
+		debugger
+		var domain = app.getDomain(d.domainName),
+			entityManager = domain.getService('entity-manager');
+
+		var m = new ViewExistingDialog({
+			entity: d,
+			backAction: function(){
+				m.hide();
+				self.show();
+			}
+		});
+
+		m.on('updated', function(){
+			m.hide();
+			self.render();
+
+		});
+		m.show();
+		// m.on('save', function(entity){
+		// 	entityManager.save(entity)
+		// 		.then(function(){
+
+		// 			m.hide();
+		// 			timeline.update();
+		// 		}).done();
+		// });
+	});
+
+	$content.find('.js-framework-timeline-container')
+		.append(timeline.element);
 
 	this.show = function(){
-		var title = _getLabel(entity);
-
-
 		var myDomains = domain.getChildren();
 		var form = formBuilder.buildDataEntryForm(domain);
 
-		var template = getTemplate(domain);
-		var $content = $(template({
-				isNew: true,
-				crumbs: crumbs,
-				domainLabel: domain.label,
-			}));
-		var $tmp = $('<div>hi</div>');
-		var timeline = createTimeline({
-			height: window.innerHeight *0.72,
-		});
+		debugger
 		var children = entity.children || [];
+		timeline.clear();
 		timeline.add(children);
 
-		$content.find('.js-form').append($tmp);
-			//.append(form.$element);
-		$content.find('.js-framework-timeline-container')
-			.append(timeline.element);
 
 		var $btnSnapshot = $content.find('.js-snapshot');
 		var $btnFollow = $content.find('.js-follow');
 		var $btnAddChild = $content.find('.js-child-add');
+		var $btnRemove = $content.find('.js-view-remove');
 
 		if (_.size(myDomains) == 1){
 			$btnAddChild.text('Add ' + myDomains[0].label);
 		}
+
+		$btnRemove.click(function(){
+			console.log('removing');
+			var entityManager = domain.getService('entity-manager');
+			entityManager.remove(entity)
+				.then(function(){
+					self.emit('updated');
+					self.hide();
+				});
+		});
 
 		$btnAddChild.click(function(ev){
 			ev.preventDefault();
@@ -93,55 +140,38 @@ function ViewExistingDialog(opts){
 					.push(child)
 					.value();
 
-				var myCrumbs = _.chain(crumbs)
-					.clone()
-					.value();
+				var entityManager = domain.getService('entity-manager');
 
-				var viewExistingDialog = new ViewExistingDialog({
-					entity: child,
-					crumbs: myCrumbs,
-					backAction: function(){self.show();},
-				});
-				viewExistingDialog.show();
-				timeline.add(entity);
+				entityManager.save(entity)
+					.then(function(info){
+						entity._id = info.id;
+						entity._rev = info.rev;
 
-				// var childDomain = app.getDomain(entity.domainName);
-				// var entityManager = childDomain.getService('entity-manager');
+						var childDomain = app.getDomain(child.domainName);
+						if (_.isEmpty(childDomain.getChildren())){
+							m.hide();
+							self.show();
+							return;
+						}
+						var myCrumbs = _.chain(crumbs)
+							.clone()
+							.value();
 
-				// entityManager.save(entity)
-				// 	.then(function(){
-
-
-				// 		var viewExistingDialog = new ViewExistingDialog({
-				// 			entity: entity,
-				// 		});
-				// 		viewExistingDialog.show();
-				// 		timeline.add(entity);
-				// 	})
-				// 	.catch(function(err){
-				// 		console.dir(err);
-				// 	})
-				// 	.finally(function(){
-				// 		console.log('ok');
-				// 	});
-			//	self.show();
-				// entityManager.save(entity)
-				// 	.then(function(){
-
-				// 		m.hide();
-				// 		timeline.update();
-				// 	}).done();
+						var viewExistingDialog = new ViewExistingDialog({
+							entity: child,
+							crumbs: myCrumbs,
+							backAction: function(){self.show();},
+						});
+						viewExistingDialog.show();
+					})
+					.catch(function(err){
+						console.error(err);
+					});
 			});
 			m.show();
 		});
 
 
-		modal = new Modal({
-				title: title,
-				$content: $content,
-				hideOkay: true,
-				backAction: opts.backAction,
-			});
 
 		function _handleSave(keepOpen){
 			var now = Date.now();
@@ -220,6 +250,10 @@ function ViewExistingDialog(opts){
 	this.hide = function(){
 		modal.hide();
 	};
+
+	// modal.on('closed', function(){
+	// 	self.emit('closed');
+	// });
 }
 
 

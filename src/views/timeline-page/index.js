@@ -81,8 +81,9 @@ function TimelinePage(){
 				var entityManager = domain.getService('entity-manager');
 
 				entityManager.save(entity)
-					.then(function(){
-
+					.then(function(info){
+						entity._id = info.id;
+						entity._rev = info.rev;
 						console.log('wtf:!!!saved data: ');
 
 						var viewExistingDialog = new ViewExistingDialog({
@@ -118,6 +119,11 @@ function TimelinePage(){
 			entity: d,
 		});
 
+		m.on('updated', function(){
+			m.hide();
+			self.render();
+
+		});
 		m.on('save', function(entity){
 			entityManager.save(entity)
 				.then(function(){
