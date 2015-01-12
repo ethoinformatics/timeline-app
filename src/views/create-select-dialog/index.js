@@ -37,26 +37,36 @@ function CreateSelectDialog(opt){
 				domainName = $this.val(),
 				domain = app.getDomain(domainName);
 
-			createNewDialog = new CreateNewDialog({
-					domain: domain,
-					backAction: opt.backAction,
-				});
-
-			var myCrumbs = _.chain(crumbs)
-				.clone()
-				.value();
-
-			createNewDialog.setCrumbs(myCrumbs);
-
-			createNewDialog.on('created', function(data){
-				self.emit('created', data);
-			});
-
-			createNewDialog.show();
-
+			_showCreateForm(domain);
 		});
 
-	this.show = selectTypeModal.show.bind(selectTypeModal);
+	function _showCreateForm(domain){
+		createNewDialog = new CreateNewDialog({
+				domain: domain,
+				backAction: opt.backAction,
+			});
+
+		var myCrumbs = _.chain(crumbs)
+			.clone()
+			.value();
+
+		createNewDialog.setCrumbs(myCrumbs);
+
+		createNewDialog.on('created', function(data){
+			self.emit('created', data);
+		});
+
+		createNewDialog.show();
+	}
+
+	this.show = function(){
+		if (_.size(formDomains) === 1){
+			_showCreateForm(formDomains[0]);
+		} else {
+			selectTypeModal.show();
+		}
+	};
+
 	this.hide = function(){
 		if (selectTypeModal) selectTypeModal.hide();
 		if (createNewDialog) createNewDialog.hide();
