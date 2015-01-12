@@ -31,6 +31,10 @@ ready(function appLoad(){
 		codeManager.show();
 	});
 
+	uploadDialog.on('closed', function(){
+		activityPage.render();
+	});
+
 	updateAppCheck();
 	activityLocationWatch();
 

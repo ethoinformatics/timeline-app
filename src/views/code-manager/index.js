@@ -4,11 +4,14 @@ var tmpl = require('./index.vash'),
 	Scroll = require('iscroll'),
 	_ = require('lodash'),
 	$ = require('jquery'),
+	EventEmitter = require('events').EventEmitter,
+	util = require('util'),
 	Modal = require('modal'),
 	listItemTemplate = require('./list-item-template.vash'),
 	app = require('app');
 
 function CodeManager(){
+	EventEmitter.call(this);
 	var self = this,
 		codeDomains = _.chain(app.getDomains('code-domain'))
 			.sortBy('label')
@@ -87,6 +90,10 @@ function CodeManager(){
 		hideOkay: true,
 	});
 
+	modal.on('closed', function(){
+		self.emit('closed');
+	});
+
 	self.show = function(){ 
 		modal.show();
 		_load();
@@ -155,5 +162,5 @@ function CodeManager(){
 	}
 }
 
-
+util.inherits(CodeManager, EventEmitter);
 module.exports = CodeManager;
