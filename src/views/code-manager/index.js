@@ -10,7 +10,9 @@ var tmpl = require('./index.vash'),
 
 function CodeManager(){
 	var self = this,
-		codeDomains = app.getDomains('code-domain');
+		codeDomains = _.chain(app.getDomains('code-domain'))
+			.sortBy('label')
+			.value();
 
 	var $element = $(tmpl({
 		domains: codeDomains,
@@ -19,14 +21,19 @@ function CodeManager(){
 	var $domainSelect = $element.find('.js-select-domain'),
 		$codeList = $element.find('.js-codes');
 
+
 	$domainSelect.on('change', function(){
 		_load();
 	});
 
-	// var scroll = new Scroll($element.find('.scroll-wrapper')[0], {
-	// 		mouseWheel: true,
-	// 		scrollbars: true,
-	// 	});
+	$element.find('.scroll-wrapper')
+		.css('width', window.innerWidth)
+		.css('height', window.innerHeight-(96+44));
+
+	var scroll = new Scroll($element.find('.scroll-wrapper')[0], {
+			mouseWheel: true,
+			scrollbars: true,
+		});
 	$codeList.on('click', '.js-delete', function(){
 		if (!window.confirm('Are you sure?')) return;
 
@@ -110,12 +117,8 @@ function CodeManager(){
 			},
 		});
 
-	function _createListItemElement(entity){
-		return listItemTemplate({
-			_id: entity._id,
-			_rev: entity._rev,
-			label: self.descriptionManager.getShortDescription(entity) || 'fuck'
-		});
+	function _createListItemElement(viewModel){
+		return listItemTemplate(viewModel);
 	}
 
 	function _load(){
@@ -128,15 +131,25 @@ function CodeManager(){
 				if (_.isEmpty(entities)){
 					$codeList.append('There are no ' + self.currentDomain.label.toLowerCase() + ' codes.');
 				}
-				entities
+
+				_.chain(entities)
+					.map(function(entity){
+						return {
+								_id: entity._id,
+								_rev: entity._rev,
+								label: self.descriptionManager.getShortDescription(entity),
+							};
+					})
+					.sortBy('label')
 					.map(_createListItemElement)
+					.value()
 					.forEach(function(el){
 						$codeList.append(el);
 					});
 
 				setTimeout(function(){
-//					scroll.refresh();
-				},0);
+					scroll.refresh();
+				},100);
 			})
 			.done();
 	}
