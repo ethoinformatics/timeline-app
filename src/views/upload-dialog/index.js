@@ -1,6 +1,8 @@
 require('./index.less');
 
 var PouchDb = require('pouchdb'),
+	EventEmitter = require('events').EventEmitter,
+	util = require('util'),
 	template = require('./index.vash'),
 	_ = require('lodash'),
 	$ = require('jquery'),
@@ -10,6 +12,7 @@ var PouchDb = require('pouchdb'),
 	Modal = require('modal');
 
 function UploadDialog(){
+	EventEmitter.call(this);
 	var self = this,
 		$element = $(template({
 				url: app.setting('couch-base-url'),
@@ -25,6 +28,10 @@ function UploadDialog(){
 				$content:$element, 
 				hideOkay:true
 			});
+
+	modal.on('closed', function(){
+		self.emit('closed');
+	});
 
 	self.show = function(){
 		modal.show();
@@ -93,5 +100,5 @@ function UploadDialog(){
 	});
 }
 
-
+util.inherits(UploadDialog, EventEmitter);
 module.exports = UploadDialog;

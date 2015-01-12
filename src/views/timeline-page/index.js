@@ -44,6 +44,8 @@ function TimelinePage(){
 	self.$element.find('#timeline-container').append(timeline.element);
 
 	self.render = function(){
+		console.log('timeline - render');
+		timeline.clear();
 
 		var isVisble = activityFilter.createPredicate();
 		var fetchPromises = app.getDomains('activity')
