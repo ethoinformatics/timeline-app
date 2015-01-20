@@ -76,6 +76,12 @@ function ViewExistingDialog(opts){
 	});
 
 	timeline.on('activity-click', function(d){
+		if (!_hasChildDomains(d.domainName)){
+			var dialog = new EditExistingDialog({entity: d});
+			dialog.show();
+			return;
+		}
+
 		var m = new ViewExistingDialog({
 			entity: d,
 			crumbs: _.chain(crumbs).clone().value(),
