@@ -5,7 +5,6 @@
 	<select data-name="@model.name">
 		@model.items.forEach(function(item){
 		<option @(item.value!=model.value ?  'selected="true"' : '') value="@item.value" class="">@item.label</option>
-			<option value="@item.value" class="">@item.label</option>
 		})
 	</select>
 </li>

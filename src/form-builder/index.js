@@ -15,10 +15,20 @@ var $ = require('jquery'),
 vash.helpers.field = function(fieldName, field, data){
 	var t = templates[field.type] || templates.text;
 
+	var items = _.chain(field.items)
+		.toArray()
+		.map(function(item){
+			return {
+				value: item.value || item.label,
+				label: item.label || item.value,
+			};
+		})
+		.value();
+
 	return t({
 		name: fieldName,
 		label: field.label || fieldName,
-		items: field.type === 'select' ? field.items || [] : [],
+		items: items,
 		value: data ? data[fieldName] : undefined,
 	});
 };
