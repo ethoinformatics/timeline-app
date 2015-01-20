@@ -85,11 +85,13 @@ function TimelinePage(){
 						entity._rev = info.rev;
 						console.log('wtf:!!!saved data: ');
 
+						timeline.add(entity);
+
 						var viewExistingDialog = new ViewExistingDialog({
 							entity: entity,
 						});
+
 						viewExistingDialog.show();
-						timeline.add(entity);
 					})
 					.catch(function(err){
 						console.dir(err);

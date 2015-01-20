@@ -12,6 +12,7 @@ var Modal = require('modal'),
 	app = require('app'),
 	EventEmitter = require('events').EventEmitter,
 	randomColor = require('rgba-generate')(0.8),
+	EditExistingDialog = require('edit-existing-dialog'),
 	template = require('./index.vash');
 
 var CreateSelectDialog = require('../create-select-dialog');
@@ -21,7 +22,8 @@ function getTemplate(){ return template; }
 
 function ViewExistingDialog(opts){
 	var self = this,
-		entity = opts.entity,
+		entity = opts.entity || opts.rootEntity,
+		rootEntity = opts.rootEntity || opts.entity,
 		crumbs = opts.crumbs,
 		domain = app.getDomain(entity.domainName);
 
@@ -31,6 +33,11 @@ function ViewExistingDialog(opts){
 		.value();
 
 	EventEmitter.call(self);
+
+	function _hasChildDomains(domainName){
+		var childDomain = app.getDomain(domainName);
+		return !_.isEmpty(childDomain.getChildren());
+	}
 
 	function _getLabel(myEntity){
 		return domain.getService('description-manager')
@@ -62,21 +69,13 @@ function ViewExistingDialog(opts){
 	});
 
 	timeline.on('activity-click', function(d){
-		var domain = app.getDomain(d.domainName),
-			entityManager = domain.getService('entity-manager');
-
 		var m = new ViewExistingDialog({
 			entity: d,
-			backAction: function(){
-				m.hide();
-				//self.show();
-			}
 		});
 
 		m.on('updated', function(){
 			m.hide();
 			self.render();
-
 		});
 
 		m.on('closed', function(){
@@ -98,16 +97,33 @@ function ViewExistingDialog(opts){
 		timeline.add(children);
 
 
-		var $btnSnapshot = $content.find('.js-snapshot');
-		var $btnFollow = $content.find('.js-follow');
-		var $btnAddChild = $content.find('.js-child-add');
-		var $btnRemove = $content.find('.js-view-remove');
+		var $btnSnapshot = $content.find('.js-snapshot'),
+			$btnFollow = $content.find('.js-follow'),
+			$btnAddChild = $content.find('.js-child-add'),
+			$btnRemove = $content.find('.js-view-remove');
 
 		if (_.size(myDomains) == 1){
 			$btnAddChild.text('Add ' + myDomains[0].label);
+		} else if (_.size(myDomains) === 0){
+			$btnAddChild.hide();
 		}
 
+		var $btnEdit = $content.find('.js-view-edit');
+
+		$btnEdit.click(function(){
+			var dialog = new EditExistingDialog({entity: entity});
+			
+			dialog.on('edited', function(data){
+				console.dir(data);
+				dialog.remove();
+			});
+			dialog.show();
+		});
+
+
 		$btnRemove.click(function(){
+			if (rootEntity!=entity) return window.alert('not implemeneted yet');
+
 			console.log('removing');
 			var entityManager = domain.getService('entity-manager');
 			entityManager.remove(entity)
@@ -137,28 +153,35 @@ function ViewExistingDialog(opts){
 					.push(child)
 					.value();
 
-				var entityManager = domain.getService('entity-manager');
+				var rootDomain = app.getDomain(rootEntity.domainName),
+					rootEntityManager = rootDomain.getService('entity-manager');
 
-				entityManager.save(entity)
+				rootEntityManager.save(rootEntity)
 					.then(function(info){
-						entity._id = info.id;
-						entity._rev = info.rev;
+						rootEntity._id = info.id;
+						rootEntity._rev = info.rev;
 
-						var childDomain = app.getDomain(child.domainName);
-						if (_.isEmpty(childDomain.getChildren())){
+						if (!_hasChildDomains(child.domainName)){
 							m.hide();
-							self.show();
+
+							setTimeout(function(){
+								timeline.add(child);
+							}, 400);
+
 							return;
 						}
+						timeline.add(child);
+
 						var myCrumbs = _.chain(crumbs)
 							.clone()
 							.value();
 
 						var viewExistingDialog = new ViewExistingDialog({
 							entity: child,
+							rootEntity: rootEntity,
 							crumbs: myCrumbs,
-							backAction: function(){self.show();},
 						});
+
 						viewExistingDialog.show();
 					})
 					.catch(function(err){
