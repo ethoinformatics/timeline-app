@@ -148,7 +148,6 @@ function ViewExistingDialog(opts){
 
 			var m = new CreateSelectDialog({
 				title: title,
-				backAction: self.show.bind(self),
 				domains: myDomains,
 				crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
 			});

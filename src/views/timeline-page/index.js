@@ -83,7 +83,6 @@ function TimelinePage(){
 					.then(function(info){
 						entity._id = info.id;
 						entity._rev = info.rev;
-						console.log('wtf:!!!saved data: ');
 
 						timeline.add(entity);
 
@@ -135,7 +134,7 @@ function TimelinePage(){
 		});
 
 		m.on('delete', function(entity){
-			if (!confirm('Are you sure?')) return;
+			if (!window.confirm('Are you sure?')) return;
 
 			entityManager.remove(entity)
 				.then(function(){
