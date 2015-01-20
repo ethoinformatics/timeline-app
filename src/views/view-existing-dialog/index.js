@@ -78,12 +78,19 @@ function ViewExistingDialog(opts){
 	timeline.on('activity-click', function(d){
 		var m = new ViewExistingDialog({
 			entity: d,
+			crumbs: _.chain(crumbs).clone().value(),
 		});
 
 		m.on('updated', function(){
 			m.hide();
 			self.render();
 		});
+		// m.on('removed', function(){
+		// 	m.hide();
+		// 	setTimeout(function(){
+		// 		timeline.remove(d);
+		// 	}, 400);
+		// });
 
 		m.on('closed', function(){
 			m.remove();
@@ -135,7 +142,7 @@ function ViewExistingDialog(opts){
 			var entityManager = domain.getService('entity-manager');
 			entityManager.remove(entity)
 				.then(function(){
-					self.emit('updated');
+					self.emit('removed', entity);
 					self.hide();
 				});
 		});

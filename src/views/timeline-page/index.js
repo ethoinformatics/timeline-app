@@ -86,11 +86,16 @@ function TimelinePage(){
 
 						timeline.add(entity);
 
-						var viewExistingDialog = new ViewExistingDialog({
+						var dialog = new ViewExistingDialog({
 							entity: entity,
 						});
 
-						viewExistingDialog.show();
+						dialog.on('removed', function(){
+							setTimeout(function(){
+								timeline.remove(entity);
+							}, 400);
+						});
+						dialog.show();
 					})
 					.catch(function(err){
 						console.dir(err);
@@ -117,6 +122,12 @@ function TimelinePage(){
 
 		var m = new ViewExistingDialog({
 			entity: d,
+		});
+
+		m.on('removed', function(){
+			setTimeout(function(){
+				timeline.remove(d);
+			}, 400);
 		});
 
 		m.on('updated', function(){
