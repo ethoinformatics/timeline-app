@@ -25,7 +25,8 @@ function ViewExistingDialog(opts){
 		entity = opts.entity || opts.rootEntity,
 		rootEntity = opts.rootEntity || opts.entity,
 		crumbs = opts.crumbs,
-		domain = app.getDomain(entity.domainName);
+		domain = app.getDomain(entity.domainName),
+		descManager = domain.getService('description-manager');
 
 	crumbs = _.chain(crumbs)
 		.toArray()
@@ -40,8 +41,7 @@ function ViewExistingDialog(opts){
 	}
 
 	function _getLabel(myEntity){
-		return domain.getService('description-manager')
-			.getShortDescription(myEntity);
+		return descManager.getShortDescription(myEntity);
 	}
 
 	var modal;
@@ -51,6 +51,13 @@ function ViewExistingDialog(opts){
 			crumbs: crumbs,
 			domainLabel: domain.label,
 		}));
+
+
+	descManager.getLongDescription(entity)
+		.then(function(description){
+			$content.find('.js-long-description-container')
+				.html(description);
+		});
 
 	var timeline = createTimeline({
 		height: (window.innerHeight-100) /3,
