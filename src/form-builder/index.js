@@ -68,6 +68,10 @@ module.exports.buildDataEntryForm = function(domain, data){
 								.attr('value', codeValue._id)
 								.text(codeValue.text);
 
+							if (data && data[field.name] == codeValue._id){
+								$opt.prop('selected', true);
+							}
+
 							$select.append($opt);
 						});
 				})
