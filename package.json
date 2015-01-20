@@ -33,7 +33,8 @@
     "pouchdb": "^3.0.6",
     "q": "^1.0.1",
     "rgba-generate": "^1.0.0",
-    "vashify": "^0.3.3"
+    "vashify": "^0.3.3",
+    "velocity-animate": "^1.2.1"
   },
   "devDependencies": {
     "nodemon": "^1.2.1"

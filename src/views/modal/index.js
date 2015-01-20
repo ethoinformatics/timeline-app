@@ -1,12 +1,14 @@
 require('./index.less');
 
 var $ = require('jquery'),
+	velocity = require('velocity-animate'),
 	EventEmitter = require('events').EventEmitter,
 	_ = require('lodash'),
 	util = require('util'),
 	modalTemplate = require('./modal.vash');
 
 
+var ANIMATION_DURATION=400;
 var DEFAULTS = {
 	hideOkay: false,
 };
@@ -26,6 +28,7 @@ function Modal(options){
 		title: myTitle,
 		showBackButton: !!options.backAction,
 	}));
+
 
 	$modal.find('.modal-body')
 		.empty()
@@ -66,26 +69,31 @@ function Modal(options){
 	this.hide = this.close = function(){
 		if (!$modal) return;
 
-		$modal.animate({top:window.innerHeight}, 300, function(){
-			$modal.hide();
-			self.emit('closed');
+		velocity($modal, {top:window.innerHeight}, {
+			duration:ANIMATION_DURATION,
+			complete: function(){
+				$modal.hide();
+				self.emit('closed');
+			},
 		});
 	};
 
 	this.remove = this.close = function(){
 		if (!$modal) return;
 
-		$modal.animate({top:window.innerHeight}, 300, function(){
-			$modal.remove();
+		velocity($modal, {top:window.innerHeight+1}, {
+			duration:ANIMATION_DURATION,
+			complete: $modal.remove.bind($modal),
 		});
 	};
 
 	this.show = function(){
 		$modal
-			.css('height', window.innerHeight)
+			.css('height', window.innerHeight+1)
 			.css('top', window.innerHeight)
-			.show()
-			.animate({top:0}, 300);
+			.show();
+
+		velocity($modal, {top:0}, {duration:ANIMATION_DURATION});
 	};
 }
 
