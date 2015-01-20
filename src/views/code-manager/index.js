@@ -1,6 +1,7 @@
 require('./index.less');
 var tmpl = require('./index.vash'),
 	CreateNewDialog = require('create-new-dialog'),
+	EditExistingDialog = require('edit-existing-dialog'),
 	Scroll = require('iscroll'),
 	_ = require('lodash'),
 	$ = require('jquery'),
@@ -37,7 +38,41 @@ function CodeManager(){
 			mouseWheel: true,
 			scrollbars: true,
 		});
-	$codeList.on('click', '.js-delete', function(){
+
+	$codeList.on('click', '.js-item', function(){
+		if (_.isEmpty(_currentEntities)) return;
+
+		var $this = $(this),
+			$item = $this.closest('.item'),
+			_id = $item.data('_id');
+
+		var dialog = new EditExistingDialog({
+				domain: self.currentDomain,
+				entity: _.find(_currentEntities, function(e){return e._id == _id;}),
+			});
+
+		dialog.on('edited', function(data){
+			dialog.hide();
+
+			self.entityManager.save(data)
+				.then(function(){
+					_load();
+				})
+				.catch(function(err){
+					console.error(err);
+				});
+		});
+
+		dialog.on('closed', function(){
+			dialog.remove();
+		});
+
+		dialog.show();
+	});
+
+	$codeList.on('click', '.js-delete', function(ev){
+		ev.stopPropagation();
+
 		if (!window.confirm('Are you sure?')) return;
 
 		var $this = $(this),
@@ -78,7 +113,7 @@ function CodeManager(){
 			});
 
 			createNewDialog.on('closed', function(){
-				self.show();
+				createNewDialog.remove();
 			});
 
 			createNewDialog.show();
@@ -128,6 +163,7 @@ function CodeManager(){
 		return listItemTemplate(viewModel);
 	}
 
+	var _currentEntities;
 	function _load(){
 		$codeList.empty()
 			.append('Loading...');
@@ -135,9 +171,12 @@ function CodeManager(){
 		return self.entityManager.getAll()
 			.then(function(entities){
 				$codeList.empty();
+
 				if (_.isEmpty(entities)){
 					$codeList.append('There are no ' + self.currentDomain.label.toLowerCase() + ' codes.');
 				}
+
+				_currentEntities = entities;
 
 				_.chain(entities)
 					.map(function(entity){

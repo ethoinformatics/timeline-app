@@ -46,7 +46,7 @@ function ViewExistingDialog(opts){
 		}));
 
 	var timeline = createTimeline({
-		height: window.innerHeight *0.72,
+		height: (window.innerHeight-100) /3,
 	});
 
 	var title = _getLabel(entity);
@@ -57,9 +57,11 @@ function ViewExistingDialog(opts){
 			backAction: opts.backAction,
 		});
 
+	modal.on('closed', function(){
+		self.emit('closed');
+	});
 
 	timeline.on('activity-click', function(d){
-		debugger
 		var domain = app.getDomain(d.domainName),
 			entityManager = domain.getService('entity-manager');
 
@@ -67,7 +69,7 @@ function ViewExistingDialog(opts){
 			entity: d,
 			backAction: function(){
 				m.hide();
-				self.show();
+				//self.show();
 			}
 		});
 
@@ -76,15 +78,12 @@ function ViewExistingDialog(opts){
 			self.render();
 
 		});
-		m.show();
-		// m.on('save', function(entity){
-		// 	entityManager.save(entity)
-		// 		.then(function(){
 
-		// 			m.hide();
-		// 			timeline.update();
-		// 		}).done();
-		// });
+		m.on('closed', function(){
+			m.remove();
+		});
+
+		m.show();
 	});
 
 	$content.find('.js-framework-timeline-container')
@@ -94,7 +93,6 @@ function ViewExistingDialog(opts){
 		var myDomains = domain.getChildren();
 		var form = formBuilder.buildDataEntryForm(domain);
 
-		debugger
 		var children = entity.children || [];
 		timeline.clear();
 		timeline.add(children);
@@ -134,7 +132,6 @@ function ViewExistingDialog(opts){
 
 			m.on('created', function(child){
 
-				debugger
 				entity.children = _.chain(entity.children)
 					.toArray()
 					.push(child)
@@ -247,13 +244,8 @@ function ViewExistingDialog(opts){
 		modal.show();
 	};
 
-	this.hide = function(){
-		modal.hide();
-	};
-
-	// modal.on('closed', function(){
-	// 	self.emit('closed');
-	// });
+	this.hide = modal.hide.bind(modal);
+	this.remove = modal.remove.bind(modal);
 }
 
 

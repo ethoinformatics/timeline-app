@@ -23,7 +23,9 @@ var DEFAULTS = {
 		},
 	};
 
+var HEADER_HEIGHT = 100;
 module.exports = function(opts){
 	opts = _.extend({}, DEFAULTS, opts);
+	opts.height =  opts.height || window.innerHeight - HEADER_HEIGHT;
 	return createTimeline(opts);
 };

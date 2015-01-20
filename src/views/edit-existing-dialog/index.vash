@@ -13,7 +13,7 @@
 	</div>
 	<div class="button-container">
 		<div class="button-bar">
-			<button type="button" class="js-save button button-balanced button-block">Create</button>
+			<button type="button" class="js-save button button-balanced button-block">Save</button>
 		</div>
 	</div>
 </div>

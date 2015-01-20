@@ -53,7 +53,13 @@ function CreateSelectDialog(opt){
 		createNewDialog.setCrumbs(myCrumbs);
 
 		createNewDialog.on('created', function(data){
+			createNewDialog.remove();
 			self.emit('created', data);
+		});
+
+		createNewDialog.on('closed', function(){
+			createNewDialog.remove();
+			console.log('removed it');
 		});
 
 		createNewDialog.show();

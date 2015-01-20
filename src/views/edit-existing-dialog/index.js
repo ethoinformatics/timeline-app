@@ -15,8 +15,9 @@ var Modal = require('modal'),
 
 function getTemplate(){ return template; }
 
-function CreateNewDialog(opt){
-	var domain = opt.domain;
+function EditExistingDialog(opt){
+	var entity = opt.entity,
+		domain = app.getDomain(entity.domainName);
 
 	var self = this;
 	EventEmitter.call(self);
@@ -27,9 +28,8 @@ function CreateNewDialog(opt){
 		crumbs = myCrumbs || [];
 	};
 
-	var title =  'Create '+ domain.label;
-
-	var form = formBuilder.buildDataEntryForm(domain);
+	var title =  'Edit '+ domain.label;
+	var form = formBuilder.buildDataEntryForm(domain, entity);
 
 	var template = getTemplate(domain);
 	var $content = $(template({
@@ -91,12 +91,10 @@ function CreateNewDialog(opt){
 		ev.preventDefault();
 		return _handleSave(keepActivityRunning)
 			.then(function(data){
-				console.dir('emiting created');
-				console.dir(data);
-				self.emit('created', data);
+				self.emit('edited', data);
 			})
 			.catch(function(err){
-				console.dir('error in CreateNewDialog');
+				console.dir('error in EditExistingDialog');
 				console.error(err);
 			})
 			.finally(function(){
@@ -125,5 +123,5 @@ function CreateNewDialog(opt){
 }
 
 
-util.inherits(CreateNewDialog, EventEmitter);
-module.exports = CreateNewDialog;
+util.inherits(EditExistingDialog, EventEmitter);
+module.exports = EditExistingDialog;

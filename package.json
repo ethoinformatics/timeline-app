@@ -45,6 +45,7 @@
     "modal": "./src/views/modal/index.js",
     "create-new-dialog": "./src/views/create-new-dialog/index.js",
     "view-existing-dialog": "./src/views/view-existing-dialog/index.js",
+    "edit-existing-dialog": "./src/views/edit-existing-dialog/index.js",
     "activity-filter": "./src/views/activity-filter/index.js",
     "form-builder": "./src/form-builder/index.js",
     "timeline": "./src/timeline.js",

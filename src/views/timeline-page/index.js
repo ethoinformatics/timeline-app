@@ -38,6 +38,9 @@ function TimelinePage(){
 
 	var timeline = createTimeline({
 	});
+	var newActivityDialog = new CreateNewDialog({
+			domains: _getTopLevelDomains(),
+		});
 
 	self.$element = $(pageTemplate({}));
 	self.$element.find('#select-container').append(activityFilter.$element);
@@ -72,10 +75,6 @@ function TimelinePage(){
 
 
 	$('body').on('click','.js-btn-top-level-add', function(){
-			var newActivityDialog = new CreateNewDialog({
-					domains: _getTopLevelDomains(),
-				});
-
 			newActivityDialog.on('created', function(entity){
 				var domain = app.getDomain(entity.domainName);
 				var entityManager = domain.getService('entity-manager');
@@ -141,6 +140,10 @@ function TimelinePage(){
 					m.hide();
 					timeline.remove(entity);
 				}).done();
+		});
+
+		m.on('closed', function(){
+			m.remove();
 		});
 
 		m.show();
