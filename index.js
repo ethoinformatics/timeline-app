@@ -70,7 +70,6 @@ var registry = {
 	setChildDomain: function(parentDomainName, propertyName, childDomain){
 		lookup[parentDomainName]['children-domains'].push(childDomain.name);
 
-	
 		// kind of bootleg...  entity-manager will reference
 		// this sercret value...
 		lookup[childDomain.name]['parent-'+parentDomainName] = propertyName;
@@ -98,7 +97,7 @@ function App(){
 			_isEthoinfoDomain: true,
 			name: domain.name,
 			register: function(serviceName, service){
-				if (serviceName._isEthoinfoDomain){
+				if (serviceName && serviceName._isEthoinfoDomain){
 					registry.setChildDomain(opts.name, 'children', serviceName);
 				} else if (service._isEthoinfoDomain){
 					registry.setChildDomain(opts.name, serviceName, service);

@@ -112,7 +112,13 @@ function ViewExistingDialog(opts){
 		var myDomains = domain.getChildren();
 		var form = formBuilder.buildDataEntryForm(domain);
 
-		var children = entity.children || [];
+		var children = _.chain(entity)
+			.values()
+			.filter(_.isArray)
+			.flatten()
+			.filter(function(val){return val.domainName;})
+			.value();
+
 		timeline.clear();
 		timeline.add(children);
 
