@@ -167,10 +167,10 @@ function ViewExistingDialog(opts){
 
 			m.on('created', function(child){
 
-				entity.children = _.chain(entity.children)
-					.toArray()
-					.push(child)
-					.value();
+				var childDomain = app.getDomain(child.domainName),
+					entityManager = childDomain.getService('entity-manager');
+
+				entityManager.addToParent(entity, child);
 
 				var rootDomain = app.getDomain(rootEntity.domainName),
 					rootEntityManager = rootDomain.getService('entity-manager');
