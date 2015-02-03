@@ -30,7 +30,7 @@ function ViewExistingDialog(opts){
 
 	crumbs = _.chain(crumbs)
 		.toArray()
-		.push({label:_getLabel(entity)})
+		.push({label:_getLabel(entity),})
 		.value();
 
 	EventEmitter.call(self);
@@ -84,6 +84,7 @@ function ViewExistingDialog(opts){
 
 		var m = new ViewExistingDialog({
 			entity: d,
+			rootEntity: rootEntity,
 			crumbs: _.chain(crumbs).clone().value(),
 		});
 
@@ -108,16 +109,21 @@ function ViewExistingDialog(opts){
 	$content.find('.js-framework-timeline-container')
 		.append(timeline.element);
 
-	this.show = function(){
-		var myDomains = domain.getChildren();
-		var form = formBuilder.buildDataEntryForm(domain);
-
-		var children = _.chain(entity)
+	
+	function _getAllChildren(){
+		return _.chain(entity)
 			.values()
 			.filter(_.isArray)
 			.flatten()
 			.filter(function(val){return val.domainName;})
 			.value();
+	}
+
+	this.show = function(){
+		var myDomains = domain.getChildren();
+		var form = formBuilder.buildDataEntryForm(domain);
+
+		var children = _getAllChildren();
 
 		timeline.clear();
 		timeline.add(children);
@@ -126,6 +132,8 @@ function ViewExistingDialog(opts){
 		var $btnSnapshot = $content.find('.js-snapshot'),
 			$btnFollow = $content.find('.js-follow'),
 			$btnAddChild = $content.find('.js-child-add'),
+			$btnViewRaw = $content.find('.js-view-raw'),
+			$btnEdit = $content.find('.js-view-edit'),
 			$btnRemove = $content.find('.js-view-remove');
 
 		if (_.size(myDomains) == 1){
@@ -134,7 +142,16 @@ function ViewExistingDialog(opts){
 			$btnAddChild.hide();
 		}
 
-		var $btnEdit = $content.find('.js-view-edit');
+		$btnViewRaw.click(function(){
+			var $pre = $('<pre></pre>').text(JSON.stringify(rootEntity, '\t', 4));
+			var $div = $('<div></div>').append($pre);
+			var m = new Modal({
+				$content: $div,
+				scroll: true,
+			});
+
+			m.show();
+		});
 
 		$btnEdit.click(function(){
 			var dialog = new EditExistingDialog({entity: entity});

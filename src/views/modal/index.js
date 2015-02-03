@@ -2,6 +2,7 @@ require('./index.less');
 
 var $ = require('jquery'),
 	velocity = require('velocity-animate'),
+	Scroll = require('iscroll'),
 	EventEmitter = require('events').EventEmitter,
 	_ = require('lodash'),
 	util = require('util'),
@@ -93,7 +94,23 @@ function Modal(options){
 			.css('top', window.innerHeight)
 			.show();
 
-		velocity($modal, {top:0}, {duration:ANIMATION_DURATION});
+	
+
+		velocity($modal, {top:0}, {
+			duration:ANIMATION_DURATION,
+			complete: function(){
+				if (options.scroll){
+					var $content = $modal.find('.content');
+					$content
+						.css('height', window.innerHeight-44);
+
+					var scroll = new Scroll($content[0], {
+						mouseWheel: true,
+						scrollbars: true,
+					});
+				}
+			},
+		});
 	};
 }
 
