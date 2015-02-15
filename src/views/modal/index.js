@@ -84,7 +84,9 @@ function Modal(options){
 
 		velocity($modal, {top:window.innerHeight+1}, {
 			duration:ANIMATION_DURATION,
-			complete: $modal.remove.bind($modal),
+			complete: function(){
+				$modal.remove();
+			},
 		});
 	};
 
