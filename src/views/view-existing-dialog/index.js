@@ -15,7 +15,7 @@ var Modal = require('modal'),
 	EditExistingDialog = require('edit-existing-dialog'),
 	template = require('./index.vash');
 
-var CreateSelectDialog = require('../create-select-dialog');
+var CreateSelectMenu = require('../create-select-dialog');
 
 function getTemplate(){ return template; }
 
@@ -182,7 +182,7 @@ function ViewExistingDialog(opts){
 			var descMgr = domain.getService('description-manager');
 			var title = 'Add a child to ' + descMgr.getShortDescription(entity);
 
-			var m = new CreateSelectDialog({
+			var m = new CreateSelectMenu({
 				title: title,
 				domains: myDomains,
 				crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
@@ -230,7 +230,7 @@ function ViewExistingDialog(opts){
 						console.error(err);
 					});
 			});
-			m.show();
+			m.show(ev);
 		});
 
 

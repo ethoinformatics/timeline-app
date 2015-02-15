@@ -4,7 +4,6 @@ var $ = require('jquery'),
 	EventEmitter = require('events').EventEmitter,
 	_ = require('lodash'),
 	util = require('util'),
-	Modal = require('modal'),
 	template = require('./index.vash'),
 	app = require('app'),
 	CreateNewDialog = require('create-new-dialog');
@@ -14,21 +13,15 @@ function CreateSelectDialog(opt){
 	EventEmitter.call(self);
 	opt = Object(opt);
 
-	var title =  opt.title || 'Create';
 	var formDomains = opt.domains || app.getDomains('form-fields');
 
 	var crumbs = opt.crumbs || [];
 	var $element = $(template({
 			activityTypes: formDomains,
-			crumbs: crumbs,
 		})),
-		selectTypeModal = new Modal({
-			title: title,
-			$content: $element,
-			hideOkay: true,
-			backAction: opt.backAction,
-		}),
 		createNewDialog;
+	
+	$('body').append($element);
 
 	$element
 		.find('.js-new-activity')
@@ -65,17 +58,35 @@ function CreateSelectDialog(opt){
 		createNewDialog.show();
 	}
 
-	this.show = function(){
+	function _showMenu(ev){
+		$element
+			.css('top', ev.pageY)
+			.css('right', window.innerWidth - ev.pageX)
+			.show();
+
+		setTimeout(function(){
+				$('body').one('click', function(){
+					$element.hide();
+					self.emit('closed');
+				});
+			},0);
+	}
+
+	this.show = function(ev){
 		if (_.size(formDomains) === 1){
 			_showCreateForm(formDomains[0]);
 		} else {
-			selectTypeModal.show();
+			_showMenu(ev);
 		}
 	};
 
 	this.hide = function(){
-		if (selectTypeModal) selectTypeModal.hide();
+		$element.hide();
 		if (createNewDialog) createNewDialog.hide();
+	};
+	this.remove = function(){
+		$element.remove();
+		if (createNewDialog) createNewDialog.remove();
 	};
 }
 

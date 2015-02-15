@@ -6,7 +6,7 @@ var $ = require('jquery'),
 	app = require('app'),
 	createTimeline = require('timeline'),
 	ActivityFilter = require('activity-filter'),
-	CreateNewDialog = require('../create-select-dialog'),
+	CreateSelectMenu = require('../create-select-dialog'),
 	ViewExistingDialog = require('../view-existing-dialog'),
 	//FormDialog = require('form-dialog'),
 	//sampleData = require('sample-data'),
@@ -38,7 +38,7 @@ function TimelinePage(){
 
 	var timeline = createTimeline({
 	});
-	var newActivityDialog = new CreateNewDialog({
+	var createSelectMenu = new CreateSelectMenu({
 			domains: _getTopLevelDomains(),
 		});
 
@@ -74,8 +74,8 @@ function TimelinePage(){
 	});
 
 
-	$('body').on('click','.js-btn-top-level-add', function(){
-			newActivityDialog.on('created', function(entity){
+	$('body').on('click','.js-btn-top-level-add', function(ev){
+			createSelectMenu.on('created', function(entity){
 				var domain = app.getDomain(entity.domainName);
 				var entityManager = domain.getService('entity-manager');
 
@@ -105,7 +105,7 @@ function TimelinePage(){
 					});
 			});
 
-			newActivityDialog.show();
+			createSelectMenu.show(ev);
 		});
 
 	// longClick(self.$element, '.activity[data-id]', function(){
