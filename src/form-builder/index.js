@@ -3,6 +3,7 @@ require('./index.less');
 var $ = require('jquery'),
 	_ = require('lodash'),
 	template = require('./index.vash'),
+	inlineFormTemplate = require('./inline-create.vash'),
 	app = require('app'),
 	vash = require('vash-runtime'),
 	templates = {
@@ -13,7 +14,10 @@ var $ = require('jquery'),
 	};
 
 vash.helpers.field = function(fieldName, field, data){
-	var t = templates[field.type] || templates.text;
+	var t = templates[field.type] || templates.text,
+		features = field.features || [];
+
+	features = features.map(function(str){return str.toLowerCase();});
 
 	var items = _.chain(field.items)
 		.toArray()
@@ -27,15 +31,17 @@ vash.helpers.field = function(fieldName, field, data){
 
 	return t({
 		name: fieldName,
+		domain: field.domain,
 		label: field.label || fieldName,
 		items: items,
 		value: data ? data[fieldName] : undefined,
+		isInlineCreate: _.contains(features, 'inline-create'),
 	});
 };
 
 
 
-module.exports.buildDataEntryForm = function(domain, data){
+function _buildDataEntryForm(domain, data){
 	var metadata = domain.getService('form-fields');
 	var isNew = !data;
 	data = Object(data);
@@ -91,8 +97,10 @@ module.exports.buildDataEntryForm = function(domain, data){
 				});
 		});
 
+	var $btnInlineCreate = $root.find('.js-inline-create');
 	var $tabButtons = $root.find('.js-tabs *[data-index]');
 	var $tabs = $root.find('.js-tab-container *[data-index]');
+
 	$tabButtons.click(function(){
 		var $this = $(this);
 
@@ -102,9 +110,62 @@ module.exports.buildDataEntryForm = function(domain, data){
 		$($tabs[$this.data('index')]).show();
 	});
 
+	$btnInlineCreate.click(function(ev){
+		ev.preventDefault();
+
+		var $this = $(this),
+			$container = $this.closest('li'),
+			domainName = $container.data('domain-name'),
+			inlineDomain = app.getDomain(domainName),
+			inlineForm = _buildDataEntryForm(inlineDomain),
+			$inlineContainer = $(inlineFormTemplate({
+				label: inlineDomain.label,
+			}));
+
+		$inlineContainer
+			.css('right', window.innerWidth-ev.pageX)
+			.css('top', ev.pageY)
+			.show()
+			.find('.js-form-container')
+			.append(inlineForm.$element);
+
+		$inlineContainer.find('.js-close')
+			.click(function(){
+				$inlineContainer.remove();
+			});
+
+		$inlineContainer.find('.js-inline-save')
+			.click(function(){
+				var entityManager = inlineDomain.getService('entity-manager'),
+					descManager = inlineDomain.getService('description-manager'),
+					entity = inlineForm.getData();
+
+				entityManager.save(entity)
+					.then(function(result){
+						$inlineContainer.remove();
+						
+						var $newOption = $('<option></option>')
+							.text(descManager.getShortDescription(entity))
+							.attr('value', result.id);
+
+						$container
+							.find('select')
+							.append($newOption)
+							.val(result.id);
+					})
+					.catch(function(err){
+						console.error(err);
+					});
+					
+			});
+
+		$('body').append($inlineContainer);
+	});
+
 	if (isNew || _.isEmpty(domain.getService('child-domains'))){
 		$tabButtons.filter('.js-children-tab-item').hide();
 	}
+
 	return {
 		setData: function(formData){
 			$root
@@ -118,7 +179,9 @@ module.exports.buildDataEntryForm = function(domain, data){
 				});
 		},
 		getData: function(){
-			var formData = {};
+			var formData = {
+				domainName: domain.name,
+			};
 			$root
 				.find('*[data-name]')
 				.each(function(){
@@ -133,5 +196,7 @@ module.exports.buildDataEntryForm = function(domain, data){
 		},
 		$element: $root,
 	};
-};
+}
+
+module.exports.buildDataEntryForm = _buildDataEntryForm;
 

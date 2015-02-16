@@ -6,4 +6,30 @@
 	.tab-container{
 		top:44px;
 	}
+	.item-select{
+		&.inline-create-item{
+			.btn-inline-create{
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				z-index: 10;
+			}
+			select{
+				right: 70px;
+			}
+		}
+	}
+}
+
+.inline-create-popup{
+	position: fixed;
+	width: 50%;
+	padding: 4px;
+	border: 1px solid black;
+	z-index: 200;
+	background-color: white;
+	ul.list{
+		margin-top: 44px;
+	}
+
 }
