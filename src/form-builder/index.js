@@ -307,28 +307,6 @@ function _buildDataEntryForm(domain, data, fieldFilter){
 			.click(function(){
 				$searchPopup.remove();
 				_showCreatePopup();
-
-				// var entityManager = inlineDomain.getService('entity-manager'),
-				// 	descManager = inlineDomain.getService('description-manager'),
-				// 	entity = inlineCreateForm.getData();
-
-				// entityManager.save(entity)
-				// 	.then(function(result){
-				// 		$inlineContainer.remove();
-						
-				// 		var $newOption = $('<option></option>')
-				// 			.text(descManager.getShortDescription(entity))
-				// 			.attr('value', result.id);
-
-				// 		$container
-				// 			.find('select')
-				// 			.append($newOption)
-				// 			.val(result.id);
-				// 	})
-				// 	.catch(function(err){
-				// 		console.error(err);
-				// 	});
-					
 			});
 
 		$('body').append($searchPopup);
