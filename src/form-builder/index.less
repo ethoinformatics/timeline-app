@@ -22,14 +22,37 @@
 }
 
 .inline-create-popup{
+	.form-container{
+		margin-top: 44px;
+		margin-bottom: 0px;
+	}
+}
+
+.inline-create-popup,
+.inline-search-popup{
 	position: fixed;
-	width: 50%;
+	width: 75%;
 	padding: 4px;
 	border: 1px solid black;
 	z-index: 200;
 	background-color: white;
-	ul.list{
-		margin-top: 44px;
+	.search-criteria{
+		ul.list.criteria-header{
+			margin-top: 44px;
+			margin-bottom: 0px;
+		}
+	}
+	ul.list.result-header{
+		margin-bottom: 0px;
+	}
+
+	.result-scroll-wrapper{
+		overflow: relative;
+		height:250px;
+		overflow: hidden;
+		.result-container{
+			border: 1px solid #f5f5f5;
+		}
 	}
 
 }

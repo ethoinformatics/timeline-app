@@ -52,7 +52,6 @@ function CreateSelectDialog(opt){
 
 		createNewDialog.on('closed', function(){
 			createNewDialog.remove();
-			console.log('removed it');
 		});
 
 		createNewDialog.show();

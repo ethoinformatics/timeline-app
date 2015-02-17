@@ -53,8 +53,12 @@ function ViewExistingDialog(opts){
 		}));
 
 
+	var myDomains = domain.getChildren(),
+		$jsToolbar = $content.find('.js-toolbar');
+
 	descManager.getLongDescription(entity)
 		.then(function(description){
+			console.dir('setting long description: ' + description);
 			$content.find('.js-long-description-container')
 				.html(description);
 		});
@@ -120,7 +124,6 @@ function ViewExistingDialog(opts){
 	}
 
 	this.show = function(){
-		var myDomains = domain.getChildren();
 		var form = formBuilder.buildDataEntryForm(domain);
 
 		var children = _getAllChildren();

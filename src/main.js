@@ -4,8 +4,8 @@ var $ = require('jquery'),
 	CodeManager = require('./views/code-manager/'),
 	updateAppCheck = require('./update-app-check'),
 	SideMenu = require('./side-menu.js'),
-	ready = require('dom-ready'),
-	activityLocationWatch = require('./activity-location-watch');
+	ready = require('dom-ready');
+	//activityLocationWatch = require('./activity-location-watch');
 
 
 ready(function appLoad(){
@@ -36,7 +36,7 @@ ready(function appLoad(){
 	});
 
 	updateAppCheck();
-	activityLocationWatch();
+	//activityLocationWatch();
 
 });
 

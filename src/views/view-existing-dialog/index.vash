@@ -12,7 +12,7 @@
 	</div>
 
 	 <div class="js-form">
-		<div class="toolbar">
+		<div class="js-toolbar toolbar">
 			<button type="button" class="js-child-add child-add button button-balanced button-small">Add</button>
 		</div>
 	</div>

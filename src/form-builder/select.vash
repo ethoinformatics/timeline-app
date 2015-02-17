@@ -9,7 +9,7 @@
 		})
 	</select>
 	@if (model.isInlineCreate){
-		<button class="btn-inline-create js-inline-create button button-small button-balanced" type="button">Add New</button>
+		<button class="btn-inline-create js-inline-create button button-small button-balanced icon-left ion-search" type="button"></button>
 	}
 </li>
 
