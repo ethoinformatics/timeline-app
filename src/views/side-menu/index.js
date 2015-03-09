@@ -1,4 +1,4 @@
-var angular = require('angular'),
+var 
 	velocity = require('velocity-animate'),
 	$ = require('jquery'),
 	q = require('q'),
@@ -8,14 +8,6 @@ var angular = require('angular'),
 	eventEmitter = new EventEmitter(),
 	template = require('./index.vash');
 
-var mod = angular.module('ethoSideMenu', ['ionic']);
-
-mod.controller('ethoSideMenuController', function($scope, $ionicSideMenuDelegate){
-	$scope.toggleLeftSideMenu = function() {
-		console.dir('hi');
-		$ionicSideMenuDelegate.toggleLeft();
-	};
-});
 
 
 function SideMenu(opt){
@@ -23,11 +15,6 @@ function SideMenu(opt){
 	var self = new EventEmitter();
 
 	self.$element = $(template({}));
-
-	process.nextTick(function(){
-		angular.bootstrap($('.js-side-menu')[0], ['ethoSideMenu']);
-		self.emit('ready');
-	});
 
 	self.$element.on('click', '.js-upload', function(ev){
 			self.emit('upload-click', ev);
