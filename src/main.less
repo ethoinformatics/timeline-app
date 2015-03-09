@@ -1,0 +1,65 @@
+#main-container{
+	border-left: 1px solid white;
+	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	position:fixed;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+	z-index: 10;
+	width: 100%;
+
+	.bar-header{
+		position:absolute;
+		display:block;
+	}
+
+	#main-content{
+		background-color:orange;
+		.relay-content{
+		}
+
+		position:relative;
+		width: 100%;
+		height: 100%;
+
+		top:44px;
+		overflow: hidden;
+		padding: 0;
+		margin: 0;
+		.card{
+		}
+
+		.workflow-scroll-wrapper{
+			position:relative;
+			width: 100%;
+			height: 100%;
+			#workflow-container{
+				position:relative;
+				width:100%;
+				min-height:100%;
+			}
+		}
+
+		#modal-container{
+			position:absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			z-index:101;
+		}
+	}
+}
+#left-menu{
+	z-index: 1;
+	overflow:hidden;
+	position:absolute;
+	top:0;
+	bottom:0;
+	width:240px;
+	.bar-header{
+		height:44px;
+		position:relative;
+	}
+}

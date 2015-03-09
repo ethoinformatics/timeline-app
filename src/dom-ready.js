@@ -1,16 +1,27 @@
-var angular = require('angular'),
-	q = require('q'),
+var q = require('q'),
 	d = q.defer(),
 	$ = require('jquery'),
 	readyCallbacks = $.Callbacks();
 
-angular.module('my-dom-ready', ['ionic'])
-	.run(['$ionicPlatform', function($ionicPlatform){
-		$ionicPlatform.ready(readyCallbacks.fire.bind(readyCallbacks));
-		d.resolve();
-	}]);
-
-angular.bootstrap(window.document.body, ['my-dom-ready']);
-
 module.exports = readyCallbacks.add.bind(readyCallbacks);
 module.exports.promise = d.promise;
+
+$(function(){
+	window.isCordova = false;
+
+    if(document.URL.indexOf("http://") === -1 && document.URL.indexOf("https://") === -1) {
+		window.isCordova = true;
+	}
+
+	if(window.isCordova) {
+		document.addEventListener("deviceready", onDeviceReady, false);
+	 } else {
+		onDeviceReady();
+	}
+
+});
+
+function onDeviceReady(){
+	readyCallbacks.fire();
+	d.resolve();
+}

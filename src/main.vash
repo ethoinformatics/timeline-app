@@ -1,0 +1,9 @@
+<div id="main-container">
+	<div class="bar bar-header bar-stable">
+	  <button class="js-show-left-menu button button-icon icon ion-navicon"></button>
+	  <h1 class="title">Ethoinformatics</h1>
+	  <button class="js-btn-top-level-add button button-balanced">New</button>
+	</div>
+	<div id="main-content" class="pane">
+	</div>
+</div>

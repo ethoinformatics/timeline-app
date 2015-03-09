@@ -1,0 +1,19 @@
+<div id="left-menu" class="js-side-menu">
+	<div class="bar bar-header bar-stable">
+	  <h1 id="left-title" class="title"></h1>
+	</div>
+	<ul class="list stable">
+		<ul class="list">
+			<li class="js-upload item item-icon-left">
+				<i class="icon ion-android-sync"></i>
+				Data sync
+				<span class="item-note">Sync to a server</span>
+			</li>
+			<li class="js-code-manager item item-icon-left">
+				<i class="icon ion-code-working"></i>
+				Codes
+				<span class="item-note">Manage coded fields</span>
+			</li>
+		</ul>
+	</ul>
+</div>
