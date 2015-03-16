@@ -1,14 +1,7 @@
-var 
-	velocity = require('velocity-animate'),
+var velocity = require('velocity-animate'),
 	$ = require('jquery'),
-	q = require('q'),
-	activityId,
-	id = 0,
 	EventEmitter = require('events').EventEmitter,
-	eventEmitter = new EventEmitter(),
 	template = require('./index.vash');
-
-
 
 function SideMenu(opt){
 	var $content = $(opt.content);

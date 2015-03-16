@@ -39,7 +39,7 @@ function CrudManager(domainName){
 	};
 	self.addToParent = function(parent, child){
 
-		var app = require('app'),
+		var app = require('app')(),
 			childDomain = app.getDomain(domainName);
 
 		// sorry, cheap hack

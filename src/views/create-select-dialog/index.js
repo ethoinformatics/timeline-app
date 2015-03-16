@@ -5,7 +5,7 @@ var $ = require('jquery'),
 	_ = require('lodash'),
 	util = require('util'),
 	template = require('./index.vash'),
-	app = require('app'),
+	app = require('app')(),
 	CreateNewDialog = require('create-new-dialog');
 
 function CreateSelectDialog(opt){

@@ -8,7 +8,7 @@ var PouchDb = require('pouchdb'),
 	$ = require('jquery'),
 	storage = require('jocal'),
 	passwordStore = storage.bind(null, 'etho-pw'),
-	app = require('app'),
+	app = require('app')(),
 	Modal = require('modal');
 
 function UploadDialog(){

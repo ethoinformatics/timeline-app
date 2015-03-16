@@ -3,7 +3,7 @@ require('./index.less');
 var $ = require('jquery'),
 	_ = require('lodash'),
 	q = require('q'),
-	app = require('app'),
+	app = require('app')(),
 	createTimeline = require('timeline'),
 	ActivityFilter = require('activity-filter'),
 	CreateSelectMenu = require('../create-select-dialog'),

@@ -5,7 +5,7 @@ var _ = require('lodash'),
 function DescriptionManager(domainName){
 	var self = this;
 
-	var app = require('app');
+	var app = require('app')();
 	var domain = app.getDomain(domainName),
 		fields = domain.getService('form-fields');
 

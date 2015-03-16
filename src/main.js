@@ -1,4 +1,6 @@
 require('./main.less');
+require('./ionic.css');
+debugger;
 
 var $ = require('jquery'),
 	ActivityPage = require('./views/timeline-page/'),
@@ -32,10 +34,12 @@ ready(function appLoad(){
 	$body.find('#main-content').append(activityPage.$element);
 
 	sideMenu.on('upload-click', function(){
+		sideMenu.close();
 		uploadDialog.show();
 	});
 
 	sideMenu.on('code-manager-click', function(){
+		sideMenu.close();
 		codeManager.show();
 	});
 

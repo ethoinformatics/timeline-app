@@ -9,7 +9,7 @@ var tmpl = require('./index.vash'),
 	util = require('util'),
 	Modal = require('modal'),
 	listItemTemplate = require('./list-item-template.vash'),
-	app = require('app');
+	app = require('app')();
 
 function CodeManager(){
 	EventEmitter.call(this);

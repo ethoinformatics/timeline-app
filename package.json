@@ -2,14 +2,13 @@
   "name": "ethoinfo-framework",
   "version": "0.0.0",
   "description": "This sample uses browserify to organize the code in to modules, vash for client side rendering of templates and jQuery for everything else",
-  "main": "index.js",
+  "main": "src/registrar.js",
+  "browserify":{
+	  "transform": ["vashify", "node-lessify"]
+  },
   "scripts": {
     "start": "./node_modules/.bin/nodemon -e js,vash,less ./bundler.js",
     "deploy": "cp -r public/* ./dist/"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:ethoinformatics/sample-ui-browserify.git"
   },
   "author": "ethoformatics",
   "license": "none",
@@ -40,7 +39,7 @@
     "nodemon": "^1.2.1"
   },
   "browser": {
-    "angular": "./src/angular.js",
+    "app": "./src/app.js",
     "dom-ready": "./src/dom-ready.js",
     "geolocation": "./src/geolocation.js",
     "modal": "./src/views/modal/index.js",
