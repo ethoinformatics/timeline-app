@@ -1,4 +1,4 @@
-var app = require('app'),
+var app = require('app')(),
 	createTimeline = require('d3-timeline'),
 	_ = require('lodash');
 

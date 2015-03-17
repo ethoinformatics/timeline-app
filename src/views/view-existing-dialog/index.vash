@@ -7,23 +7,46 @@
 			<a href="#"></a>
 		</div>
 	</div>
-	<div class="js-long-description-container long-description-container">
-		i'm a place holder.
+	<div>
+		<ul class="etho-tabs">
+			<li class="js-etho-tab selected" data-tabclass="tab-timeline">
+				Timeline
+			</li>
+			<li class="js-etho-tab" data-tabclass="tab-map">
+				Map
+			</li>
+			<li class="js-etho-tab" data-tabclass="tab-notes">
+				Notes
+			</li>
+		</ul>
 	</div>
+	<div class="js-tabcontainer etho-tabcontainer">
+		<div class="tab-timeline">
+			<div class="js-long-description-container long-description-container">
+				i'm a place holder.
+			</div>
 
-	 <div class="js-form">
-		<div class="js-toolbar toolbar">
-			<button type="button" class="js-child-add child-add button button-balanced button-small">Add</button>
+			 <div class="js-form">
+				<div class="js-toolbar toolbar">
+					<button type="button" class="js-child-add child-add button button-balanced button-small">Add</button>
+				</div>
+			</div>
+			<div class="js-framework-timeline-container framework-timeline-container">
+			</div>
+			<div class="button-container">
+				<div class="button-bar">
+					<!-- <button type="button" class="js-view-stop button-small button button-balanced">Stop @model.domainLabel</button> -->
+					<button type="button" class="js-view-edit button-small button button-energized">Edit @model.domainLabel</button>
+					<button type="button" class="js-view-remove button-small button button-assertive">Remove @model.domainLabel</button>
+					<button type="button" class="js-view-raw button-small button button-royal">View Raw Data</button>
+				</div>
+			</div>
 		</div>
-	</div>
-	<div class="js-framework-timeline-container framework-timeline-container">
-	</div>
-	<div class="button-container">
-		<div class="button-bar">
-			<!-- <button type="button" class="js-view-stop button-small button button-balanced">Stop @model.domainLabel</button> -->
-			<button type="button" class="js-view-edit button-small button button-energized">Edit @model.domainLabel</button>
-			<button type="button" class="js-view-remove button-small button button-assertive">Remove @model.domainLabel</button>
-			<button type="button" class="js-view-raw button-small button button-royal">View Raw Data</button>
+		<div class="tab-map">
+			i'm the map tab
+		</div>
+		<div class="tab-notes">
+			i'm the notes tab
 		</div>
 	</div>
 </div>

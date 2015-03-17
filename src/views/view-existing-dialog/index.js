@@ -49,15 +49,23 @@ function ViewExistingDialog(opts){
 			isNew: true,
 			crumbs: crumbs,
 			domainLabel: domain.label,
-		}));
+		})),
+		$tabContainer = $content.find('.js-tabcontainer');
 
+	$content.find('.js-etho-tab').click(function(){
+		var $this = $(this),
+			tabClass = $this.data('tabclass');
 
-	var myDomains = domain.getChildren(),
-		$jsToolbar = $content.find('.js-toolbar');
+		$this.siblings().removeClass('selected');
+		$this.addClass('selected');
+		$tabContainer.children().hide();
+		$tabContainer.find('.'+tabClass).show();
+	});
+
+	var myDomains = domain.getChildren();
 
 	descManager.getLongDescription(entity)
 		.then(function(description){
-			console.dir('setting long description: ' + description);
 			$content.find('.js-long-description-container')
 				.html(description);
 		});

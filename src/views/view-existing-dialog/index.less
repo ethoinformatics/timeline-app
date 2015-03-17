@@ -1,4 +1,35 @@
+
 .activity-form{
+	.etho-tabs{
+		@borderColor: #a4a4a4;
+		background-color: #f8f8f8;
+		color: #444;
+		padding-left: 4px;
+		border-bottom: 1px solid @borderColor;
+		height: 37px;
+
+		li{
+			display: inline-block;
+			width:25%;
+			padding: 8px;
+			max-width: 105px;
+			text-align:center;
+		}
+		li.selected{
+			background-color: white;
+			border-radius: 6px 6px 0 0;
+			border: 1px solid @borderColor;
+			border-bottom: none;
+		}
+	}
+
+	.etho-tabcontainer{
+		.tab-map,
+		.tab-notes{
+			display:none;
+		}
+	}
+
 	.button-container{
 		background-color: #f5f5f5;
 
