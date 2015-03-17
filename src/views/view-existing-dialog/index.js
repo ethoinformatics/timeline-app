@@ -1,6 +1,7 @@
 require('./index.less');
 
 var Modal = require('modal'),
+	MapView = require('map'),
 	_ = require('lodash'),
 	q = require('q'),
 	$ = require('jquery'),
@@ -51,6 +52,10 @@ function ViewExistingDialog(opts){
 			domainLabel: domain.label,
 		})),
 		$tabContainer = $content.find('.js-tabcontainer');
+	
+	var map = new MapView();
+	$tabContainer.find('.tab-map').append(map.$element);
+
 
 	$content.find('.js-etho-tab').click(function(){
 		var $this = $(this),
@@ -60,6 +65,8 @@ function ViewExistingDialog(opts){
 		$this.addClass('selected');
 		$tabContainer.children().hide();
 		$tabContainer.find('.'+tabClass).show();
+
+		map.load();
 	});
 
 	var myDomains = domain.getChildren();
