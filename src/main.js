@@ -1,6 +1,4 @@
 require('./main.less');
-require('./ionic.css');
-debugger;
 
 var $ = require('jquery'),
 	ActivityPage = require('./views/timeline-page/'),
