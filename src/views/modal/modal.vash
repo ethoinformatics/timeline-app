@@ -1,9 +1,9 @@
 <div style="display:none;" class="modal">
 	<div class="bar bar-header bar-dark">
-	@if (model.showBackButton){
-	<a class="js-back button icon-left ion-chevron-left button-clear button-light"></a>
-	}
-	  <h1 class="title">@model.title</h1>
+		@if (model.showBackButton){
+		<a class="js-back button icon-left ion-chevron-left button-clear button-light"></a>
+		}
+		<span class="js-header-placeholder"></span>
 	  <button class="js-close button icon ion-close"></button>
 	</div>
 	<div class="content has-header">

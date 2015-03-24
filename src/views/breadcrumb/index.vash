@@ -1,0 +1,8 @@
+<div class="js-Breadcrumb">
+	<div class="breadcrumb flat">
+		@model.crumbs.forEach(function(crumb){
+			<a href="#">@crumb.label</a>
+		})
+		<a href="#"></a>
+	</div>
+</div>

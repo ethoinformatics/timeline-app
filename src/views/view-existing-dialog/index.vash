@@ -1,13 +1,5 @@
 <div class="activity-form">
-	<div class="js-Breadcrumb">
-		<div class="breadcrumb flat">
-			@model.crumbs.forEach(function(crumb){
-				<a href="#">@crumb.label</a>
-			})
-			<a href="#"></a>
-		</div>
-	</div>
-	<div>
+	<div class="etho-header">
 		<ul class="etho-tabs">
 			<li class="js-etho-tab selected" data-tabclass="tab-timeline">
 				Timeline
@@ -15,8 +7,8 @@
 			<li class="js-etho-tab" data-tabclass="tab-map">
 				Map
 			</li>
-			<li class="js-etho-tab" data-tabclass="tab-notes">
-				Notes
+			<li class="js-etho-tab" data-tabclass="tab-edit">
+				Edit
 			</li>
 		</ul>
 	</div>
@@ -33,19 +25,18 @@
 			</div>
 			<div class="js-framework-timeline-container framework-timeline-container">
 			</div>
-			<div class="button-container">
-				<div class="button-bar">
-					<!-- <button type="button" class="js-view-stop button-small button button-balanced">Stop @model.domainLabel</button> -->
-					<button type="button" class="js-view-edit button-small button button-energized">Edit @model.domainLabel</button>
-					<button type="button" class="js-view-remove button-small button button-assertive">Remove @model.domainLabel</button>
-					<button type="button" class="js-view-raw button-small button button-royal">View Raw Data</button>
-				</div>
-			</div>
+			<!-- <div class="button-container"> -->
+			<!-- 	<div class="button-bar"> -->
+			<!-- 		<1!-- <button type="button" class="js-view-stop button-small button button-balanced">Stop @model.domainLabel</button> --1> -->
+			<!-- 		<button type="button" class="js-view-edit button-small button button-energized">Edit @model.domainLabel</button> -->
+			<!-- 		<button type="button" class="js-view-remove button-small button button-assertive">Remove @model.domainLabel</button> -->
+			<!-- 		<button type="button" class="js-view-raw button-small button button-royal">View Raw Data</button> -->
+			<!-- 	</div> -->
+			<!-- </div> -->
 		</div>
 		<div class="tab-map">
 		</div>
-		<div class="tab-notes">
-			i'm the notes tab
+		<div class="tab-edit">
 		</div>
 	</div>
 </div>

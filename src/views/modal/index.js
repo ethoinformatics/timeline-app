@@ -16,20 +16,26 @@ var DEFAULTS = {
 
 function Modal(options){
 	var self = this, $modal;
+	var $header;
+
+	if (options.title){
+		$header = $('<h1 class="title"></h1>').text(options.title);
+	} else {
+		$header = options.$header;
+	}
 
 	options = _.extend({}, DEFAULTS, options);
 
 	options = Object(options);
 	EventEmitter.call(self);
 
-	var myTitle = myTitle || options.title,
-		$myContent = $myContent || options.$content;
+	var $myContent = $myContent || options.$content;
 
 	$modal = $(modalTemplate({
-		title: myTitle,
 		showBackButton: !!options.backAction,
 	}));
 
+	$modal.find('.js-header-placeholder').replaceWith($header);
 
 	$modal.find('.modal-body')
 		.empty()

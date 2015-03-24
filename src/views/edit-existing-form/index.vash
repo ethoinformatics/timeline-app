@@ -1,0 +1,13 @@
+<div>
+	<div class="activity-form">
+		 <div class="js-form">
+		</div>
+		<div class="js-header header">
+		</div>
+		<div class="button-container">
+			<div class="button-bar">
+				<button type="button" class="js-save button button-balanced button-block">Save</button>
+			</div>
+		</div>
+	</div>
+</div>

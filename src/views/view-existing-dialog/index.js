@@ -10,9 +10,11 @@ var Modal = require('modal'),
 	createTimeline = require('timeline'),
 	util = require('util'),
 	app = require('app')(),
+	Breadcrumb = require('breadcrumb'),
 	EventEmitter = require('events').EventEmitter,
 	randomColor = require('rgba-generate')(0.8),
 	EditExistingDialog = require('edit-existing-dialog'),
+	EditExistingForm = require('edit-existing-form'),
 	template = require('./index.vash');
 
 var CreateSelectMenu = require('../create-select-dialog');
@@ -28,12 +30,13 @@ function ViewExistingDialog(opts){
 		domain = app.getDomain(entity.domainName),
 		descManager = domain.getService('description-manager');
 
+	EventEmitter.call(self);
 	crumbs = _.chain(crumbs)
 		.toArray()
 		.push({label:_getLabel(entity),})
 		.value();
 
-	EventEmitter.call(self);
+	var breadcrumb = new Breadcrumb({crumbs: crumbs});
 
 	function _hasChildDomains(domainName){
 		var childDomain = app.getDomain(domainName);
@@ -56,6 +59,8 @@ function ViewExistingDialog(opts){
 	var map = new MapView();
 	$tabContainer.find('.tab-map').append(map.$element);
 
+	var editForm = new EditExistingForm({entity: entity});
+	$tabContainer.find('.tab-edit').append(editForm.$element);
 
 	$content.find('.js-etho-tab').click(function(){
 		var $this = $(this),
@@ -83,7 +88,7 @@ function ViewExistingDialog(opts){
 
 	var title = _getLabel(entity);
 	modal = new Modal({
-			title: title,
+			$header: breadcrumb.$element,
 			$content: $content,
 			hideOkay: true,
 			backAction: opts.backAction,
@@ -249,8 +254,6 @@ function ViewExistingDialog(opts){
 			});
 			m.show(ev);
 		});
-
-
 
 		function _handleSave(keepOpen){
 			var now = Date.now();

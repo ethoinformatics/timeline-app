@@ -1,77 +1,3 @@
-
-.activity-form{
-
-	.etho-header{
-		background-color: #f8f8f8;
-		padding-top:8px;
-
-		.etho-tabs{
-			@borderColor: #a4a4a4;
-			background-color: #f8f8f8;
-			color: #444;
-			padding-left: 4px;
-			border-bottom: 1px solid @borderColor;
-			height: 37px;
-
-			li{
-				display: inline-block;
-				width:25%;
-				padding: 8px;
-				max-width: 105px;
-				text-align:center;
-			}
-			li.selected{
-				background-color: white;
-				border-radius: 6px 6px 0 0;
-				border: 1px solid @borderColor;
-				border-bottom: none;
-			}
-		}
-	}
-
-	.etho-tabcontainer{
-		.tab-map{
-			overflow: hidden;
-		}
-		.tab-map,
-		.tab-edit{
-			display:none;
-		}
-	}
-
-	.button-container{
-		background-color: #f5f5f5;
-
-			position: relative;
-			left:0;
-			right:0;
-			bottom:0;
-
-		.button-bar{
-			padding:20px;
-			.button-tool{
-				opacity: .7
-			}
-
-		}
-	}
-	.long-description-container{
-		margin: 8px;
-	}
-}
-
-
-
-.toolbar{
-	height: 36px;
-	.child-add{
-		margin-top: 10px;
-		margin-right: 10px;
-		padding-left: 10px;
-		padding-right: 10px;
-		float:right;
-	}
-}
 .breadcrumb {
 	/*centering*/
 	display: inline-block;
@@ -79,7 +5,11 @@
 	box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.35);
 	overflow: hidden;
 	border-radius: 5px;
+	font-style: bold;
 }
+
+@background-color: #444;
+@color: white;
 
 .breadcrumb a {
 	text-decoration: none;
@@ -88,11 +18,10 @@
 	float: left;
 	font-size: 12px;
 	line-height: 36px;
-	color: white;
+	color: @color;
 	/*need more margin on the left of links to accomodate the numbers*/
 	padding: 0 10px 0 30px;
-	background: #666;
-	background: linear-gradient(#666, #333);
+	background: @background-color;
 	position: relative;
 }
 /*since the first link does not have a triangle before it we can reduce the left padding to make it look consistent with other links*/
@@ -110,8 +39,6 @@
 
 /*hover/active styles*/
 .breadcrumb a.active{
-	background: #333;
-	background: linear-gradient(#333, #000);
 }
 .breadcrumb a.active:after{
 	background: #333;
@@ -167,15 +94,15 @@
 
 
 .flat a, .flat a:after {
-	background: white;
-	color: black;
+	background: @background-color;
+	color: @color;
 	transition: all 0.5s;
 }
 .flat a:before {
-	background: white;
-	box-shadow: 0 0 0 1px #ccc;
+	background: @background-color;
+	box-shadow: 0 0 0 1px green;
 }
 .flat a:hover, .flat a.active, 
 .flat a:hover:after, .flat a.active:after{
-	background: #9EEB62;
+	background: red;
 }
