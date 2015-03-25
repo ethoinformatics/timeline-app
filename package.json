@@ -5,6 +5,7 @@
   "main": "src/registrar.js",
   "browserify": {
     "transform": [
+      "es6ify",
       "vashify",
       "node-lessify"
     ]
@@ -23,7 +24,7 @@
     "browserify": "^6.3.4",
     "d3-timeline": "git+ssh://git@github.com/ethoinformatics/d3-timeline#b53d26133bccbcb98625d1f091d603db779d3452",
     "date-math": "0.0.1",
-    "ezuuid": "0.0.1",
+    "es6ify": "^1.6.0",
     "iscroll": "^5.1.3",
     "jocal": "0.0.1",
     "jquery": "^2.1.1",
