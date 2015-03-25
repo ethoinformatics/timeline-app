@@ -33,7 +33,7 @@ function ViewExistingDialog(opts){
 	EventEmitter.call(self);
 	crumbs = _.chain(crumbs)
 		.toArray()
-		.push({label:_getLabel(entity),})
+		.push({label:_getLabel(entity), color: entity.color})
 		.value();
 
 	var breadcrumb = new Breadcrumb({crumbs: crumbs});

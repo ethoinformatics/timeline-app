@@ -4,7 +4,6 @@ var Modal = require('modal'),
 	_ = require('lodash'),
 	q = require('q'),
 	$ = require('jquery'),
-	ezuuid = require('ezuuid'),
 	formBuilder = require('form-builder'),
 	geolocation = require('geolocation'),
 	util = require('util'),
@@ -53,7 +52,7 @@ function CreateNewDialog(opt){
 			d = q.defer();
 
 		var data = {
-				id: ezuuid(),
+				id: 'um',
 				color: randomColor().toHex(),
 				domainName: domain.name,
 				beginTime: now,

@@ -1,8 +1,8 @@
 <div class="js-Breadcrumb">
-	<div class="breadcrumb flat">
-		@model.crumbs.forEach(function(crumb){
-			<a href="#">@crumb.label</a>
-		})
-		<a href="#"></a>
+	<div class="js-crumbs breadcrumb flat">
+		<a href="#"><i class="icon ion-home"></i></a>
+		<span class="spacer">
+			<span class="space"></span>
+		</span>
 	</div>
 </div>
