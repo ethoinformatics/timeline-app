@@ -5,7 +5,6 @@
   "main": "src/registrar.js",
   "browserify": {
     "transform": [
-      "es6ify",
       "vashify",
       "node-lessify"
     ]

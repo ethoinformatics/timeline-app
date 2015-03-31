@@ -87,6 +87,8 @@ function DescriptionManager(domainName){
 								return pair[0].name == fieldName;
 							});
 
+						if (!codeLookup) return 'invalid value';
+
 						var code = _.find(codeLookup[1], function(code){
 								return code.value == value;
 							});

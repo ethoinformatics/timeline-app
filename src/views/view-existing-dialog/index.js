@@ -21,30 +21,51 @@ var CreateSelectMenu = require('../create-select-dialog');
 
 function getTemplate(){ return template; }
 
-
 function ViewExistingDialog(opts){
 	var self = this,
-		entity = opts.entity || opts.rootEntity,
+		entity,
 		rootEntity = opts.rootEntity || opts.entity,
 		crumbs = opts.crumbs,
-		domain = app.getDomain(entity.domainName),
-		descManager = domain.getService('description-manager');
+		domain,
+		descManager,
+		editForm;
+
+	_changeEntity(opts.entity || opts.rootEntity);
 
 	EventEmitter.call(self);
 	crumbs = _.chain(crumbs)
 		.toArray()
-		.push({label:_getLabel(entity), color: entity.color})
+		.push({context: entity, label:_getLabel(entity), color: entity.color})
 		.value();
 
 	var breadcrumb = new Breadcrumb({crumbs: crumbs});
+	breadcrumb.on('close', function(data){
+		modal.remove();
+	});
 
-	function _hasChildDomains(domainName){
-		var childDomain = app.getDomain(domainName);
-		return !_.isEmpty(childDomain.getChildren());
+	breadcrumb.on('selection', function(data){
+		if (!_changeEntity(data.context)) return;
+
+		_update();
+	});
+
+	function _changeEntity(entityToLoad){
+		if (entityToLoad == entity) return false;
+
+		entity = entityToLoad;
+		domain = app.getDomain(entity.domainName);
+		descManager = domain.getService('description-manager');
+
+		return true;
 	}
 
 	function _getLabel(myEntity){
 		return descManager.getShortDescription(myEntity);
+	}
+
+	function _loadEditForm(){
+		editForm = new EditExistingForm({entity: entity});
+		$tabContainer.find('.tab-edit').empty().append(editForm.$element);
 	}
 
 	var modal;
@@ -59,12 +80,23 @@ function ViewExistingDialog(opts){
 	var map = new MapView();
 	$tabContainer.find('.tab-map').append(map.$element);
 
-	var editForm = new EditExistingForm({entity: entity});
-	$tabContainer.find('.tab-edit').append(editForm.$element);
 
+	var currentTab = 'tab-timeline';
 	$content.find('.js-etho-tab').click(function(){
 		var $this = $(this),
 			tabClass = $this.data('tabclass');
+
+		if (currentTab == 'tab-edit'){
+			editForm.updateFields();
+
+			_doSave()
+				.then(function(){
+					_update(true);
+				})
+				.catch(function(err){
+					console.error(err);
+				});
+		}
 
 		$this.siblings().removeClass('selected');
 		$this.addClass('selected');
@@ -72,21 +104,27 @@ function ViewExistingDialog(opts){
 		$tabContainer.find('.'+tabClass).show();
 
 		map.load();
+
+		currentTab = tabClass;
 	});
 
 	var myDomains = domain.getChildren();
 
-	descManager.getLongDescription(entity)
-		.then(function(description){
-			$content.find('.js-long-description-container')
-				.html(description);
-		});
+	function _setTitleContent(){
+		descManager.getLongDescription(entity)
+			.then(function(description){
+				$content.find('.js-long-description-container')
+					.html(description);
+			})
+			.catch(function(err){
+				console.error(err);
+			});
+	}
 
 	var timeline = createTimeline({
 		height: (window.innerHeight-100) /3,
 	});
 
-	var title = _getLabel(entity);
 	modal = new Modal({
 			$header: breadcrumb.$element,
 			$content: $content,
@@ -99,40 +137,25 @@ function ViewExistingDialog(opts){
 	});
 
 	timeline.on('activity-click', function(d){
-		if (!_hasChildDomains(d.domainName)){
-			var dialog = new EditExistingDialog({entity: d});
-			dialog.show();
-			return;
-		}
+		_changeEntity(d);
+		breadcrumb.add({context:d, label: _getLabel(d), color: d.color});
 
-		var m = new ViewExistingDialog({
-			entity: d,
-			rootEntity: rootEntity,
-			crumbs: _.chain(crumbs).clone().value(),
-		});
-
-		m.on('updated', function(){
-			m.hide();
-			self.render();
-		});
-		// m.on('removed', function(){
-		// 	m.hide();
-		// 	setTimeout(function(){
-		// 		timeline.remove(d);
-		// 	}, 400);
-		// });
-
-		m.on('closed', function(){
-			m.remove();
-		});
-
-		m.show();
+		_update();
 	});
 
 	$content.find('.js-framework-timeline-container')
 		.append(timeline.element);
 
-	
+	function _renderTimeline(){
+		console.log('_renderTimeline');
+		var children = _getAllChildren();
+
+		console.dir('loading ' + children.length);
+
+		timeline.clear();
+		timeline.add(children);
+	}
+
 	function _getAllChildren(){
 		return _.chain(entity)
 			.values()
@@ -142,14 +165,18 @@ function ViewExistingDialog(opts){
 			.value();
 	}
 
+	function _update(skipTimeline){
+		if (!skipTimeline){
+			_renderTimeline();
+		}
+		_loadEditForm();
+		_setTitleContent();
+	}
+
 	this.show = function(){
+		_update();
+
 		var form = formBuilder.buildDataEntryForm(domain);
-
-		var children = _getAllChildren();
-
-		timeline.clear();
-		timeline.add(children);
-
 
 		var $btnSnapshot = $content.find('.js-snapshot'),
 			$btnFollow = $content.find('.js-follow'),
@@ -163,28 +190,6 @@ function ViewExistingDialog(opts){
 		} else if (_.size(myDomains) === 0){
 			$btnAddChild.hide();
 		}
-
-		$btnViewRaw.click(function(){
-			var $pre = $('<pre></pre>').text(JSON.stringify(rootEntity, '\t', 4));
-			var $div = $('<div></div>').append($pre);
-			var m = new Modal({
-				$content: $div,
-				scroll: true,
-			});
-
-			m.show();
-		});
-
-		$btnEdit.click(function(){
-			var dialog = new EditExistingDialog({entity: entity});
-			
-			dialog.on('edited', function(data){
-				console.dir(data);
-				dialog.remove();
-			});
-			dialog.show();
-		});
-
 
 		$btnRemove.click(function(){
 			if (rootEntity!=entity) return window.alert('not implemeneted yet');
@@ -211,48 +216,24 @@ function ViewExistingDialog(opts){
 			});
 
 			m.on('created', function(child){
-
 				var childDomain = app.getDomain(child.domainName),
 					entityManager = childDomain.getService('entity-manager');
 
 				entityManager.addToParent(entity, child);
 
-				var rootDomain = app.getDomain(rootEntity.domainName),
-					rootEntityManager = rootDomain.getService('entity-manager');
-
-				rootEntityManager.save(rootEntity)
+				_doSave()
 					.then(function(info){
 						rootEntity._id = info.id;
 						rootEntity._rev = info.rev;
 
-						if (!_hasChildDomains(child.domainName)){
-							m.hide();
-
-							setTimeout(function(){
-								timeline.add(child);
-							}, 400);
-
-							return;
-						}
-						timeline.add(child);
-
-						var myCrumbs = _.chain(crumbs)
-							.clone()
-							.value();
-
-						var viewExistingDialog = new ViewExistingDialog({
-							entity: child,
-							rootEntity: rootEntity,
-							crumbs: myCrumbs,
-						});
-
-						viewExistingDialog.show();
+						_changeEntity(child);
 					})
 					.catch(function(err){
 						console.error(err);
 					});
+
 			});
-			m.show(ev);
+				m.show(ev);
 		});
 
 		function _handleSave(keepOpen){
@@ -321,6 +302,7 @@ function ViewExistingDialog(opts){
 				});
 		}
 
+
 		$btnSnapshot.click(_.partial(_createButtonClick, false));
 		$btnFollow.click(_.partial(_createButtonClick, true));
 		$btnAddChild.click(function(){
@@ -331,6 +313,19 @@ function ViewExistingDialog(opts){
 
 	this.hide = modal.hide.bind(modal);
 	this.remove = modal.remove.bind(modal);
+
+	function _doSave(){
+		var rootDomain = app.getDomain(rootEntity.domainName),
+			rootEntityManager = rootDomain.getService('entity-manager');
+
+		return rootEntityManager.save(rootEntity)
+			.then(function(info){
+				rootEntity._id = info.id;
+				rootEntity._rev = info.rev;
+
+				return info;
+			});
+	}
 }
 
 

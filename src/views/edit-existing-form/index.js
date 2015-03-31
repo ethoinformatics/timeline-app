@@ -3,12 +3,10 @@ require('./index.less');
 var _ = require('lodash'),
 	q = require('q'),
 	$ = require('jquery'),
-	ezuuid = require('ezuuid'),
 	formBuilder = require('form-builder'),
 	util = require('util'),
 	app = require('app')(),
 	EventEmitter = require('events').EventEmitter,
-	randomColor = require('rgba-generate')(0.8),
 	template = require('./index.vash');
 
 function getTemplate(){ return template; }
@@ -29,37 +27,12 @@ function EditExistingDialog(opt){
 
 	var $btnSave = self.$element.find('.js-save');
 
-	function _handleSave(keepOpen){
-		var now = Date.now(),
-			d = q.defer();
+	self.updateFields = function(){
+		_.extend(entity, form.getData());
+		return entity;
+	};
 
-		var data = {
-				id: ezuuid(),
-				color: randomColor().toHex(),
-				domainName: domain.name,
-				beginTime: now,
-				endTime: keepOpen ? null : now,
-			};
-
-		data = _.extend(data, form.getData());
-
-		var activityService = domain.getService('activity');
-		if (activityService){
-			activityService.start(data);
-		}
-
-		var eventService = domain.getService('event');
-		if (eventService){
-			eventService.create(data);
-		}
-		d.resolve(data);
-
-		return d.promise;
-	}
-
-	function _createButtonClick(keepActivityRunning, ev){
-		console.log('gotta click');
-
+	function _onCreateButtonClick(keepActivityRunning, ev){
 		var $this = $(this),
 			oldText = $this.text();
 
@@ -70,23 +43,17 @@ function EditExistingDialog(opt){
 		$this.text('Please wait...');
 
 		ev.preventDefault();
-		return _handleSave(keepActivityRunning)
-			.then(function(data){
-				self.emit('edited', data);
-			})
-			.catch(function(err){
-				console.dir('error in EditExistingDialog');
-				console.error(err);
-			})
-			.finally(function(){
-				$this.text(oldText);
-				$this.parent()
-					.find('input,button')
-					.removeAttr('disabled');
-			});
+
+		_updateFields();
+		self.emit('edited', entity);
+
+		$this.text(oldText);
+		$this.parent()
+			.find('input,button')
+			.removeAttr('disabled');
 	}
 
-	$btnSave.click(_.partial(_createButtonClick, true));
+	$btnSave.click(_.partial(_onCreateButtonClick, true));
 }
 
 

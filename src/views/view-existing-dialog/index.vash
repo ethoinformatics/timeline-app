@@ -11,6 +11,9 @@
 				Edit
 			</li>
 		</ul>
+		<span class="buttons">
+			<button type="button" class="js-child-add child-add button button-balanced button-small">Add</button>
+		</span>
 	</div>
 	<div class="js-tabcontainer etho-tabcontainer">
 		<div class="tab-timeline">
@@ -18,11 +21,6 @@
 				i'm a place holder.
 			</div>
 
-			 <div class="js-form">
-				<div class="js-toolbar toolbar">
-					<button type="button" class="js-child-add child-add button button-balanced button-small">Add</button>
-				</div>
-			</div>
 			<div class="js-framework-timeline-container framework-timeline-container">
 			</div>
 			<!-- <div class="button-container"> -->

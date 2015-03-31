@@ -1,8 +1,10 @@
-<div class="js-Breadcrumb">
+<div class="js-Breadcrumb etho-breadcrumb">
 	<div class="js-crumbs breadcrumb flat">
-		<a href="#"><i class="icon ion-home"></i></a>
-		<span class="spacer">
-			<span class="space"></span>
+		<span class="home-crumb-container crumb-container">
+			<a href="#" class="js-breadcrumb-close"><i class="icon ion-home"></i></a>
+			<span class="spacer">
+				<span class="space"></span>
+			</span>
 		</span>
 	</div>
 </div>
