@@ -5,7 +5,6 @@ var Modal = require('modal'),
 	_ = require('lodash'),
 	q = require('q'),
 	$ = require('jquery'),
-	ezuuid = require('ezuuid'),
 	formBuilder = require('form-builder'),
 	createTimeline = require('timeline'),
 	util = require('util'),
@@ -240,7 +239,6 @@ function ViewExistingDialog(opts){
 			var now = Date.now();
 
 			var data = {
-					id: ezuuid(),
 					color: randomColor().toHex(),
 					domainName: domain.name,
 					beginTime: now,

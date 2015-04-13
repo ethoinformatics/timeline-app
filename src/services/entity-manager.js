@@ -1,5 +1,4 @@
 var PouchDb = require('pouchdb'),
-	ezuuid = require('ezuuid'),
 	_ = require('lodash'),
 	q = require('q');
 
@@ -9,7 +8,7 @@ function CrudManager(domainName){
 		self = this;
 
 	self.save = function(entity){
-		entity._id = entity._id || ezuuid();
+		entity._id = entity._id || Date.now(); // todo: throw a userId in here too.
 		return q.denodeify(db.put.bind(db, entity))();
 	};
 
