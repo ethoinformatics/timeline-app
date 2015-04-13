@@ -103,7 +103,7 @@ function ViewExistingDialog(opts){
 		$tabContainer.children().hide();
 		$tabContainer.find('.'+tabClass).show();
 
-		map.load();
+		map.load(entity.footprint);
 
 		currentTab = tabClass;
 	});

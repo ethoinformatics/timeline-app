@@ -1,27 +1,25 @@
 var geolocation = require('geolocation'),
 	q = require('q'),
-	app = require('app'),
+	app = require('app')(),
 	_ = require('lodash');
 
 module.exports = function(){
 	function onLocationUpdate(data){
+		console.log('hello from the location watch service');
 
-		var savePromises = _.chain(app.getDomains('activity'))
+		var savePromises = _.chain(app.getDomains('location-aware'))
 			.map(function(domain){
 
-				var activityService = domain.getService('activity');
+				var locationService = domain.getService('location-aware');
 				var entityManager = domain.getService('entity-manager');
 
 				// todo: figure out how to query for this in a more sane way
 				var savePromises = entityManager.getAll()
-					.then(function(activities){
-						return activities
-							.filter(function(activity){
-								return !activityService.getEndTime(activity);
-							})
-							.map(function(activity){
-								activityService.locationUpdate(activity, data);
-								return entityManager.save(activity);
+					.then(function(entities){
+						return entities
+							.map(function(entity){
+								locationService.update(entity, data);
+								return entityManager.save(entity);
 							});
 					});
 				

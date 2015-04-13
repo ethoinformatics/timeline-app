@@ -9,10 +9,11 @@ var $ = require('jquery'),
 	Scroll = require('iscroll'),
 	vash = require('vash-runtime'),
 	templates = {
-		text: require('./text-field.vash'),
-		select: require('./select.vash'),
-		lookup: require('./select.vash'),
-		textarea: require('./textarea-field.vash'),
+		text: require('./fields/text.vash'),
+		date: require('./fields/date.vash'),
+		select: require('./fields/select.vash'),
+		lookup: require('./fields/select.vash'),
+		textarea: require('./fields/textarea.vash'),
 	};
 
 vash.helpers.field = function(fieldName, field, data){

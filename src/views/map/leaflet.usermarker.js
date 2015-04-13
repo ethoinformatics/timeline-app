@@ -1,3 +1,4 @@
+var L = require('leaflet');
 /**
  * Leaflet.UserMarker v1.0
  * 

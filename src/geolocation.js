@@ -6,8 +6,8 @@ var q = require('q'),
 navigator
 	.geolocation
 	.watchPosition(
-			successCallbacks.fire.bind(successCallbacks),
-			errorCallbacks.fire.bind(errorCallbacks),
+			success,
+			failure,
 			{
 				enableHighAccuracy: true,
 				maximumAge        : 30000,
@@ -15,12 +15,31 @@ navigator
 			}
 		);
 
+
+var lastResult;
+function success(data){
+	lastResult = data;
+	successCallbacks.fire(data);
+}
+
+function failure(data){
+	alert('gps error');
+	alert(data.toString())
+	errorCallbacks.fire(data);
+}
+
 exports.watch = function(fnSuccess, fnError){ 
 	successCallbacks.add(fnSuccess);
 	errorCallbacks.add(fnError);
+
+	// a bit of a workaround for use in a web browser
+	if (lastResult){
+		fnSuccess(lastResult);
+	}
 };
 
 exports.unwatch = function(fnSuccess, fnError){ 
+	console.log('hellllllllllllllllllllllll');
 	successCallbacks.remove(fnSuccess);
 	errorCallbacks.remove(fnError);
 };

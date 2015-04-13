@@ -7,8 +7,8 @@ var $ = require('jquery'),
 	updateAppCheck = require('./update-app-check'),
 	SideMenu = require('./views/side-menu/'),
 	mainTemplate = require('./main.vash'),
-	ready = require('dom-ready');
-	//activityLocationWatch = require('./activity-location-watch');
+	ready = require('dom-ready'),
+	locationWatch = require('./activity-location-watch');
 
 
 var $showLeftMenu, isLeftMenuOpen = false;
@@ -50,6 +50,7 @@ ready(function appLoad(){
 	});
 
 	updateAppCheck();
+	locationWatch();
 
 });
 
