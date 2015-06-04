@@ -4,6 +4,7 @@ var $ = require('jquery'),
 	ActivityPage = require('./views/timeline-page/'),
 	UploadDialog = require('./views/upload-dialog/'),
 	CodeManager = require('./views/code-manager/'),
+	Settings = require('./views/settings/'),
 	updateAppCheck = require('./update-app-check'),
 	SideMenu = require('./views/side-menu/'),
 	mainTemplate = require('./main.vash'),
@@ -12,6 +13,17 @@ var $ = require('jquery'),
 
 
 var $showLeftMenu, isLeftMenuOpen = false;
+
+function keepAppAlive(){
+	if (typeof cordova == 'undefined') return;
+
+	cordova.plugins.backgroundMode.setDefaults({ 
+		title: 'Ethoinformatics',
+		text:'The app is in background mode.',
+		ticker:'Ethoinformatics is still running.',
+	});
+	cordova.plugins.backgroundMode.enable();
+}
 
 ready(function appLoad(){
 	var app = require('app');
@@ -26,19 +38,18 @@ ready(function appLoad(){
 	var sideMenu = new SideMenu({content: $mainContainer}),
 		uploadDialog = new UploadDialog(),
 		codeManager = new CodeManager(),
+		settings = new Settings(),
 		activityPage = new ActivityPage();
 
 	$body.append(sideMenu.$element);
 	$body.find('#main-content').append(activityPage.$element);
 
-	sideMenu.on('upload-click', function(){
+	sideMenu.on('click', function(moduleName){
 		sideMenu.close();
-		uploadDialog.show();
-	});
 
-	sideMenu.on('code-manager-click', function(){
-		sideMenu.close();
-		codeManager.show();
+		if (moduleName == 'code-manager') codeManager.show();
+		if (moduleName == 'sync') uploadDialog.show();
+		if (moduleName == 'settings') settings.show();
 	});
 
 	uploadDialog.on('closed', function(){
@@ -52,6 +63,7 @@ ready(function appLoad(){
 	updateAppCheck();
 	locationWatch();
 
+	keepAppAlive();
 });
 
 
