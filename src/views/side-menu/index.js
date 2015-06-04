@@ -9,12 +9,16 @@ function SideMenu(opt){
 
 	self.$element = $(template({}));
 
-	self.$element.on('click', '.js-upload', function(ev){
-			self.emit('upload-click', ev);
+	self.$element.on('click', '.js-upload', function(){
+			self.emit('click', 'sync');
 		});
 
-	self.$element.on('click', '.js-code-manager', function(ev){
-			self.emit('code-manager-click', ev);
+	self.$element.on('click', '.js-code-manager', function(){
+			self.emit('click', 'code-manager');
+		});
+
+	self.$element.on('click', '.js-settings', function(){
+			self.emit('click', 'settings');
 		});
 
 	var $showLeftMenu = $('.js-show-left-menu'),

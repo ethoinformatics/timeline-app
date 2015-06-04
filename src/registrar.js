@@ -129,6 +129,8 @@ function App(){
 
 }
 
+var theApp = new App();
 
+theApp.createDomain('_etho-settings');
 
-module.exports = new App();
+module.exports = theApp;

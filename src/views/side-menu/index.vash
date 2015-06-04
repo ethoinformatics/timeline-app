@@ -4,15 +4,20 @@
 	</div>
 	<ul class="list stable">
 		<ul class="list">
+			<li class="js-settings item item-icon-left">
+				<i class="icon ion-gear-b"></i>
+				Settings
+				<!-- <span class="item-note">Settings</span> -->
+			</li>
 			<li class="js-upload item item-icon-left">
-				<i class="icon ion-android-sync"></i>
+				<i class="icon ion-code-working"></i>
 				Data sync
-				<span class="item-note">Sync to a server</span>
+				<!-- <span class="item-note">Sync to a server</span> -->
 			</li>
 			<li class="js-code-manager item item-icon-left">
-				<i class="icon ion-code-working"></i>
-				Codes
-				<span class="item-note">Manage coded fields</span>
+				<i class="icon ion-search"></i>
+				Coded fields
+				<!-- <span class="item-note">Manage coded fields</span> -->
 			</li>
 		</ul>
 	</ul>

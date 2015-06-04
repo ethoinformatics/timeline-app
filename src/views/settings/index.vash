@@ -1,0 +1,21 @@
+<div class="setting-manager">
+	<ul class="tools list">
+		<li class="item item-divider item-input">
+		</li>
+		@model.settings.forEach(function(setting){
+			<li class="setting item item-input item-select">
+				<div class="input-label">
+					@setting.name
+				</div>
+				<select id="@setting.name">
+					<option></option>
+				</select>
+			</li>
+		})
+	</ul>
+
+	<div class="button-bar">
+		<button id="btn-save-settings" type="button" class="button button-positive">Save Settings</button>
+	</div>
+</div>
+

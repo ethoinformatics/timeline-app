@@ -28,7 +28,7 @@
     "jocal": "0.0.1",
     "jquery": "^2.1.1",
     "leaflet": "^0.7.3",
-    "lodash": "^2.4.1",
+    "lodash": "^3.6.0",
     "merle": "^0.1.5",
     "moment": "^2.8.2",
     "node-lessify": "0.0.5",

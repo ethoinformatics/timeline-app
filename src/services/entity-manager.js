@@ -9,6 +9,8 @@ function CrudManager(domainName){
 
 	self.save = function(entity){
 		entity._id = entity._id || Date.now(); // todo: throw a userId in here too.
+		entity.domainName = entity.domainName || domainName;
+		entity._id = entity._id || ezuuid();
 		return q.denodeify(db.put.bind(db, entity))();
 	};
 
