@@ -2,15 +2,21 @@ var PouchDb = require('pouchdb'),
 	_ = require('lodash'),
 	q = require('q');
 
+
 function CrudManager(domainName){
 	var databaseName = 'hello',
 		db = new PouchDb(databaseName),
 		self = this;
 
 	self.save = function(entity){
-		entity._id = entity._id || Date.now(); // todo: throw a userId in here too.
+		entity._id = entity._id || Date.now().toString(); // todo: throw a userId in here too.
 		entity.domainName = entity.domainName || domainName;
 		entity._id = entity._id || ezuuid();
+
+
+		if (entity.domainName != '_etho-settings'){
+		}
+
 		return q.denodeify(db.put.bind(db, entity))();
 	};
 

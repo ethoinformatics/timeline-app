@@ -14,6 +14,22 @@ var Modal = require('modal'),
 
 function getTemplate(){ return template; }
 
+function _getDeviceSettingsObject(){
+	var settingsDomain = app.getDomain('_etho-settings');
+	var entityManager = settingsDomain.getService('entity-manager');
+
+	return entityManager.getAll()
+		.then(function(entities){
+			var mySettings = _.find(entities, function(entity){
+				return entity.deviceId == device.uuid;
+			});
+
+			if (!mySettings) return { deviceId: device.uuid };
+
+			return mySettings;
+		});
+}
+
 function CreateNewDialog(opt){
 	var domain = opt.domain;
 
@@ -48,8 +64,7 @@ function CreateNewDialog(opt){
 		});
 
 	function _handleSave(keepOpen){
-		var now = Date.now(),
-			d = q.defer();
+		var now = Date.now();
 
 		var data = {
 				id: 'um',
@@ -70,9 +85,12 @@ function CreateNewDialog(opt){
 		if (eventService){
 			eventService.create(data);
 		}
-		d.resolve(data);
 
-		return d.promise;
+		return _getDeviceSettingsObject()
+			.then(function(settings){
+				data.observerId = settings.user;
+				return data;
+			});
 	}
 
 	function _createButtonClick(keepActivityRunning, ev){

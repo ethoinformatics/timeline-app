@@ -24,7 +24,7 @@ function success(data){
 
 function failure(data){
 	alert('gps error');
-	alert(data.toString())
+	alert(JSON.stringify(data));
 	errorCallbacks.fire(data);
 }
 
@@ -39,7 +39,6 @@ exports.watch = function(fnSuccess, fnError){
 };
 
 exports.unwatch = function(fnSuccess, fnError){ 
-	console.log('hellllllllllllllllllllllll');
 	successCallbacks.remove(fnSuccess);
 	errorCallbacks.remove(fnError);
 };
