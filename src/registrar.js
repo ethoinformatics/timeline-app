@@ -3,11 +3,13 @@ var _ = require('lodash'),
 	lookup = Object.create(null),
 	domainDefaults = Object.create(null),
 	EntityManager = require('./services/entity-manager'),
+	uuidGenerator = require('./services/uuid-generator'),
 	DescriptionManager = require('./services/description-manager');
 
 // register global/default services here
 domainDefaults['entity-manager'] = { ctor: EntityManager };
 domainDefaults['description-manager'] = { ctor: DescriptionManager };
+domainDefaults['uuid-generator'] = uuidGenerator;
 
 function getService(domainName, serviceName){
 	var d = lookup[domainName],

@@ -38,8 +38,13 @@ function CrudManager(domainName){
 		});
 
 	self.save = function(entity){
-		entity._id = entity._id || Date.now().toString(); // todo: throw a userId in here too.
 		entity.domainName = entity.domainName || domainName;
+
+		var app = require('app')(),
+			domain = app.getDomain(domainName),
+			uuidGenerator = domain.getService('uuid-generator');
+
+		entity._id = entity._id || uuidGenerator(entity);
 
 		return q.denodeify(db.put.bind(db, entity))();
 	};
