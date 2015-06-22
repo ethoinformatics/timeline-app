@@ -33,6 +33,7 @@
     "moment": "^2.8.2",
     "node-lessify": "0.0.5",
     "pouchdb": "^3.0.6",
+    "pouchdb-upsert": "^1.1.1",
     "q": "^1.0.1",
     "rgba-generate": "^1.0.0",
     "vashify": "^0.3.3",

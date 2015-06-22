@@ -2,20 +2,44 @@ var PouchDb = require('pouchdb'),
 	_ = require('lodash'),
 	q = require('q');
 
+PouchDb.plugin(require('pouchdb-upsert'));
+
+function createDesignDoc(name, mapFunction) {
+  var ddoc = {
+    _id: '_design/' + name,
+    views: {
+    }
+  };
+  ddoc.views[name] = { map: mapFunction.toString() };
+  return ddoc;
+}
 
 function CrudManager(domainName){
 	var databaseName = 'hello',
 		db = new PouchDb(databaseName),
 		self = this;
 
+	function createView(name, map){
+		var designDoc = createDesignDoc(name, map);
+		return db.putIfNotExists(designDoc);
+	}
+
+	var views = [
+			['domain_name_index', function(d){return emit(d.domainName);}],
+		];
+
+	var viewsLoadedPromise = q.all(views.map(function(pair){ 
+			return createView(pair[0], pair[1]); 
+		}))
+		.then(function(){
+			return q.all(views.map(function(pair){
+				return db.query(pair[0], {stale: 'update_after'});
+			}));
+		});
+
 	self.save = function(entity){
 		entity._id = entity._id || Date.now().toString(); // todo: throw a userId in here too.
 		entity.domainName = entity.domainName || domainName;
-		entity._id = entity._id || ezuuid();
-
-
-		if (entity.domainName != '_etho-settings'){
-		}
 
 		return q.denodeify(db.put.bind(db, entity))();
 	};
@@ -32,20 +56,16 @@ function CrudManager(domainName){
 	};
 
 	self.getAll = function(){
-		return q.denodeify(db.allDocs.bind(db, {include_docs: true, descending: true}))()
-			.then(function(result){
-				return _.chain(result.rows)
-					.pluck('doc')
-					.filter(function(row){
-						// todo: don't fetch everything
-						return row.domainName == domainName;
-					})
-					.value();
-					
+		return viewsLoadedPromise
+			.then(function(){
+				return q(db.query('domain_name_index', {key: domainName, include_docs:true}))
+					.then(function(result){
+						return _.map(result.rows, 'doc');
+					});
 			});
 	};
-	self.addToParent = function(parent, child){
 
+	self.addToParent = function(parent, child){
 		var app = require('app')(),
 			childDomain = app.getDomain(domainName);
 
