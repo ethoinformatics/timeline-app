@@ -1,8 +1,6 @@
 require('./index.less');
 var tmpl = require('./index.vash'),
-	CreateNewDialog = require('create-new-dialog'),
-	EditExistingDialog = require('edit-existing-dialog'),
-	Scroll = require('iscroll'),
+	deviceSettings = require('device-settings'),
 	q = require('q'),
 	_ = require('lodash'),
 	$ = require('jquery'),
@@ -27,7 +25,6 @@ function CodeManager(){
 		}),
 	}));
 
-
 	function loadSettings(){
 		var loadedSelects = settingLookupDomains.map(function(domain){
 			var descManager = domain.getService('description-manager');
@@ -48,8 +45,10 @@ function CodeManager(){
 
 		q.all(loadedSelects)
 			.then(function(selects){
-				_getSettingsObject()
+				debugger
+				deviceSettings()
 					.then(function(settings){
+						debugger
 						Object.keys(settings)
 							.forEach(function(key){
 								var $select = _.find(selects, function($select){ return $select.attr('id') == key;});
@@ -81,36 +80,17 @@ function CodeManager(){
 		modal.show();
 	};
 
-	function _getSettingsObject(){
-		var settingsDomain = app.getDomain('_etho-settings');
-		var entityManager = settingsDomain.getService('entity-manager');
-
-		return entityManager.getAll()
-			.then(function(entities){
-				var mySettings = _.find(entities, function(entity){
-					return entity.deviceId == device.uuid;
-				});
-
-				if (!mySettings) return { deviceId: device.uuid };
-
-				return mySettings;
-			});
-	}
-
 	$element.find('#btn-save-settings').click(function(){
-		var settingsDomain = app.getDomain('_etho-settings');
-		var entityManager = settingsDomain.getService('entity-manager');
-
-		_getSettingsObject()
+		deviceSettings()
 			.then(function(settings){
+				debugger
 
 				$element.find('select').each(function(){
 					var $select = $(this);
 					settings[$select.attr('id')] = $select.val();
 				});
 
-
-				entityManager.save(settings)
+				deviceSettings(settings)
 					.then(function(res){
 						console.dir(res);
 						modal.hide();

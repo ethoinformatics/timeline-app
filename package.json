@@ -57,6 +57,6 @@
     "form-builder": "./src/form-builder/index.js",
     "timeline": "./src/timeline.js",
     "long-click": "./src/long-click.js",
-    "sample-data": "./src/sample-data.json"
+    "device-settings": "./src/device-settings.js"
   }
 }

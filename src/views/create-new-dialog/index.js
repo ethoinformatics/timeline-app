@@ -4,6 +4,7 @@ var Modal = require('modal'),
 	_ = require('lodash'),
 	q = require('q'),
 	$ = require('jquery'),
+	deviceSettings = require('device-settings'),
 	formBuilder = require('form-builder'),
 	geolocation = require('geolocation'),
 	util = require('util'),
@@ -13,22 +14,6 @@ var Modal = require('modal'),
 	template = require('./index.vash');
 
 function getTemplate(){ return template; }
-
-function _getDeviceSettingsObject(){
-	var settingsDomain = app.getDomain('_etho-settings');
-	var entityManager = settingsDomain.getService('entity-manager');
-
-	return entityManager.getAll()
-		.then(function(entities){
-			var mySettings = _.find(entities, function(entity){
-				return entity.deviceId == device.uuid;
-			});
-
-			if (!mySettings) return { deviceId: device.uuid };
-
-			return mySettings;
-		});
-}
 
 function CreateNewDialog(opt){
 	var domain = opt.domain;
@@ -86,7 +71,7 @@ function CreateNewDialog(opt){
 			eventService.create(data);
 		}
 
-		return _getDeviceSettingsObject()
+		return deviceSettings()
 			.then(function(settings){
 				data.observerId = settings.user;
 				return data;
