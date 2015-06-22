@@ -16,7 +16,7 @@ var $ = require('jquery'),
 function _getTopLevelDomains(){
 	var domains = app.getDomains()
 		.filter(function(domain){
-			return !domain.getService('code-domain');
+			return !domain.getService('code-domain') && !/^_/.test(domain.name);
 		});
 
 	return domains.filter(function(d){
