@@ -60,9 +60,12 @@ function TimelinePage(){
 		return q.all(fetchPromises)
 			.then(function(results){
 				var entities = _.flatten(results)
+					.filter(function(d){ return d.domainName=='diary'; })
 					.filter(isVisble);
 
-				timeline.add(entities);
+
+
+				timeline.add(_.sortBy(entities, 'eventDate'));
 				
 				return entities;
 			})

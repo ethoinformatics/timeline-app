@@ -72,7 +72,6 @@ function MapView(){
 		// geojson.coordinates = [];
 		// geojson.coordinates.push([[40.798790199,-73.9965883], [40.798790199,-74.9865883]]);
 		// geojson.coordinates.push([[40.798790199,-73.9965883], [40.778790199,-74.9865883]]);
-		debugger
 			var myStyle = {
 				    "color": "#ff7800",
 					    "weight": 5,

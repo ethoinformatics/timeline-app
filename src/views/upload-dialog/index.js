@@ -1,5 +1,6 @@
 require('./index.less');
 
+var DB_NAME = 'new_pp_db';
 var PouchDb = require('pouchdb'),
 	EventEmitter = require('events').EventEmitter,
 	util = require('util'),
@@ -53,12 +54,13 @@ function UploadDialog(){
 	function _getUrl(){
 		var url = $url.val();
 		url = url.replace('//', '//'+$userName.val() + ':' + $password.val() + '@');
+		console.dir(url);
 
 		return url;
 	}
 
 	$element.find('.js-upload').click(function(){
-		var db = new PouchDb('hello'),
+		var db = new PouchDb(DB_NAME),
 			password = $password.val();
 		_showWorking('Uploading...');
 
@@ -79,7 +81,7 @@ function UploadDialog(){
 	});
 
 	$element.find('.js-download').click(function(){
-		var db = new PouchDb('hello'),
+		var db = new PouchDb(DB_NAME),
 			password = $password.val();
 
 		_showWorking('Downloading...');

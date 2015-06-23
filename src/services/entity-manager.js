@@ -2,6 +2,8 @@ var PouchDb = require('pouchdb'),
 	_ = require('lodash'),
 	q = require('q');
 
+var DB_NAME = 'new_pp_db';
+
 PouchDb.plugin(require('pouchdb-upsert'));
 
 function createDesignDoc(name, mapFunction) {
@@ -15,8 +17,7 @@ function createDesignDoc(name, mapFunction) {
 }
 
 function CrudManager(domainName){
-	var databaseName = 'hello',
-		db = new PouchDb(databaseName),
+	var db = new PouchDb(DB_NAME),
 		self = this;
 
 	function createView(name, map){

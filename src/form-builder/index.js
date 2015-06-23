@@ -77,11 +77,12 @@ function _buildDataEntryForm(domain, data, fieldFilter){
 	_.chain(metadata)
 		.pluck('fields')
 		.map(function(o){ return _.pairs(o); })
-		.flatten(true)
+		.flatten()
 		.map(function(pair){
 			return _.extend({}, {name: pair[0]}, pair[1]);
 		})
-		.filter(function(field){ return /^lookup$/i.test(field.type); })
+		.filter(function(field){ 
+			return /^lookup$/i.test(field.type); })
 		.value()
 		.forEach(function(field){
 			var $select = $root.find('select[data-name='+field.name+']'),

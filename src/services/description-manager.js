@@ -62,7 +62,7 @@ function DescriptionManager(domainName){
 		var codedFields = _.chain(fields)
 			.pluck('fields')
 			.map(function(o){ return _.pairs(o); })
-			.flatten(true)
+			.flatten()
 			.map(function(pair){
 				return _.extend({}, {name: pair[0]}, pair[1]);
 			})
