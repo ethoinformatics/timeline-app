@@ -51,10 +51,7 @@ function CrudManager(domainName){
 	};
 
 	self.byId = function(id){
-		return q.denodeify(db.allDocs.bind(db, {include_docs:true, key: id}))()
-			.then(function(result){
-				return result.rows[0].doc;
-			});
+		return q.denodeify(db.get.bind(db, id))();
 	};
 
 	self.remove = function(doc){

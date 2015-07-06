@@ -21,6 +21,10 @@ var DEFAULTS = {
 
 			return service ? service.getShortDescription(d) : 'no label';
 		},
+		getColor: function(d){
+			var domain = app.getDomain(d.domainName);
+			return domain.getService('color');
+		},
 	};
 
 var HEADER_HEIGHT = 100;

@@ -11,7 +11,6 @@ var Modal = require('modal'),
 	app = require('app')(),
 	Breadcrumb = require('breadcrumb'),
 	EventEmitter = require('events').EventEmitter,
-	randomColor = require('rgba-generate')(0.8),
 	EditExistingDialog = require('edit-existing-dialog'),
 	EditExistingForm = require('edit-existing-form'),
 	template = require('./index.vash');
@@ -23,18 +22,25 @@ function getTemplate(){ return template; }
 function ViewExistingDialog(opts){
 	var self = this,
 		entity,
+		descManagerCache = {},
 		rootEntity = opts.rootEntity || opts.entity,
 		crumbs = opts.crumbs,
 		domain,
 		descManager,
+		myDomains,
 		editForm;
 
 	_changeEntity(opts.entity || opts.rootEntity);
 
+	function _getColor(entity){
+		var color = app.getDomain(entity.domainName).getService('color');
+		return color;
+	}
+
 	EventEmitter.call(self);
 	crumbs = _.chain(crumbs)
 		.toArray()
-		.push({context: entity, label:_getLabel(entity), color: entity.color})
+		.push({context: entity, label:_getLabel(entity), color: _getColor(entity)})
 		.value();
 
 	var breadcrumb = new Breadcrumb({crumbs: crumbs});
@@ -49,12 +55,24 @@ function ViewExistingDialog(opts){
 	});
 
 	function _changeEntity(entityToLoad){
+		console.log('start _changeEntity');
 		if (entityToLoad == entity) return false;
 
 		entity = entityToLoad;
 		domain = app.getDomain(entity.domainName);
-		descManager = domain.getService('description-manager');
+		descManagerCache[entity.domainName] = descManagerCache[entity.domainName] || domain.getService('description-manager');
+		descManager = descManagerCache[entity.domainName];
 
+		myDomains = domain.getChildren();
+
+		// load the description managers now because they are slow
+		myDomains.forEach(function(myDomain){
+			if (descManagerCache[myDomain.name]) return;
+
+			descManagerCache[myDomain.name] = myDomain.getService('description-manager');
+		});
+
+		console.log('end _changeEntity');
 		return true;
 	}
 
@@ -107,11 +125,13 @@ function ViewExistingDialog(opts){
 		currentTab = tabClass;
 	});
 
-	var myDomains = domain.getChildren();
-
 	function _setTitleContent(){
+		$content.find('.js-long-description-container')
+			.html('<h1 class="loading-message">Loading...</h1>');
+
 		descManager.getLongDescription(entity)
 			.then(function(description){
+				console.log('done loading form');
 				$content.find('.js-long-description-container')
 					.html(description);
 			})
@@ -136,10 +156,12 @@ function ViewExistingDialog(opts){
 	});
 
 	timeline.on('activity-click', function(d){
+		console.log('start activity-click');
 		_changeEntity(d);
-		breadcrumb.add({context:d, label: _getLabel(d), color: d.color});
+		breadcrumb.add({context:d, label: _getLabel(d), color: _getColor(d)});
 
 		_update();
+		console.log('end activity-click');
 	});
 
 	$content.find('.js-framework-timeline-container')
@@ -165,11 +187,22 @@ function ViewExistingDialog(opts){
 	}
 
 	function _update(skipTimeline){
+
+		var $btnAddChild = $content.find('.js-child-add');
+		if (_.size(myDomains) == 1){
+			$btnAddChild.text('Add ' + myDomains[0].label);
+		} else if (_.size(myDomains) === 0){
+			$btnAddChild.hide();
+		} else {
+			$btnAddChild.text('Add');
+		}
+
+		_loadEditForm();
+		_setTitleContent();
+
 		if (!skipTimeline){
 			_renderTimeline();
 		}
-		_loadEditForm();
-		_setTitleContent();
 	}
 
 	this.show = function(){
@@ -180,21 +213,15 @@ function ViewExistingDialog(opts){
 		var $btnSnapshot = $content.find('.js-snapshot'),
 			$btnFollow = $content.find('.js-follow'),
 			$btnAddChild = $content.find('.js-child-add'),
-			$btnViewRaw = $content.find('.js-view-raw'),
-			$btnEdit = $content.find('.js-view-edit'),
 			$btnRemove = $content.find('.js-view-remove');
 
-		if (_.size(myDomains) == 1){
-			$btnAddChild.text('Add ' + myDomains[0].label);
-		} else if (_.size(myDomains) === 0){
-			$btnAddChild.hide();
-		}
 
 		$btnRemove.click(function(){
 			if (rootEntity!=entity) return window.alert('not implemeneted yet');
 
 			console.log('removing');
 			var entityManager = domain.getService('entity-manager');
+
 			entityManager.remove(entity)
 				.then(function(){
 					self.emit('removed', entity);
@@ -226,6 +253,8 @@ function ViewExistingDialog(opts){
 						rootEntity._rev = info.rev;
 
 						_changeEntity(child);
+						_update();
+						breadcrumb.add({context:child, label: _getLabel(child), color: _getColor(child)});
 					})
 					.catch(function(err){
 						console.error(err);
@@ -239,7 +268,6 @@ function ViewExistingDialog(opts){
 			var now = Date.now();
 
 			var data = {
-					color: randomColor().toHex(),
 					domainName: domain.name,
 					beginTime: now,
 					endTime: keepOpen ? null : now,
