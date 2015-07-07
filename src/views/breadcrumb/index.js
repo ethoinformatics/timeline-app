@@ -6,7 +6,8 @@ var util = require('util');
 var template = require('./index.vash'),
 	crumbTemplate = require('./crumb.vash'),
 	_ = require('lodash'),
-	$ = require('jquery');
+	$ = require('jquery'),
+	velocity = require('velocity-animate');
 
 
 function Breadcrumb(opt){
@@ -23,12 +24,21 @@ function Breadcrumb(opt){
 				.reverse()
 				.forEach(function(el){
 					if (el == clickedElement) found = true;
-					if (found) return;
-
 					var $el = $(el);
-					$el.fadeOut('fast', function(){
-						$el.remove();
-					});
+
+					if (found) {
+						velocity($el, 'stop');
+						$el.css('opacity', '1')
+							.removeClass('js-faded');
+					} else {
+						$el.addClass('js-faded');
+						velocity($el, {opacity: 0.2}, {
+							duration: 450,
+							complete: function(){
+
+							},
+						});
+					}
 
 				});
 
@@ -48,6 +58,9 @@ function Breadcrumb(opt){
 	self.add = function(crumb){
 		var el = toElement(crumb);
 		$cntr.append(el);
+
+		$cntr.find('.js-crumb-container.js-faded')
+			.remove();
 	};
 	self.$element.find('.js-breadcrumb-close')
 		.on('click', function(){self.emit('close');});

@@ -33,6 +33,7 @@ function Modal(options){
 
 	$modal = $(modalTemplate({
 		showBackButton: !!options.backAction,
+		hideClose: !!options.hideClose,
 	}));
 
 	$modal.find('.js-header-placeholder').replaceWith($header);

@@ -4,7 +4,9 @@
 		<a class="js-back button icon-left ion-chevron-left button-clear button-light"></a>
 		}
 		<span class="js-header-placeholder"></span>
-	  <button class="js-close button icon ion-close"></button>
+		@if (!model.hideClose){
+		<button class="js-close button icon ion-close"></button>
+		}
 	</div>
 	<div class="content has-header">
 		<div class="modal-body">

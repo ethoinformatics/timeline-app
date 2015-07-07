@@ -11,7 +11,6 @@ var Modal = require('modal'),
 	app = require('app')(),
 	Breadcrumb = require('breadcrumb'),
 	EventEmitter = require('events').EventEmitter,
-	EditExistingDialog = require('edit-existing-dialog'),
 	EditExistingForm = require('edit-existing-form'),
 	template = require('./index.vash');
 
@@ -95,6 +94,7 @@ function ViewExistingDialog(opts){
 		$tabContainer = $content.find('.js-tabcontainer');
 	
 	var map = new MapView();
+	map.showGeoJson(entity.footprint);
 	$tabContainer.find('.tab-map').append(map.$element);
 
 
@@ -113,32 +113,20 @@ function ViewExistingDialog(opts){
 				.catch(function(err){
 					console.error(err);
 				});
-		}
+		}	
 
 		$this.siblings().removeClass('selected');
 		$this.addClass('selected');
 		$tabContainer.children().hide();
 		$tabContainer.find('.'+tabClass).show();
 
-		map.load(entity.footprint);
-
 		currentTab = tabClass;
+
+		if (currentTab == 'tab-map'){
+			map.showGeoJson(entity.footprint);
+		}
 	});
 
-	function _setTitleContent(){
-		$content.find('.js-long-description-container')
-			.html('<h1 class="loading-message">Loading...</h1>');
-
-		descManager.getLongDescription(entity)
-			.then(function(description){
-				console.log('done loading form');
-				$content.find('.js-long-description-container')
-					.html(description);
-			})
-			.catch(function(err){
-				console.error(err);
-			});
-	}
 
 	var timeline = createTimeline({
 		height: (window.innerHeight-100) /3,
@@ -149,6 +137,7 @@ function ViewExistingDialog(opts){
 			$content: $content,
 			hideOkay: true,
 			backAction: opts.backAction,
+		  	hideClose: true,
 		});
 
 	modal.on('closed', function(){
@@ -177,6 +166,20 @@ function ViewExistingDialog(opts){
 		timeline.add(children);
 	}
 
+	function _setTitleContent(){
+		$content.find('.js-long-description-container')
+			.html('<h1 class="loading-message">Loading...</h1>');
+
+		descManager.getLongDescription(entity)
+			.then(function(description){
+				console.log('done loading form');
+				$content.find('.js-long-description-container')
+					.html(description);
+			})
+			.catch(function(err){
+				console.error(err);
+			});
+	}
 	function _getAllChildren(){
 		return _.chain(entity)
 			.values()
