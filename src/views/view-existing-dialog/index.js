@@ -2,6 +2,8 @@ require('./index.less');
 
 var Modal = require('modal'),
 	MapView = require('map'),
+	moment = require('moment'),
+	insertAtCaret = require('insert-at-caret'),
 	_ = require('lodash'),
 	q = require('q'),
 	$ = require('jquery'),
@@ -91,12 +93,19 @@ function ViewExistingDialog(opts){
 			crumbs: crumbs,
 			domainLabel: domain.label,
 		})),
-		$tabContainer = $content.find('.js-tabcontainer');
+		$tabContainer = $content.find('.js-tabcontainer'),
+		$remarks = $tabContainer.find('textarea');
+
+	$tabContainer.css('height', (window.innerHeight-88)+'px');
+	$tabContainer.find('textarea').css('height', (window.innerHeight-(88+49))+'px'); //sorry
+
+	$tabContainer.find('.js-timestamp').click(function(){
+		insertAtCaret($remarks[0], moment().format(' HH:mm '));	
+	});
 	
 	var map = new MapView();
 	map.showGeoJson(entity.footprint);
 	$tabContainer.find('.tab-map').append(map.$element);
-
 
 	var currentTab = 'tab-timeline';
 	$content.find('.js-etho-tab').click(function(){
@@ -115,6 +124,20 @@ function ViewExistingDialog(opts){
 				});
 		}	
 
+		if (currentTab == 'tab-remarks'){
+			editForm.updateFields();
+			entity.remarks = $remarks.val();
+
+			_doSave()
+				.then(function(){
+					_update(true);
+				})
+				.catch(function(err){
+					console.error(err);
+				});
+		}	
+
+
 		$this.siblings().removeClass('selected');
 		$this.addClass('selected');
 		$tabContainer.children().hide();
@@ -125,11 +148,14 @@ function ViewExistingDialog(opts){
 		if (currentTab == 'tab-map'){
 			map.showGeoJson(entity.footprint);
 		}
+		if (currentTab == 'tab-remarks'){
+			$remarks.val(entity.remarks);
+		}
 	});
 
 
 	var timeline = createTimeline({
-		height: (window.innerHeight-100) /3,
+		height: (window.innerHeight-175),
 	});
 
 	modal = new Modal({
@@ -206,6 +232,8 @@ function ViewExistingDialog(opts){
 		if (!skipTimeline){
 			_renderTimeline();
 		}
+
+		$remarks.val(entity.remarks);
 	}
 
 	this.show = function(){

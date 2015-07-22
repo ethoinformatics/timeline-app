@@ -53,6 +53,7 @@
     "map": "./src/views/map/index.js",
     "edit-existing-dialog": "./src/views/edit-existing-dialog/index.js",
     "edit-existing-form": "./src/views/edit-existing-form/index.js",
+    "insert-at-caret": "./src/insert-at-caret.js",
     "activity-filter": "./src/views/activity-filter/index.js",
     "form-builder": "./src/form-builder/index.js",
     "timeline": "./src/timeline.js",

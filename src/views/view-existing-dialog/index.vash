@@ -7,6 +7,9 @@
 			<li class="js-etho-tab" data-tabclass="tab-map">
 				Map
 			</li>
+			<li class="js-etho-tab" data-tabclass="tab-remarks">
+				Remarks
+			</li>
 			<li class="js-etho-tab" data-tabclass="tab-edit">
 				Edit
 			</li>
@@ -33,6 +36,14 @@
 			<!-- </div> -->
 		</div>
 		<div class="tab-map">
+		</div>
+		<div class="tab-remarks">
+			<textarea class="remarks js-remarks"></textarea>
+			<div class="tabs tabs-stable">
+				<a class="tab-item js-timestamp">
+					<i class="icon ion-clock"></i>
+				</a>
+			</div>
 		</div>
 		<div class="tab-edit">
 		</div>

@@ -1,0 +1,16 @@
+<div class="tab-timeline">
+	<div class="js-long-description-container long-description-container">
+		i'm a place holder.
+	</div>
+
+	<div class="js-framework-timeline-container framework-timeline-container">
+	</div>
+	<!-- <div class="button-container"> -->
+	<!-- 	<div class="button-bar"> -->
+	<!-- 		<1!-- <button type="button" class="js-view-stop button-small button button-balanced">Stop @model.domainLabel</button> --1> -->
+	<!-- 		<button type="button" class="js-view-edit button-small button button-energized">Edit @model.domainLabel</button> -->
+	<!-- 		<button type="button" class="js-view-remove button-small button button-assertive">Remove @model.domainLabel</button> -->
+	<!-- 		<button type="button" class="js-view-raw button-small button button-royal">View Raw Data</button> -->
+	<!-- 	</div> -->
+	<!-- </div> -->
+</div>

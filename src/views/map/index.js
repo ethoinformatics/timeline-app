@@ -9,7 +9,8 @@ var template = require('./index.vash'),
 L.Icon.Default.imagePath = 'node_modules/leaflet/dist/images/';
 
 var GEOJSON_STYLE = {
-	color: "#ff7800",
+	//color: "#ff7800",
+	color: '#EECF20',
 	weight: 5,
 	opacity: 0.65,
 };
@@ -73,13 +74,19 @@ function MapView(){
 	}).addTo(map);
 
 	var geoJsonLayer;
-	self.showGeoJson = function(geojson){
+	self.showGeoJson = function(geojson, color){
+		_ensureProperSize(map);
+
+		if (!geojson) return;
 		if (geoJsonLayer)
 			map.removeLayer(map);
 
+
 		geoJsonLayer = L.geoJson(geojson, {style: GEOJSON_STYLE}).addTo(map);
 
-		_ensureProperSize(map);
+		setTimeout(function(){
+			map.fitBounds(geoJsonLayer.getBounds());
+		},500);
 	};
 
 	self.show = _ensureProperSize.bind(null, map);
