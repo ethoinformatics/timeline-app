@@ -69,15 +69,28 @@ var registry = {
 
 		return domain;
 	},
-	setChildDomain: function(parentDomainName, propertyName, childDomain){
-		lookup[parentDomainName]['children-domains'].push(childDomain.name);
+	setChildDomain: function(parentDomainName, propertyName, childDomain, options){
+		options = Object(options);
+		options.name = childDomain.name;
+
+		lookup[parentDomainName]['children-domains'].push(options);
 
 		// kind of bootleg...  entity-manager will reference
 		// this sercret value...
 		lookup[childDomain.name]['parent-'+parentDomainName] = propertyName;
 	},
 	getChildDomains: function(parentDomainName){
-		return lookup[parentDomainName]['children-domains'].map(this.getDomain.bind(this));
+		var self = this;
+
+		var domains = lookup[parentDomainName]['children-domains']
+			.map(function(d){
+				var childDomain = self.getDomain(d.name);
+				var tmp  = _.extend(_.create(childDomain), d);
+				return tmp;
+			});
+
+
+		return domains;
 	},
 };
 
@@ -98,11 +111,13 @@ function App(){
 		return {
 			_isEthoinfoDomain: true,
 			name: domain.name,
-			register: function(serviceName, service){
+			register: function(serviceName, service, relationshipOptions){
+				relationshipOptions = Object(relationshipOptions);
+
 				if (serviceName && serviceName._isEthoinfoDomain){
 					registry.setChildDomain(opts.name, 'children', serviceName);
 				} else if (service._isEthoinfoDomain){
-					registry.setChildDomain(opts.name, serviceName, service);
+					registry.setChildDomain(opts.name, serviceName, service, relationshipOptions);
 				} else {
 					registry.setDomainService(opts.name, serviceName, service);
 				}

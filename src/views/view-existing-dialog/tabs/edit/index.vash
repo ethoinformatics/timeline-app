@@ -1,2 +1,24 @@
-<div class="tab-edit">
+<div>
+	<div class="scroll-wrapper">
+		<div class="scroller">
+			<div>
+				<ul class="section-header list list-inset">
+					<li class="item item-divider">
+						@model.domainName Details
+					</li>
+				</ul>
+				<div class="edit-form">
+				</div>
+				
+				@model.inlineDomains.forEach(function(domain){
+				<ul class="list list-inset accordian">
+					<li class="item item-divider header">
+						@domain.label
+						<button data-domain="@domain.name" class="js-inline-add button button-balanced button-small">New</button>
+					</li>
+				</ul>
+				})
+			</div>
+		</div>
+	</div>
 </div>

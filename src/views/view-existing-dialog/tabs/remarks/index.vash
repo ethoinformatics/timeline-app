@@ -1,0 +1,8 @@
+<div class="tab-remarks">
+	<textarea class="remarks js-remarks"></textarea>
+	<div class="tabs tabs-stable">
+		<a class="tab-item js-timestamp">
+			<i class="icon ion-clock"></i>
+		</a>
+	</div>
+</div>

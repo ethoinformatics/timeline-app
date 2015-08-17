@@ -1,4 +1,4 @@
-<li data-domain-name="@model.domain" class="@(model.isInlineCreate ? 'inline-create-item': '') item-input item-select">
+<li data-domain-name="@model.domain" class="@(model.isInlineCreate ? 'inline-create-item': '') item item-input item-select">
 	<div class="input-label">
 		@model.label
 	</div>

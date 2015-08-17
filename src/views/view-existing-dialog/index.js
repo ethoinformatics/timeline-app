@@ -1,24 +1,22 @@
 require('./index.less');
 
 var Modal = require('modal'),
-	MapView = require('map'),
 	moment = require('moment'),
-	insertAtCaret = require('insert-at-caret'),
-	_ = require('lodash'),
-	q = require('q'),
-	$ = require('jquery'),
-	formBuilder = require('form-builder'),
-	createTimeline = require('timeline'),
-	util = require('util'),
-	app = require('app')(),
-	Breadcrumb = require('breadcrumb'),
-	EventEmitter = require('events').EventEmitter,
-	EditExistingForm = require('edit-existing-form'),
-	template = require('./index.vash');
+_ = require('lodash'),
+q = require('q'),
+$ = require('jquery'),
+formBuilder = require('form-builder'),
+util = require('util'),
+app = require('app')(),
+Breadcrumb = require('breadcrumb'),
+EventEmitter = require('events').EventEmitter,
+template = require('./index.vash');
 
 var CreateSelectMenu = require('../create-select-dialog');
-
-function getTemplate(){ return template; }
+var TabEdit = require('./tabs/edit/index.js'),
+TabMap = require('./tabs/map/index.js'),
+TabRemarks = require('./tabs/remarks/index.js'),
+TabTimeline = require('./tabs/timeline/index.js');
 
 function ViewExistingDialog(opts){
 	var self = this,
@@ -29,7 +27,18 @@ function ViewExistingDialog(opts){
 		domain,
 		descManager,
 		myDomains,
-		editForm;
+		tabEdit = new TabEdit(),
+		tabMap = new TabMap(),
+		tabRemarks = new TabRemarks(),
+		tabTimeline = new TabTimeline();
+
+	EventEmitter.call(self);
+
+	var $content = $(template({
+		isNew: true,
+			crumbs: crumbs,
+		})),
+		$tabContainer = $content.find('.js-tabcontainer');
 
 	_changeEntity(opts.entity || opts.rootEntity);
 
@@ -38,13 +47,13 @@ function ViewExistingDialog(opts){
 		return color;
 	}
 
-	EventEmitter.call(self);
 	crumbs = _.chain(crumbs)
 		.toArray()
 		.push({context: entity, label:_getLabel(entity), color: _getColor(entity)})
 		.value();
 
 	var breadcrumb = new Breadcrumb({crumbs: crumbs});
+
 	breadcrumb.on('close', function(data){
 		modal.remove();
 	});
@@ -52,17 +61,15 @@ function ViewExistingDialog(opts){
 	breadcrumb.on('selection', function(data){
 		if (!_changeEntity(data.context)) return;
 
-		_update();
+		_updateAddButton();
 	});
 
 	function _changeEntity(entityToLoad){
-		console.log('start _changeEntity');
 		if (entityToLoad == entity) return false;
 
 		entity = entityToLoad;
 		domain = app.getDomain(entity.domainName);
-		descManagerCache[entity.domainName] = descManagerCache[entity.domainName] || domain.getService('description-manager');
-		descManager = descManagerCache[entity.domainName];
+		descManager = descManagerCache[entity.domainName] = descManagerCache[entity.domainName] || domain.getService('description-manager');
 
 		myDomains = domain.getChildren();
 
@@ -73,7 +80,15 @@ function ViewExistingDialog(opts){
 			descManagerCache[myDomain.name] = myDomain.getService('description-manager');
 		});
 
-		console.log('end _changeEntity');
+		var ctx = createContext(entity);
+
+		[tabEdit, tabRemarks, tabTimeline, tabMap]
+			.forEach(function(tab){
+				tab.setContext(ctx);
+			});
+
+		_updateAddButton();
+
 		return true;
 	}
 
@@ -81,82 +96,53 @@ function ViewExistingDialog(opts){
 		return descManager.getShortDescription(myEntity);
 	}
 
-	function _loadEditForm(){
-		editForm = new EditExistingForm({entity: entity});
-		$tabContainer.find('.tab-edit').empty().append(editForm.$element);
-	}
-
 	var modal;
-	var template = getTemplate(domain);
-	var $content = $(template({
-			isNew: true,
-			crumbs: crumbs,
-			domainLabel: domain.label,
-		})),
-		$tabContainer = $content.find('.js-tabcontainer'),
-		$remarks = $tabContainer.find('textarea');
 
 	$tabContainer.css('height', (window.innerHeight-88)+'px');
-	$tabContainer.find('textarea').css('height', (window.innerHeight-(88+49))+'px'); //sorry
-
-	$tabContainer.find('.js-timestamp').click(function(){
-		insertAtCaret($remarks[0], moment().format(' HH:mm '));	
-	});
+	var $tabHeaderContainer = $content.find('.js-etho-tabs');
 	
-	var map = new MapView();
-	map.showGeoJson(entity.footprint);
-	$tabContainer.find('.tab-map').append(map.$element);
+	[tabTimeline, tabEdit, tabRemarks, tabMap]
+		.forEach(function(tab, i){
+			var $header = $('<li></li>')
+				.addClass('js-etho-tab')
+				.attr('data-tabclass', tab.label)
+				.text(tab.label);
 
-	var currentTab = 'tab-timeline';
-	$content.find('.js-etho-tab').click(function(){
-		var $this = $(this),
-			tabClass = $this.data('tabclass');
+			if (i === 0) {
+				$header.addClass('selected');
+				tab.$element.show();
+			} else {
+				tab.$element.hide();
+			}
 
-		if (currentTab == 'tab-edit'){
-			editForm.updateFields();
+			$tabHeaderContainer.append($header);
+			$tabContainer.append(tab.$element);
 
-			_doSave()
-				.then(function(){
-					_update(true);
-				})
-				.catch(function(err){
-					console.error(err);
-				});
-		}	
+			$header.on('click', function(){
+				_tabClick.call(this, arguments[0], tab);
+			});
+		});
 
-		if (currentTab == 'tab-remarks'){
-			editForm.updateFields();
-			entity.remarks = $remarks.val();
+	var previousTab;
+	function _tabClick(ev, clickedTab){
+		var $this = $(this);
 
-			_doSave()
-				.then(function(){
-					_update(true);
-				})
-				.catch(function(err){
-					console.error(err);
-				});
-		}	
+		if (previousTab && _.isFunction(previousTab.loseFocus))
+			previousTab.loseFocus();
 
 
 		$this.siblings().removeClass('selected');
 		$this.addClass('selected');
 		$tabContainer.children().hide();
-		$tabContainer.find('.'+tabClass).show();
 
-		currentTab = tabClass;
-
-		if (currentTab == 'tab-map'){
-			map.showGeoJson(entity.footprint);
+		if (_.isFunction(clickedTab.show)){
+			clickedTab.show();
+		} else {
+			clickedTab.$element.show();
 		}
-		if (currentTab == 'tab-remarks'){
-			$remarks.val(entity.remarks);
-		}
-	});
 
-
-	var timeline = createTimeline({
-		height: (window.innerHeight-175),
-	});
+		previousTab = clickedTab;
+	}
 
 	modal = new Modal({
 			$header: breadcrumb.$element,
@@ -170,74 +156,49 @@ function ViewExistingDialog(opts){
 		self.emit('closed');
 	});
 
-	timeline.on('activity-click', function(d){
-		console.log('start activity-click');
-		_changeEntity(d);
-		breadcrumb.add({context:d, label: _getLabel(d), color: _getColor(d)});
+	function descendContext(newEntity){
+		_changeEntity(newEntity);
 
-		_update();
-		console.log('end activity-click');
-	});
-
-	$content.find('.js-framework-timeline-container')
-		.append(timeline.element);
-
-	function _renderTimeline(){
-		console.log('_renderTimeline');
-		var children = _getAllChildren();
-
-		console.dir('loading ' + children.length);
-
-		timeline.clear();
-		timeline.add(children);
+		breadcrumb.add({
+			context: newEntity, 
+			label: _getLabel(newEntity), 
+			color: _getColor(newEntity), 
+		});
 	}
 
-	function _setTitleContent(){
-		$content.find('.js-long-description-container')
-			.html('<h1 class="loading-message">Loading...</h1>');
-
-		descManager.getLongDescription(entity)
-			.then(function(description){
-				console.log('done loading form');
-				$content.find('.js-long-description-container')
-					.html(description);
-			})
-			.catch(function(err){
-				console.error(err);
-			});
-	}
-	function _getAllChildren(){
-		return _.chain(entity)
-			.values()
-			.filter(_.isArray)
-			.flatten()
-			.filter(function(val){return val.domainName;})
-			.value();
+	function createContext(entity){
+		return {
+			descend: descendContext,
+			entity: entity,
+			domain: domain,
+			descManager: descManager,
+			getChildren: function(){
+				return _.chain(entity)
+					.values()
+					.filter(_.isArray)
+					.flatten()
+					.filter(function(val){return val.domainName;})
+					.value();
+			},
+		};
 	}
 
-	function _update(skipTimeline){
-
+	function _updateAddButton(){
 		var $btnAddChild = $content.find('.js-child-add');
-		if (_.size(myDomains) == 1){
-			$btnAddChild.text('Add ' + myDomains[0].label);
-		} else if (_.size(myDomains) === 0){
+		
+		var popupChildDomains = myDomains.filter(function(d){return !d.inline;});
+
+		if (_.size(popupChildDomains) == 1){
+			$btnAddChild.text('Add ' + popupChildDomains[0].label);
+		} else if (_.size(popupChildDomains) === 0){
 			$btnAddChild.hide();
 		} else {
 			$btnAddChild.text('Add');
 		}
-
-		_loadEditForm();
-		_setTitleContent();
-
-		if (!skipTimeline){
-			_renderTimeline();
-		}
-
-		$remarks.val(entity.remarks);
 	}
 
 	this.show = function(){
-		_update();
+		_updateAddButton();
 
 		var form = formBuilder.buildDataEntryForm(domain);
 
@@ -268,7 +229,7 @@ function ViewExistingDialog(opts){
 
 			var m = new CreateSelectMenu({
 				title: title,
-				domains: myDomains,
+				domains: myDomains.filter(function(d){return !d.inline;}),
 				crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
 			});
 
@@ -284,7 +245,7 @@ function ViewExistingDialog(opts){
 						rootEntity._rev = info.rev;
 
 						_changeEntity(child);
-						_update();
+						_updateAddButton();
 						breadcrumb.add({context:child, label: _getLabel(child), color: _getColor(child)});
 					})
 					.catch(function(err){

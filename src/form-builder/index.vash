@@ -18,7 +18,7 @@
 	@model.tabs.forEach(function(tab, i){
 	<div class="js-tab-container tab-container">
 		<div data-index="@i" class="js-tab content" style="display:@(i===0?'block':'none')">
-			<ul class="list">
+			<ul class="list list-inset">
 			@Object.keys(tab.fields).forEach(function(fieldName){
 				@html.raw(html.field(fieldName, tab.fields[fieldName], @model.entity))
 			})
