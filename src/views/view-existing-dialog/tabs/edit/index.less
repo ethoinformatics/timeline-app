@@ -3,8 +3,44 @@
 }
 .accordian{
 	.header{
-		button{
-			float: right;
+		margin-bottom: 1px;
+		.button-small.header-button{
+			min-width: 28px;
+			min-height: 20px;
+		}
+	}
+	.item-container{
+		
+		margin-top: 2px;
+		padding: 0;
+		border: none;
+
+		li{
+			border-top: 1px solid #ddd;
+		}
+
+
+		.form-builder{
+			.list-inset{
+				margin-top: 0;
+			}
+		}
+		.etho-inline-header{
+			margin-bottom: 1px;
+			margin-top: 0;
+			i.ion{
+				min-width: 12px;
+			}
+
+			li{
+				padding-left: 12px;
+			}
+		}
+	}
+
+	.item-container:first-child{
+		.etho-inline-header{
+			margin-top: 20px;
 		}
 	}
 }

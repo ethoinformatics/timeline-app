@@ -1,8 +1,10 @@
 require('./index.less');
 
 var $ = require('jquery'),
+	velocity = require('velocity-animate'),
 	EditExistingForm = require('edit-existing-form'),
 	tmpl = require('./index.vash'),
+	inlineChildTmpl = require('./inline-child.vash'),
 	scrollTmpl = require('./scroll.vash'),
 	Scroll = require('iscroll');
 
@@ -34,36 +36,71 @@ function EditTab(){
 			.empty()
 			.append(editForm.$element);
 
-		var scroll = new Scroll(self.$element.find('.scroll-wrapper')[0], {
+		self.$element
+			.css('width', window.innerWidth)
+			.css('height', window.innerHeight-(96+44));
+
+		var scroll = new Scroll(self.$element[0], {
 				mouseWheel: true,
 				scrollbars: true,
 			});
 
-		self.$element.find('.scroll-wrapper')
-			.css('width', window.innerWidth)
-			.css('height', window.innerHeight-(96+44));
 
 		scroll.refresh();
 
+		self.$element.on('js-expand-toggle', function(ev){
+			var $this = $(this);
+
+
+		});
 		self.$element.find('.js-inline-add')
 			.on('click', function(){
 				var $this = $(this),
 					domainName = $this.data('domain'),
 					domain = inlineDomains.filter(function(d){return d.name == domainName;})[0];
 
-				// var $headerLi = $('<li></li>')
-				// 	.addClass('item')
-				// 	.addClass('header')
-				// 	.text(domain.label);
+				var $containerLi = $('<li></li>')
+					.addClass('item')
+					.addClass('item-container')
+					//.addClass('header')
+					.append(inlineChildTmpl({domainLabel: domain.label || domain.name}));
 
-
-				var $li = $('<li></li>');
 				var childForm = new EditExistingForm({entity: {domainName: domain.name}});
-				$li.append(childForm.$element);
+				childForm.$element.addClass('js-fields');
+				$containerLi.append(childForm.$element);
 			
 				$this.closest('ul')
-//					.append($headerLi)
-					.append($li);
+					.append($containerLi);
+
+
+
+				$containerLi.find('.js-expand-toggle')
+					.on('click', function(){
+						var DURATION = 200;
+						var $this = $(this),
+							$icon = $this.find('i'),
+							$accordian = $this.closest('.accordian');
+
+						var $allIcons = $accordian.find('i.js-expand-icon').not($icon);
+						var $allItemContainers = $accordian
+							.find('.item-container')
+							.not($containerLi);
+
+						$allItemContainers.find('.js-expand-toggle').data('collapsed', true);
+						velocity($allItemContainers.find('.js-fields'), 'slideUp', {duration: DURATION});
+						$allIcons.removeClass('ion-arrow-down-b').addClass('ion-arrow-right-b');
+
+						var isCollapsed = $this.data('collapsed');
+						if (isCollapsed) {
+							velocity(childForm.$element, 'slideDown', {duration: DURATION});
+							$icon.addClass('ion-arrow-down-b').removeClass('ion-arrow-right-b');
+						} else {
+							velocity(childForm.$element, 'slideUp', {duration: DURATION});
+							$icon.removeClass('ion-arrow-down-b').addClass('ion-arrow-right-b');
+						}
+
+						$this.data('collapsed', !isCollapsed);
+					});
 
 				scroll.refresh();
 			});
