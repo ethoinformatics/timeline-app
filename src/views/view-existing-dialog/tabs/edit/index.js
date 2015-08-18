@@ -11,47 +11,72 @@ var $ = require('jquery'),
 	scrollTmpl = require('./scroll.vash'),
 	Scroll = require('iscroll');
 
+var EventEmitter = require('events').EventEmitter;
+var util = require('util');
+
+
+function _createChildCollectionData(parentDomain, childDomains){
+	var lookup = _.chain(childDomains)
+		.map(function(d){
+			// sorry, cheap hack todo: hide this somewhere
+			var parentPropertyName = d.getService('parent-'+parentDomain.name);
+
+			return {
+				collectionName: parentPropertyName,
+				domain: d,
+			};
+		})
+		.groupBy(function(d){return d.collectionName;})
+		.value();
+
+	return _.keys(lookup)
+		.map(function(collectionName){
+			return {
+				collectionName: collectionName,
+				domainNames:_.map(lookup[collectionName], function(d){return d.domain.name;}).join(','),
+			};
+		});
+}
+
 function EditTab(){
+	EventEmitter.call(this);
 
 	var self = this, editForm;
-
+	var _context; 
 	self.label = 'Data';
 	self.$element = $(scrollTmpl({}));
 
 
 	self.setContext = function(ctx){
+		_context = ctx;
 		editForm = new EditExistingForm({entity: ctx.entity});
 		editForm.updateFields();
 
 		var childDomains = ctx.domain.getChildren();
-		var childData = _.chain(childDomains)
-			.filter(function(d){return d.inline;})
-			.map(function(d){
-				// sorry, cheap hack todo: hide this somewhere
-				var parentPropertyName = d.getService('parent-'+ctx.domain.name);
 
-				return {
-					collectionName: parentPropertyName,
-					domain: d,
-				};
-			})
-			.groupBy(function(d){return d.collectionName;})
-			.value();
+		var inlineChildDomains = childDomains.filter(function(d){return d.inline;});
+		var inlineChildren = _createChildCollectionData(ctx.domain, inlineChildDomains);
 
-		childData = _.keys(childData)
-			.map(function(collectionName){
-				return {
-					collectionName: collectionName,
-					domainNames:_.map(childData[collectionName], function(d){return d.domain.name;}).join(','),
-				};
+		var standardChildDomains = childDomains.filter(function(d){return !d.inline;});
+		var standardChildren = _createChildCollectionData(ctx.domain, standardChildDomains);
+
+		standardChildren.forEach(function(item){
+				item.entities = (ctx.entity[item.collectionName] || [])
+					.map(function(child){
+						return {
+							_id: child._id || child.id,
+							domainLabel: child.domainName,
+							entityLabel: ctx.getShortDescription(child),
+						};
+					});
 			});
-
 
 		self.$element
 			.find('.scroller')
 			.empty()
 			.append(tmpl({
-				childData: childData,
+				childData: inlineChildren,
+				standardChildren: standardChildren,
 				label: ctx.domain.label,
 			}));
 
@@ -69,8 +94,6 @@ function EditTab(){
 				scrollbars: true,
 			});
 
-
-		scroll.refresh();
 
 		function _collapseChildren(collectionName){
 			var $accordians = self.$element.find('.js-collection-'+ collectionName);
@@ -152,7 +175,9 @@ function EditTab(){
 					$this.data('collapsed', !isCollapsed);
 				});
 
-			scroll.refresh();
+			setTimeout(function(){
+				scroll.refresh();
+			}, 100);
 		}
 
 		self.$element.find('.js-inline-add')
@@ -173,7 +198,19 @@ function EditTab(){
 
 				popupButtons.show(ev);
 			});
+
 	};
+
+	self.$element.on('click', '.js-child-link', function(){
+		var $this = $(this),
+			collectionName = $this.data('collection'),
+			_id = $this.data('id');
+
+		var child = _.find(_context.entity[collectionName], function(c){
+			return (c._id || c.id) == _id;
+		});
+		_context.descend(child);
+	});
 
 	self.loseFocus = function(){
 		editForm.updateFields();
@@ -189,4 +226,5 @@ function EditTab(){
 
 }
 
+util.inherits(EditTab, EventEmitter);
 module.exports = EditTab;

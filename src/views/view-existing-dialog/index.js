@@ -180,6 +180,10 @@ function ViewExistingDialog(opts){
 					.filter(function(val){return val.domainName;})
 					.value();
 			},
+			getShortDescription: function(entity){
+				var descManager = descManagerCache[entity.domainName];
+				return descManager.getShortDescription(entity);
+			},
 		};
 	}
 

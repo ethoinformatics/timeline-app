@@ -8,6 +8,20 @@
 		<div class="edit-form">
 		</div>
 
+		@model.standardChildren.forEach(function(data){
+		<ul class="list list-inset accordian js-collection-@data.collectionName">
+			<li class="item item-divider header">
+				@data.collectionName
+			</li>
+			@data.entities.forEach(function(childEntity){
+				<li class="item js-child-link" data-collection="@data.collectionName" data-id="@childEntity._id">
+					@childEntity.entityLabel
+					<span class="item-note">@childEntity.domainLabel</span>
+				</li>
+			})
+		</ul>
+		})
+
 		@model.childData.forEach(function(data){
 		<ul class="list list-inset accordian js-collection-@data.collectionName">
 			<li class="item item-divider header item-button-right">
