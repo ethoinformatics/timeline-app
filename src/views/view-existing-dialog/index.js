@@ -101,7 +101,7 @@ function ViewExistingDialog(opts){
 	$tabContainer.css('height', (window.innerHeight-88)+'px');
 	var $tabHeaderContainer = $content.find('.js-etho-tabs');
 	
-	[tabTimeline, tabEdit, tabRemarks, tabMap]
+	[tabEdit, tabRemarks, tabTimeline, tabMap]
 		.forEach(function(tab, i){
 			var $header = $('<li></li>')
 				.addClass('js-etho-tab')
@@ -244,26 +244,26 @@ function ViewExistingDialog(opts){
 						rootEntity._id = info.id;
 						rootEntity._rev = info.rev;
 
-						_changeEntity(child);
-						_updateAddButton();
-						breadcrumb.add({context:child, label: _getLabel(child), color: _getColor(child)});
-					})
-					.catch(function(err){
-						console.error(err);
-					});
+					_changeEntity(child);
+					_updateAddButton();
+					breadcrumb.add({context:child, label: _getLabel(child), color: _getColor(child)});
+				})
+				.catch(function(err){
+					console.error(err);
+				});
 
-			});
-				m.show(ev);
 		});
+			m.show(ev);
+	});
 
-		function _handleSave(keepOpen){
-			var now = Date.now();
+	function _handleSave(keepOpen){
+		var now = Date.now();
 
-			var data = {
-					domainName: domain.name,
-					beginTime: now,
-					endTime: keepOpen ? null : now,
-				};
+		var data = {
+				domainName: domain.name,
+				beginTime: now,
+				endTime: keepOpen ? null : now,
+			};
 
 			data = _.extend(data, form.getData());
 

@@ -2,17 +2,17 @@
 	<div>
 		<ul class="section-header list list-inset">
 			<li class="item item-divider">
-				@model.domainName Details
+				@model.label Details
 			</li>
 		</ul>
 		<div class="edit-form">
 		</div>
-		
-		@model.inlineDomains.forEach(function(domain){
-		<ul class="list list-inset accordian">
+
+		@model.childData.forEach(function(data){
+		<ul class="list list-inset accordian js-collection-@data.collectionName">
 			<li class="item item-divider header item-button-right">
-				@domain.label
-				<button data-domain="@domain.name" class="js-inline-add button-small button header-button button-balanced">
+				@data.collectionName
+				<button data-collection="@data.collectionName" data-domains="@data.domainNames" class="js-inline-add button-small button header-button button-balanced">
 					<i class="ion ion-plus-circled"></i>
 				</button>
 			</li>
