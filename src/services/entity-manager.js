@@ -16,7 +16,7 @@ function createDesignDoc(name, mapFunction) {
   return ddoc;
 }
 
-function CrudManager(domainName){
+function CrudManager(registry, domainName){
 	var db = new PouchDb(DB_NAME),
 		self = this;
 
@@ -41,8 +41,7 @@ function CrudManager(domainName){
 	self.save = function(entity){
 		entity.domainName = entity.domainName || domainName;
 
-		var app = require('app')(),
-			domain = app.getDomain(domainName),
+		var domain = registry.getDomain(domainName),
 			uuidGenerator = domain.getService('uuid-generator');
 
 		entity._id = entity._id || uuidGenerator(entity);
@@ -69,11 +68,12 @@ function CrudManager(domainName){
 	};
 
 	self.addToParent = function(parent, child){
-		var app = require('app')(),
-			childDomain = app.getDomain(domainName);
+		var childDomain = registry.getDomain(domainName);
+
+		child.id = child.id || PouchDb.utils.uuid();
 
 		// sorry, cheap hack
-		// todo: this isn't a service
+		// todo: hide this somewhere
 		var parentPropertyName = childDomain.getService('parent-'+parent.domainName);
 	
 		parent[parentPropertyName] = _.chain(parent[parentPropertyName])

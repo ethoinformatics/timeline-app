@@ -26,3 +26,5 @@ node_modules
 
 ionic/www/bundles/
 settings.sh
+new_pp*
+pp*

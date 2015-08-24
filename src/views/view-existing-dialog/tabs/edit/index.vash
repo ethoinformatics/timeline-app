@@ -13,7 +13,7 @@
 			@data.collectionName
 		</li>
 		@data.entities.forEach(function(childEntity){
-			<li class="item js-child-link" data-collection="@data.collectionName" data-id="@childEntity._id">
+			<li title= "@childEntity._id" class="item js-child-link" data-collection="@data.collectionName" data-id="@childEntity._id">
 				@childEntity.entityLabel
 				<span class="item-note">@childEntity.domainLabel</span>
 			</li>

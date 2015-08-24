@@ -16,7 +16,7 @@ function getService(domainName, serviceName){
 		service = d[serviceName];
 
 	if (service && _.isFunction(service.ctor)){
-		service = new service.ctor(domainName);
+		service = new service.ctor(registry, domainName);
 	}
 
 	return service;
@@ -88,7 +88,6 @@ var registry = {
 				var tmp  = _.extend(_.create(childDomain), d);
 				return tmp;
 			});
-
 
 		return domains;
 	},

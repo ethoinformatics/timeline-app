@@ -2,7 +2,7 @@ var _ = require('lodash'),
 	q = require('q');
 
 
-function DescriptionManager(domainName){
+function DescriptionManager(registry, domainName){
 	var self = this;
 	
 

@@ -15,6 +15,7 @@ function TimelineTab(){
 
 	var timeline = createTimeline({
 		height: (window.innerHeight-175),
+		getColor: function(){return 'red';},
 	});
 
 	timeline.on('activity-click', function(d){
@@ -25,7 +26,7 @@ function TimelineTab(){
 		.append(timeline.element);
 
 	function _renderTimeline(){
-		var children = _context.getChildren();
+		var children = _getChildren();
 
 		timeline.clear();
 		timeline.add(children);
@@ -41,6 +42,11 @@ function TimelineTab(){
 			.catch(function(err){
 				console.error(err);
 			});
+	}
+
+	function _getChildren(){
+		var children = _context.getChildren();
+		return children;
 	}
 
 	self.setContext = function(ctx){

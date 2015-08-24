@@ -26,11 +26,16 @@ function ViewExistingDialog(opts){
 		crumbs = opts.crumbs,
 		domain,
 		descManager,
-		myDomains,
-		tabEdit = new TabEdit(),
-		tabMap = new TabMap(),
-		tabRemarks = new TabRemarks(),
-		tabTimeline = new TabTimeline();
+		myDomains;
+
+	var tabOptions = {
+		rootEntity: rootEntity,
+	};
+
+	var tabEdit = new TabEdit(tabOptions),
+		tabMap = new TabMap(tabOptions),
+		tabRemarks = new TabRemarks(tabOptions),
+		tabTimeline = new TabTimeline(tabOptions);
 
 	EventEmitter.call(self);
 

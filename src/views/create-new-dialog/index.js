@@ -10,7 +10,6 @@ var Modal = require('modal'),
 	util = require('util'),
 	app = require('app')(),
 	EventEmitter = require('events').EventEmitter,
-	randomColor = require('rgba-generate')(0.8),
 	template = require('./index.vash');
 
 function getTemplate(){ return template; }
@@ -52,8 +51,6 @@ function CreateNewDialog(opt){
 		var now = Date.now();
 
 		var data = {
-				id: 'um',
-				color: randomColor().toHex(),
 				domainName: domain.name,
 				beginTime: now,
 				endTime: keepOpen ? null : now,
