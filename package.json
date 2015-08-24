@@ -1,8 +1,8 @@
 {
   "name": "ethoinfo-framework",
   "version": "0.0.0",
-  "description": "This sample uses browserify to organize the code in to modules, vash for client side rendering of templates and jQuery for everything else",
-  "main": "src/registrar.js",
+  "description": "",
+  "main": "src/registrar/index.js",
   "browserify": {
     "transform": [
       "vashify",
@@ -45,21 +45,20 @@
   },
   "browser": {
     "app": "./src/app.js",
+    "breadcrumb": "./src/controls/breadcrumb/index.js",
+    "popup-buttons": "./src/controls/popup-buttons/index.js",
+    "map": "./src/controls/map/index.js",
+    "modal": "./src/controls/modal/index.js",
     "dom-ready": "./src/dom-ready.js",
     "geolocation": "./src/geolocation.js",
-    "modal": "./src/views/modal/index.js",
     "create-new-dialog": "./src/views/create-new-dialog/index.js",
     "view-existing-dialog": "./src/views/view-existing-dialog/index.js",
-    "breadcrumb": "./src/views/breadcrumb/index.js",
-    "popup-buttons": "./src/views/popup-buttons/index.js",
-    "map": "./src/views/map/index.js",
     "edit-existing-dialog": "./src/views/edit-existing-dialog/index.js",
     "edit-existing-form": "./src/views/edit-existing-form/index.js",
     "insert-at-caret": "./src/insert-at-caret.js",
     "activity-filter": "./src/views/activity-filter/index.js",
-    "form-builder": "./src/form-builder/index.js",
+    "form-builder": "./src/services/form-builder/index.js",
     "timeline": "./src/timeline.js",
-    "long-click": "./src/long-click.js",
     "device-settings": "./src/device-settings.js"
   }
 }

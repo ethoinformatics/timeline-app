@@ -1,9 +1,9 @@
-var theApp;
+var myApp;
 
-module.exports = function(a){
-	if (a === undefined) return theApp;
+module.exports = function(app){
+	if (app === undefined) return myApp;
 
-	theApp=a;
-	return theApp;
+	myApp = app;
+	return myApp;
 };
 

@@ -2,9 +2,9 @@ var _ = require('lodash'),
 	DOMAIN_SETTINGS_KEY = 'DOMAIN_SETTING_KEY',
 	lookup = Object.create(null),
 	domainDefaults = Object.create(null),
-	EntityManager = require('./services/entity-manager'),
-	uuidGenerator = require('./services/uuid-generator'),
-	DescriptionManager = require('./services/description-manager');
+	EntityManager = require('../services/entity-manager'),
+	uuidGenerator = require('../services/uuid-generator'),
+	DescriptionManager = require('../services/description-manager');
 
 // register global/default services here
 domainDefaults['entity-manager'] = { ctor: EntityManager };
@@ -140,8 +140,8 @@ function App(){
 	};
 
 	self.run = function(){
-		require('./app.js')(self.getRegistry());
-		require('./main.js');
+		require('../app.js')(self.getRegistry());
+		require('../main.js');
 	};
 
 }

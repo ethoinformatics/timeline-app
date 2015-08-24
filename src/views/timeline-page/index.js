@@ -5,7 +5,6 @@ var $ = require('jquery'),
 	q = require('q'),
 	app = require('app')(),
 	createTimeline = require('timeline'),
-	ActivityFilter = require('activity-filter'),
 	CreateSelectMenu = require('../create-select-dialog'),
 	ViewExistingDialog = require('../view-existing-dialog'),
 	//FormDialog = require('form-dialog'),
@@ -29,12 +28,8 @@ function _getTopLevelDomains(){
 }
 
 function TimelinePage(){
-	var self = this,
-		activityFilter = new ActivityFilter();
+	var self = this;
 
-	activityFilter.on('predicate-change', function(){
-		self.render();
-	});
 
 	var timeline = createTimeline({
 	});
@@ -43,14 +38,12 @@ function TimelinePage(){
 		});
 
 	self.$element = $(pageTemplate({}));
-	self.$element.find('#select-container').append(activityFilter.$element);
 	self.$element.find('#timeline-container').append(timeline.element);
 
 	self.render = function(){
 		console.log('timeline - render');
 		timeline.clear();
 
-		var isVisble = activityFilter.createPredicate();
 		var fetchPromises = app.getDomains('activity')
 			.map(function(domain){
 				var entityManager = domain.getService('entity-manager');
@@ -60,10 +53,7 @@ function TimelinePage(){
 		return q.all(fetchPromises)
 			.then(function(results){
 				var entities = _.flatten(results)
-					.filter(function(d){ return d.domainName=='diary'; })
-					.filter(isVisble);
-
-
+					.filter(function(d){ return d.domainName=='diary'; });
 
 				timeline.add(_.sortBy(entities, 'eventDate'));
 				
