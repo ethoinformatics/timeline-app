@@ -25,6 +25,9 @@ var DEFAULTS = {
 			var domain = app.getDomain(d.domainName);
 			return domain.getService('color');
 		},
+		getKey: function(d){
+			return d.id || d._id;
+		},
 	};
 
 var HEADER_HEIGHT = 100;
