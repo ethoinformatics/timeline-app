@@ -38,6 +38,8 @@ function DescriptionManager(registry, domainName){
 			return service(entity);
 		} else if (_.isString(service)){
 			return entity[service];
+		} else {
+			return entity.name || entity.title || entity._id;
 		}
 
 		return '';
@@ -63,6 +65,8 @@ function DescriptionManager(registry, domainName){
 		});
 
 	self.getLongDescription = function(entity){
+		if (!service) return q(self.getShortDescription(entity));
+
 		return q.all(loadCodePromises)
 			.then(function(results){
 				var codeLookups = _.zip(codedFields, results);
