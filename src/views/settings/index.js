@@ -45,10 +45,8 @@ function CodeManager(){
 
 		q.all(loadedSelects)
 			.then(function(selects){
-				debugger
 				deviceSettings()
 					.then(function(settings){
-						debugger
 						Object.keys(settings)
 							.forEach(function(key){
 								var $select = _.find(selects, function($select){ return $select.attr('id') == key;});
@@ -83,8 +81,6 @@ function CodeManager(){
 	$element.find('#btn-save-settings').click(function(){
 		deviceSettings()
 			.then(function(settings){
-				debugger
-
 				$element.find('select').each(function(){
 					var $select = $(this);
 					settings[$select.attr('id')] = $select.val();
