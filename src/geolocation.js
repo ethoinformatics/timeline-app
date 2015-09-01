@@ -23,8 +23,10 @@ function success(data){
 }
 
 function failure(data){
-	alert('gps error');
-	alert(JSON.stringify(data));
+	//alert('gps error');
+	//alert(JSON.stringify(data));
+	console.log('gsp error');
+	console.error(data);
 	errorCallbacks.fire(data);
 }
 

@@ -9,6 +9,9 @@ var $ = require('jquery'),
 	//sampleData = require('sample-data'),
 	tmpl = require('./index.vash');
 
+var EventEmitter = require('events').EventEmitter,
+	util = require('util');
+
 
 
 function _getTopLevelDomains(){
@@ -27,6 +30,7 @@ function _getTopLevelDomains(){
 }
 
 function GlobalAddButton(){
+	EventEmitter.call(this);
 	var self = this;
 
 	var createSelectMenu = new CreateSelectMenu({
@@ -35,12 +39,12 @@ function GlobalAddButton(){
 
 	self.$element = $(tmpl({}));
 
-
 	self.$element.on('click', function(ev){
 			createSelectMenu.on('created', function(entity){
 				var domain = app.getDomain(entity.domainName);
 				var entityManager = domain.getService('entity-manager');
 
+				self.emit('created', entity);
 				entityManager.save(entity)
 					.then(function(info){
 						entity._id = info.id;
@@ -61,4 +65,5 @@ function GlobalAddButton(){
 		});
 }
 
+util.inherits(GlobalAddButton, EventEmitter);
 module.exports = GlobalAddButton;

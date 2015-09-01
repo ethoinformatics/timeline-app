@@ -45,6 +45,7 @@ ready(function appLoad(){
 	$body.find('.js-menu').append(addButton.$element);
 	$body.find('#main-content').append(listView.$element);
 
+	addButton.on('created', function(){ listView.refresh(); });
 	sideMenu.on('click', function(moduleName){
 		sideMenu.close();
 

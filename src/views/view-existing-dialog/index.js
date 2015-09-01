@@ -195,15 +195,17 @@ function ViewExistingDialog(opts){
 
 	function _updateAddButton(){
 		var $btnAddChild = $content.find('.js-child-add');
+		$btnAddChild.text('Add');
 		
 		var popupChildDomains = myDomains.filter(function(d){return !d.inline;});
 
 		if (_.size(popupChildDomains) == 1){
-			$btnAddChild.text('Add ' + popupChildDomains[0].label);
+		//	$btnAddChild.text('Add ' + popupChildDomains[0].label);
+			$btnAddChild.removeClass('disabled');
 		} else if (_.size(popupChildDomains) === 0){
-			$btnAddChild.hide();
+			$btnAddChild.addClass('disabled');
 		} else {
-			$btnAddChild.text('Add');
+			$btnAddChild.removeClass('disabled');
 		}
 	}
 
@@ -233,6 +235,8 @@ function ViewExistingDialog(opts){
 
 		$btnAddChild.click(function(ev){
 			ev.preventDefault();
+
+			if ($(this).hasClass('disabled')) return console.log('ignore click');
 
 			var descMgr = domain.getService('description-manager');
 			var title = 'Add a child to ' + descMgr.getShortDescription(entity);

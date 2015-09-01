@@ -7,36 +7,14 @@
 		}
 	}
 
-	#timeline-container{
-		height:100%;
-
-		text.timeline-label{
-			color:white;
-			font-weight:bolder;
-		}
-		svg{
-			g.selected{
-				rect.foreground{
-					box-shadow: 0 0 20px yellow;
-				}
-			}
-			g.activity{
-				rect.background{
-					fill: #f5f5f5;
-				}
-			}
-			.time-axis{
-				path, line{
-					fill: none;
-					stroke: black;
-					shape-rendering: crisp-edges;
-				}
-				text{
-					font-family: sans-serif;
-					font-size: 11px;
-				}
-
-			}
+	.scroll-wrapper{
+		overflow:hidden;
+		position:relative;
+		top:0px;
+		bottom:0px;
+			width: 100%;
+		.scroller{
 		}
 	}
+	
 }

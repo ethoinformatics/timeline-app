@@ -3,6 +3,7 @@ require('./index.less');
 var $ = require('jquery'),
 	_ = require('lodash'),
 	q = require('q'),
+	Scroll = require('iscroll'),
 	app = require('app')(),
 	ViewExistingDialog = require('../view-existing-dialog'),
 	pageTemplate = require('./index.vash'),
@@ -62,16 +63,24 @@ function ListPage(){
 	var self = this;
 
 	self.$element = $(pageTemplate({ }));
-
-	_getEntities()
-		.then(function(entities){
-			var $ul = self.$element.find('ul.list');
-
-			entities.forEach(function(entity){
-				$ul.append(itemTemplate(_createViewModel(entity)));
-			});
-
+	var scroll = new Scroll(self.$element.find('.scroll-wrapper')[0], {
+			mouseWheel: true,
+			scrollbars: true,
 		});
+
+	self.refresh = function(){
+		_getEntities()
+			.then(function(entities){
+				var $ul = self.$element.find('ul.list');
+				$ul.empty();
+
+				entities.forEach(function(entity){
+					$ul.append(itemTemplate(_createViewModel(entity)));
+				});
+
+				scroll.refresh();
+			});
+	};
 
 	self.$element.on('click', '.js-item', function(){
 		var $this = $(this),
@@ -91,6 +100,7 @@ function ListPage(){
 			});
 	});
 
+	self.refresh();
 }
 
 module.exports = ListPage;
