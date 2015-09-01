@@ -1,6 +1,7 @@
 timeline-app
 ============
 
+
 ##Structure of src/
 - the entry point for our code is in `src/main.js`.
 - `src/main.js` kicks off everything else through require statements and dom-manipulation. 
