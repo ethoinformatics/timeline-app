@@ -33,7 +33,18 @@ function _getEntities(){
 		.thru(q.all)
 		.value()
 		.then(function(results){
-			return _.flatten(results);
+			return _.chain(results)
+				.flatten()
+				.sortBy(function(d){
+					var domain = app.getDomain(d.domainName);
+					var sortBy = domain ? domain.getService('sort-by') : false;
+
+					if (!sortBy) return d._id || d.id;
+
+					return d[sortBy];
+				})
+				.reverse()
+				.value();
 		});
 }
 
