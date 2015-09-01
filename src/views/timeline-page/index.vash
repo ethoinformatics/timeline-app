@@ -1,7 +1,5 @@
 <div id="activity-page" class="pane">
 		<ul class="list">
-			<li id="select-container" class="item item-divider item-input item-select">
-			</li>
 			<li id="timeline-container" class="list">
 			</li>
 		</ul>

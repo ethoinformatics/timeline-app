@@ -44,7 +44,7 @@ function TimelinePage(){
 		console.log('timeline - render');
 		timeline.clear();
 
-		var fetchPromises = app.getDomains('activity')
+		var fetchPromises = app.getDomains('get-start-time')
 			.map(function(domain){
 				var entityManager = domain.getService('entity-manager');
 				return entityManager.getAll();
@@ -101,14 +101,6 @@ function TimelinePage(){
 			createSelectMenu.show(ev);
 		});
 
-	// longClick(self.$element, '.activity[data-id]', function(){
-	// 	self.$element
-	// 		.find('.actvity[data-id]')
-	// 		.removeClass('selected');
-
-	// 	$(this).addClass('selected');
-	// 	alert('aha');
-	// });
 	timeline.on('activity-click', function(d){
 		var domain = app.getDomain(d.domainName),
 			entityManager = domain.getService('entity-manager');

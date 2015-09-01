@@ -5,15 +5,11 @@ var app = require('app')(),
 var DEFAULTS = {
 		getBegin: function(d){
 			var domain = app.getDomain(d.domainName);
-			var service = domain.getService('activity');
-
-			return service.getBeginTime(d);
+			return domain.getService('get-begin-time')(d);
 		},
 		getEnd: function(d){
 			var domain = app.getDomain(d.domainName);
-			var service = domain.getService('activity');
-
-			return service.getEndTime(d);
+			return domain.getService('get-end-time')(d);
 		},
 		getLabel: function(d){
 			var domain = app.getDomain(d.domainName);
