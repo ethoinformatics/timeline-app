@@ -22,7 +22,7 @@
   "homepage": "https://github.com/ethoinformatics/sample-ui-browserify",
   "dependencies": {
     "browserify": "^6.3.4",
-    "d3-timeline": "git+ssh://git@github.com/ethoinformatics/d3-timeline#b53d26133bccbcb98625d1f091d603db779d3452",
+    "d3-timeline": "1.0.1",
     "date-math": "0.0.1",
     "es6ify": "^1.6.0",
     "hammerjs": "^2.0.4",
