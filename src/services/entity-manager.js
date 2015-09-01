@@ -80,6 +80,16 @@ function CrudManager(registry, domainName){
 			.toArray()
 			.push(child)
 			.value();
+
+		// by default no events in the same collection can have overlapping times
+		_.chain(parent[parentPropertyName])
+			.toArray()
+			.reject(function(c){return c== child;})
+			.value()
+			.forEach(function(c){
+				c.endTime = c.endTime || child.beginTime;
+			});
+
 	};
 }
 
