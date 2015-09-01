@@ -1,18 +1,17 @@
 require('./main.less');
+require('../node_modules/leaflet/dist/leaflet.css');
 
 var $ = require('jquery'),
-	ActivityPage = require('./views/timeline-page/'),
+	GlobalAddButton = require('./controls/global-add-button/'),
 	UploadDialog = require('./views/upload-dialog/'),
 	CodeManager = require('./views/code-manager/'),
 	Settings = require('./views/settings/'),
 	updateAppCheck = require('./update-app-check'),
 	SideMenu = require('./views/side-menu/'),
+	ListView = require('./views/list-view/'),
 	mainTemplate = require('./main.vash'),
 	ready = require('dom-ready'),
 	locationWatch = require('./activity-location-watch');
-
-
-var $showLeftMenu, isLeftMenuOpen = false;
 
 function keepAppAlive(){
 	if (typeof cordova == 'undefined') return;
@@ -39,10 +38,12 @@ ready(function appLoad(){
 		uploadDialog = new UploadDialog(),
 		codeManager = new CodeManager(),
 		settings = new Settings(),
-		activityPage = new ActivityPage();
+		listView = new ListView(),
+		addButton = new GlobalAddButton();
 
 	$body.append(sideMenu.$element);
-	$body.find('#main-content').append(activityPage.$element);
+	$body.find('.js-menu').append(addButton.$element);
+	$body.find('#main-content').append(listView.$element);
 
 	sideMenu.on('click', function(moduleName){
 		sideMenu.close();
@@ -53,7 +54,7 @@ ready(function appLoad(){
 	});
 
 	uploadDialog.on('closed', function(){
-		activityPage.render();
+		//activityPage.render();
 	});
 
 	$content.click(function(){
