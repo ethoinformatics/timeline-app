@@ -19,6 +19,7 @@ describe('the registrar', function(){
 		var children = registry.getDomain('parent_domain').getChildren();
 
 		expect(children).to.be.ok;
+		console.dir(children);
 		expect(children).to.be.have.length(1);
 		expect(children[0]).to.be.ok;
 		expect(children[0].name).to.be.equal('child_domain');
