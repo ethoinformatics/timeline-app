@@ -11,7 +11,8 @@
   },
   "scripts": {
     "start": "./node_modules/.bin/nodemon -e js,vash,less ./bundler.js",
-    "deploy": "cp -r public/* ./dist/"
+    "deploy": "cp -r public/* ./dist/",
+    "test": "mocha --reporter spec $(find . -path ./node_modules -prune -o -name '*.spec.js' -print)"
   },
   "author": "ethoformatics",
   "license": "none",
