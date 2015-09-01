@@ -51,6 +51,13 @@ function _buildDataEntryForm(domain, data, fieldFilter){
 	var metadata = domain.getService('form-fields');
 	var isNew = !data;
 
+	// we allow two formats.
+	// an array of tabs, or just an object of fields.
+	if (!_.isArray(metadata)){
+		metadata = [
+				{ fields: metadata, }
+			];
+	}
 	if (fieldFilter){
 		metadata = metadata.map(function(tab){
 			var filteredTab = _.cloneDeep(tab),
