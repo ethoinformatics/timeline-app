@@ -187,6 +187,7 @@ function ViewExistingDialog(opts){
 			},
 			getShortDescription: function(entity){
 				var descManager = descManagerCache[entity.domainName];
+				if (!descManager) return entity._id || entity.id;
 				return descManager.getShortDescription(entity);
 			},
 		};
