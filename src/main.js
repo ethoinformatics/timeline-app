@@ -6,7 +6,6 @@ var $ = require('jquery'),
 	UploadDialog = require('./views/upload-dialog/'),
 	CodeManager = require('./views/code-manager/'),
 	Settings = require('./views/settings/'),
-	updateAppCheck = require('./update-app-check'),
 	SideMenu = require('./views/side-menu/'),
 	ListView = require('./views/list-view/'),
 	mainTemplate = require('./main.vash'),
@@ -16,12 +15,15 @@ var $ = require('jquery'),
 function keepAppAlive(){
 	if (typeof cordova == 'undefined') return;
 
-	cordova.plugins.backgroundMode.setDefaults({ 
-		title: 'Ethoinformatics',
-		text:'The app is in background mode.',
-		ticker:'Ethoinformatics is still running.',
-	});
-	cordova.plugins.backgroundMode.enable();
+	try {
+		cordova.plugins.backgroundMode.setDefaults({ 
+			title: 'Ethoinformatics',
+			text:'The app is in background mode.',
+			ticker:'Ethoinformatics is still running.',
+		});
+		cordova.plugins.backgroundMode.enable();
+	} catch (e){
+	}
 }
 
 ready(function appLoad(){
@@ -62,7 +64,6 @@ ready(function appLoad(){
 		sideMenu.close();
 	});
 
-	updateAppCheck();
 	locationWatch();
 
 	keepAppAlive();
