@@ -53,7 +53,7 @@
     "map": "./src/controls/map/index.js",
     "modal": "./src/controls/modal/index.js",
     "dom-ready": "./src/dom-ready.js",
-    "geolocation": "./src/geolocation.js",
+    "geolocation": "./src/services/geolocation.js",
     "create-new-dialog": "./src/views/create-new-dialog/index.js",
     "view-existing-dialog": "./src/views/view-existing-dialog/index.js",
     "edit-existing-dialog": "./src/views/edit-existing-dialog/index.js",

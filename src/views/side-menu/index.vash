@@ -19,6 +19,11 @@
 				Coded fields
 				<!-- <span class="item-note">Manage coded fields</span> -->
 			</li>
+			<li class="js-geolocation-viewer item item-icon-left">
+				<i class="icon ion-pinpoint"></i>
+				Geolocation viewer
+				<!-- <span class="item-note">Manage coded fields</span> -->
+			</li>
 		</ul>
 	</ul>
 </div>

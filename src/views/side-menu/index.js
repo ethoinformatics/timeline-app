@@ -21,6 +21,10 @@ function SideMenu(opt){
 			self.emit('click', 'settings');
 		});
 
+	self.$element.on('click', '.js-geolocation-viewer', function(){
+			self.emit('click', 'geolocation-viewer');
+		});
+
 	var $showLeftMenu = $('.js-show-left-menu'),
 		isLeftMenuOpen = false;
 

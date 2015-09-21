@@ -11,10 +11,10 @@ function DescriptionManager(registry, domainName){
 		fields = domain.getService('form-fields');
 
 	function getCodes(field){
-		if (!field) return q.fcall(_.constant([]));
+		if (!field) return q([]);
 
 		var codeDomain = app.getDomain(field.domain);
-		if (!codeDomain) return q.fcall(_.constant([]));
+		if (!codeDomain) return q([]);
 
 		var codeDescManager = codeDomain.getService('description-manager'),
 			codeEntitymanager = codeDomain.getService('entity-manager');

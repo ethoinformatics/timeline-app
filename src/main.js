@@ -6,6 +6,7 @@ var $ = require('jquery'),
 	UploadDialog = require('./views/upload-dialog/'),
 	CodeManager = require('./views/code-manager/'),
 	Settings = require('./views/settings/'),
+	GeolocationViewer = require('./views/geolocation-viewer/'),
 	SideMenu = require('./views/side-menu/'),
 	ListView = require('./views/list-view/'),
 	mainTemplate = require('./main.vash'),
@@ -41,7 +42,8 @@ ready(function appLoad(){
 		codeManager = new CodeManager(),
 		settings = new Settings(),
 		listView = new ListView(),
-		addButton = new GlobalAddButton();
+		addButton = new GlobalAddButton(),
+		geolocationViewer = new GeolocationViewer();
 
 	$body.append(sideMenu.$element);
 	$body.find('.js-menu').append(addButton.$element);
@@ -54,6 +56,7 @@ ready(function appLoad(){
 		if (moduleName == 'code-manager') codeManager.show();
 		if (moduleName == 'sync') uploadDialog.show();
 		if (moduleName == 'settings') settings.show();
+		if (moduleName == 'geolocation-viewer') geolocationViewer.show();
 	});
 
 	uploadDialog.on('closed', function(){
