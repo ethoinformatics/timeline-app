@@ -6,12 +6,5 @@
 		</span>
 	</div>
 	<div class="js-tabcontainer etho-tabcontainer">
-		<div class="tab-timeline">
-
-			<div class="js-framework-timeline-container framework-timeline-container">
-			</div>
-		</div>
-		<div class="tab-edit">
-		</div>
 	</div>
 </div>
