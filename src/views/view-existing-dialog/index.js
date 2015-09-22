@@ -12,11 +12,29 @@ Breadcrumb = require('breadcrumb'),
 EventEmitter = require('events').EventEmitter,
 template = require('./index.vash');
 
+var geolocation = require('geolocation');
+
 var CreateSelectMenu = require('../create-select-dialog');
 var TabEdit = require('./tabs/edit/index.js'),
 TabMap = require('./tabs/map/index.js'),
 TabRemarks = require('./tabs/remarks/index.js'),
 TabTimeline = require('./tabs/timeline/index.js');
+
+function _getDeviceSettingsObject(){
+	var settingsDomain = app.getDomain('_etho-settings');
+	var entityManager = settingsDomain.getService('entity-manager');
+
+	return entityManager.getAll()
+		.then(function(entities){
+			var mySettings = _.find(entities, function(entity){
+				return entity.deviceId == device.uuid;
+			});
+
+			if (!mySettings) return { deviceId: device.uuid };
+
+			return mySettings;
+		});
+}
 
 function ViewExistingDialog(opts){
 	var self = this,
@@ -36,6 +54,23 @@ function ViewExistingDialog(opts){
 		tabMap = new TabMap(tabOptions),
 		tabRemarks = new TabRemarks(tabOptions),
 		tabTimeline = new TabTimeline(tabOptions);
+
+	var rootDomain = app.getDomain(rootEntity.domainName);
+	var geoAware = rootDomain.getService('geo-aware');
+	if (geoAware){
+		_getDeviceSettingsObject()
+			.then(function(settings){
+				geolocation.watch(function(err, data){
+					if (err) return console.log('geo-aware watch error');
+
+					geoAware.update(rootEntity, data, settings);
+				});
+			})
+			.catch(function(err){
+				console.log('error getting device settings');
+				console.error(err);
+			});
+	}
 
 	EventEmitter.call(self);
 
@@ -261,6 +296,7 @@ function ViewExistingDialog(opts){
 			});
 
 			m.on('created', function(child){
+				debugger
 				var childDomain = app.getDomain(child.domainName),
 					entityManager = childDomain.getService('entity-manager');
 

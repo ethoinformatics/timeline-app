@@ -10,22 +10,22 @@ var $ = require('jquery'),
 	SideMenu = require('./views/side-menu/'),
 	ListView = require('./views/list-view/'),
 	mainTemplate = require('./main.vash'),
-	ready = require('dom-ready'),
-	locationWatch = require('./activity-location-watch');
+	ready = require('dom-ready');
+	//locationWatch = require('./activity-location-watch');
 
-function keepAppAlive(){
-	if (typeof cordova == 'undefined') return;
+// function keepAppAlive(){
+// 	if (typeof cordova == 'undefined') return;
 
-	try {
-		cordova.plugins.backgroundMode.setDefaults({ 
-			title: 'Ethoinformatics',
-			text:'The app is in background mode.',
-			ticker:'Ethoinformatics is still running.',
-		});
-		cordova.plugins.backgroundMode.enable();
-	} catch (e){
-	}
-}
+// 	try {
+// 		cordova.plugins.backgroundMode.setDefaults({ 
+// 			title: 'Ethoinformatics',
+// 			text:'The app is in background mode.',
+// 			ticker:'Ethoinformatics is still running.',
+// 		});
+// 		cordova.plugins.backgroundMode.enable();
+// 	} catch (e){
+// 	}
+// }
 
 ready(function appLoad(){
 	var app = require('app');
@@ -67,9 +67,8 @@ ready(function appLoad(){
 		sideMenu.close();
 	});
 
-	locationWatch();
-
-	keepAppAlive();
+	//locationWatch();
+	//keepAppAlive();
 });
 
 

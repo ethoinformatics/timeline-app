@@ -62,9 +62,17 @@ function MapTab(){
 
 	self.descend = function(){
 	};
+
+	var path;
 	self.show = function(){
 		self.$element.show();
 
+		if (!path){
+			path = L.geoJson(_context.entity.geo.footprint, {
+				//style: GEOJSON_STYLE,
+			});
+			path.addTo(lmap);
+		}
 		//var children = _context.getChildren();
 		_renderChildren(_context.entity, 0);
 		map.show();
