@@ -90,8 +90,11 @@ function ListPage(){
 		var domain = app.getDomain(domainName),
 			entityManager = domain.getService('entity-manager');
 
+		console.log('opening: ' + domainName + ' ' + _id);
+
 		entityManager.byId(_id)
 			.then(function(entity){
+				if (!entity) return window.alert('unable to find entity');
 				var m = new ViewExistingDialog({ entity: entity, });
 				m.show();
 			})

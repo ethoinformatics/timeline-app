@@ -9,6 +9,7 @@ function _getDeviceSettingsObject(){
 
 	return entityManager.getAll()
 		.then(function(entities){
+			return {};
 			var mySettings = _.find(entities, function(entity){
 				return entity.deviceId == device.uuid;
 			});
@@ -20,14 +21,20 @@ function _getDeviceSettingsObject(){
 }
 
 module.exports = function(){
-	function onLocationUpdate(data){
+	function onLocationUpdate(err, data){
+		alert('got an update');
+		if (err){
+			console.log('geolocation error');
+			return console.error(err);
+		}
 
 		_getDeviceSettingsObject()
 			.then(function(settings){
-				var savePromises = _.chain(app.getDomains('location-aware'))
+				var savePromises = _.chain(app.getDomains('geo-aware'))
 					.map(function(domain){
+						debugger
 
-						var locationService = domain.getService('location-aware');
+						var locationService = domain.getService('geo-aware');
 						var entityManager = domain.getService('entity-manager');
 
 						// todo: figure out how to query for this in a more sane way
@@ -35,13 +42,16 @@ module.exports = function(){
 							.then(function(entities){
 								return entities
 									.map(function(entity){
-										locationService.update(entity, data, settings);
+										var needSave = locationService(entity, data, settings);
+										if (!needSave) return false;
+
 										return entityManager.save(entity);
 									});
 							});
 						
 						return savePromises;
 					})
+					.filter(Boolean)
 					.flatten()
 					.value();
 

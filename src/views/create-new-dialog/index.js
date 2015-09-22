@@ -1,6 +1,7 @@
 require('./index.less');
 
 var Modal = require('modal'),
+	geolocation = require('geolocation'),
 	_ = require('lodash'),
 	q = require('q'),
 	$ = require('jquery'),
@@ -50,28 +51,43 @@ function CreateNewDialog(opt){
 	function _handleSave(keepOpen){
 		var now = Date.now();
 
-		var data = {
+		var entity = {
 				domainName: domain.name,
 				beginTime: now,
 				endTime: keepOpen ? null : now,
+				geo: {},
 			};
 
-		data = _.extend(data, form.getData());
+		entity = _.extend(entity, form.getData());
 
 		var activityService = domain.getService('activity');
 		if (activityService){
-			activityService.start(data);
+			activityService.start(entity);
 		}
 
 		var eventService = domain.getService('event');
 		if (eventService){
-			eventService.create(data);
+			eventService.create(entity);
 		}
 
-		return deviceSettings()
-			.then(function(settings){
-				data.observerId = settings.user;
-				return data;
+		return q.all([
+				deviceSettings(),
+				geolocation.once(),
+			])
+			.spread(function(settings, locationData){
+				entity.observerId = settings.user;
+				entity.geo.create = {
+					type: 'Point',
+					coordinates: [
+						locationData.coords.longitude,
+						locationData.coords.latitude,
+						locationData.coords.altitude,
+					],
+					properties: {
+						timestamp: Date.now(),
+					},
+				};
+				return entity;
 			});
 	}
 

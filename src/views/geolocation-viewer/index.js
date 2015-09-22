@@ -2,6 +2,7 @@ require('./index.less');
 
 var $ = require('jquery'),
 	tmpl = require('./index.vash'),
+	velocity = require('velocity-animate'),
 	geolocation = require('geolocation'),
 	Modal = require('modal');
 
@@ -11,13 +12,23 @@ function GeolocationViewer(){
 		$pre = $element.find('pre'),
 		$status = $element.find('.status');
 
+		function _resetColor(){
+			setTimeout(function(){
+				velocity($status, {'backgroundColor': '#FFFFFF', color:'#000000'}, {
+					duration: 600, 
+				});
+			}, 1400);
+		}
+
 	var watch = function(err, result){
+		_resetColor();
 		if (err){
 			console.log('geo error');
 			console.dir(err);
+
 			$status.text('Failure!')
-				.removeClass('success')
-				.addClass('failure');
+				.css('color', 'white')
+				.css('background-color', 'red');
 
 			$pre.empty()
 				.text(JSON.stringify(err, '\t', 2));
@@ -25,22 +36,20 @@ function GeolocationViewer(){
 			return;
 		}
 
-
-		console.dir('good');
-		console.dir(result);
 		$status.text('Success!')
-			.addClass('success')
-			.removeClass('failure');
+			.css('color', 'white')
+			.css('background-color', 'green');
 
 		$pre.empty()
 			.text(JSON.stringify(result, '\t', 2));
+
 	};
 	
 
 	geolocation.watch(watch);
 
 	var modal = new Modal({
-		title: 'Coded field manager',
+		title: 'Geolocation viewer',
 		$content: $element,
 		hideOkay: true,
 	});

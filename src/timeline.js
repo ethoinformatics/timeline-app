@@ -19,7 +19,7 @@ var DEFAULTS = {
 		},
 		getColor: function(d){
 			var domain = app.getDomain(d.domainName);
-			return domain.getService('color');
+			return domain.getService('color') || 'purple';
 		},
 		getKey: function(d){
 			return d.id || d._id;

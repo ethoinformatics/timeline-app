@@ -48,8 +48,13 @@ function ViewExistingDialog(opts){
 	_changeEntity(opts.entity || opts.rootEntity);
 
 	function _getColor(entity){
-		var color = app.getDomain(entity.domainName).getService('color');
-		return color;
+		var domain = app.getDomain(entity.domainName),
+			service;
+
+		if (domain)
+			service = domain.getService('color');
+
+		return service || 'pink';
 	}
 
 	crumbs = _.chain(crumbs)
@@ -72,8 +77,13 @@ function ViewExistingDialog(opts){
 	function _changeEntity(entityToLoad){
 		if (entityToLoad == entity) return false;
 
+		if (!entityToLoad.domainName) return window.alert('missing domainName property');
+		var myDomain = app.getDomain(entityToLoad.domainName);
+		if (!myDomain) return window.alert('cannot find domain for ' + entityToLoad.domainName);
+
 		entity = entityToLoad;
-		domain = app.getDomain(entity.domainName);
+		domain = myDomain;
+
 		descManager = descManagerCache[entity.domainName] = descManagerCache[entity.domainName] || domain.getService('description-manager');
 
 		myDomains = domain.getChildren();
@@ -164,6 +174,9 @@ function ViewExistingDialog(opts){
 	function descendContext(newEntity){
 		_changeEntity(newEntity);
 
+		tabMap.descend(newEntity);
+
+		
 		breadcrumb.add({
 			context: newEntity, 
 			label: _getLabel(newEntity), 
@@ -177,8 +190,8 @@ function ViewExistingDialog(opts){
 			entity: entity,
 			domain: domain,
 			descManager: descManager,
-			getChildren: function(){
-				return _.chain(entity)
+			getChildren: function(myEntity){
+				return _.chain(myEntity || entity)
 					.values()
 					.filter(_.isArray)
 					.flatten()

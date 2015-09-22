@@ -15,7 +15,7 @@ function TimelineTab(){
 
 	var timeline = createTimeline({
 		height: (window.innerHeight-175),
-		getColor: function(){return 'red';},
+		//getColor: function(){return 'red';},
 	});
 
 	timeline.on('activity-click', function(d){
