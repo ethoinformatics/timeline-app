@@ -83,14 +83,16 @@ function ListPage(){
 	};
 
 	self.$element.on('click', '.js-item', function(){
+		console.log('got a item click');
+
 		var $this = $(this),
 			_id = $this.data('id').toString(),
 			domainName = $this.data('domain');
 
+		console.log('opening: ' + domainName + ' ' + _id);
 		var domain = app.getDomain(domainName),
 			entityManager = domain.getService('entity-manager');
 
-		console.log('opening: ' + domainName + ' ' + _id);
 
 		entityManager.byId(_id)
 			.then(function(entity){
