@@ -22,7 +22,6 @@ function _getDeviceSettingsObject(){
 
 module.exports = function(){
 	function onLocationUpdate(err, data){
-		alert('got an update');
 		if (err){
 			console.log('geolocation error');
 			return console.error(err);
