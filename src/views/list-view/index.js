@@ -2,6 +2,7 @@ require('./index.less');
 
 var $ = require('jquery'),
 	_ = require('lodash'),
+	Hammer = require('hammerjs'),
 	q = require('q'),
 	Scroll = require('iscroll'),
 	app = require('app')(),
@@ -77,7 +78,10 @@ function ListPage(){
 				entities.forEach(function(entity){
 					var $item = $(itemTemplate(_createViewModel(entity)));
 					$ul.append($item);
-					$item.on('click', _itemClick.bind(null, entity.domainName, entity._id));
+					var hammer = new Hammer($item[0]);
+					hammer.on('tap', _itemClick.bind(null, entity.domainName, entity._id));
+
+
 				});
 
 				scroll.refresh();
