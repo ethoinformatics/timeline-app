@@ -75,20 +75,16 @@ function ListPage(){
 				$ul.empty();
 
 				entities.forEach(function(entity){
-					$ul.append(itemTemplate(_createViewModel(entity)));
+					var $item = $(itemTemplate(_createViewModel(entity)));
+					$ul.append($item);
+					$item.on('click', _itemClick.bind(null, entity.domainName, entity._id));
 				});
 
 				scroll.refresh();
 			});
 	};
 
-	self.$element.on('click', '.js-item', function(){
-		console.log('got a item click');
-
-		var $this = $(this),
-			_id = $this.data('id').toString(),
-			domainName = $this.data('domain');
-
+	function _itemClick(domainName, _id){
 		console.log('opening: ' + domainName + ' ' + _id);
 		var domain = app.getDomain(domainName),
 			entityManager = domain.getService('entity-manager');
@@ -103,7 +99,7 @@ function ListPage(){
 			.catch(function(err){
 				console.error(err);
 			});
-	});
+	}
 
 	self.refresh();
 }
