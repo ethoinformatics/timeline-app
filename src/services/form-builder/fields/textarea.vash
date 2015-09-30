@@ -1,5 +1,0 @@
-
-<li class="item item-input item-stacked-label">
-	<span class="input-label">@model.label</span>
-	<textarea rows="3" data-name="@model.name">@model.value</textarea>
-</li>

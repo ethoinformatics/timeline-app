@@ -1,7 +1,0 @@
-<ul class="list list-inset etho-inline-header">
-	<li class="js-expand-toggle item item-icon-left item-divider">
-		<i class="js-expand-icon ion ion-arrow-down-b"></i>
-		@model.domainLabel
-		<span class="item-note">Hello</span>
-	</li>
-</ul>

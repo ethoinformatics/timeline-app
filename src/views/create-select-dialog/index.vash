@@ -1,9 +1,0 @@
-<ul class="create-select-menu">
-	@model.activityTypes.forEach(function(activityType, i){
-		<li>
-			<button type="button" class="js-new-activity button-small button button-dark button-block" value="@activityType.name" class="js-new-record">
-				@activityType.label
-			</button>
-		</li>
-	})
-</ul>
