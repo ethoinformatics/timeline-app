@@ -1,8 +1,0 @@
-<div id="main-container">
-	<div class="bar bar-header bar-stable js-menu">
-	  <button class="js-show-left-menu button button-icon icon ion-navicon"></button>
-	  <h1 class="title">Ethoinformatics</h1>
-	</div>
-	<div id="main-content" class="pane">
-	</div>
-</div>

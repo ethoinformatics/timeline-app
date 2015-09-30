@@ -1,9 +1,0 @@
-<ul class="create-select-menu">
-	@model.items.forEach(function(item){
-		<li>
-			<button type="button" class="js-button button @item.class button-block" value="@item.value">
-				@item.label
-			</button>
-		</li>
-	})
-</ul>

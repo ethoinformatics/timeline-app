@@ -1,4 +1,0 @@
-<li data-_id="@model._id" data-_rev="@model._rev"  class="js-item item item-icon-right">
-	@model.label
-	<i class="js-delete delete icon ion-close-circled assertive"></i>
-</li>

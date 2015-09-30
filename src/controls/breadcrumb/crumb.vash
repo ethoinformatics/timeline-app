@@ -1,6 +1,0 @@
-<span class="crumb-container js-crumb-container">
-	<a style="background:@model.color}" href="#">@model.label</a>
-	<span  class="spacer">
-		<span style="background:@model.color}" class="space"></span>
-	</span>
-</span>
