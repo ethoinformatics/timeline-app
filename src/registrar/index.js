@@ -1,7 +1,9 @@
+/* This file is the entry point for an app */
 var _ = require('lodash'),
-	DOMAIN_SETTINGS_KEY = 'DOMAIN_SETTING_KEY',
+	DOMAIN_SETTINGS_KEY = 'DOMAIN_SETTING_KEY', //what is this?
 	lookup = Object.create(null),
 	domainDefaults = Object.create(null),
+	// entity manager handles the connection to DB
 	EntityManager = require('../services/entity-manager'),
 	uuidGenerator = require('../services/uuid-generator'),
 	DescriptionManager = require('../services/description-manager');
@@ -139,7 +141,9 @@ function App(){
 	};
 
 	self.run = function(){
+		// instantiate the app, with the registry of services
 		require('../app.js')(self.getRegistry());
+		// build the DOM elements, and load Objects
 		require('../main.js');
 	};
 
@@ -148,5 +152,5 @@ function App(){
 var theApp = new App();
 
 theApp.createDomain('_etho-settings');
-
+/* projects will use app.run() to kick off use of etho-framework */
 module.exports = theApp;

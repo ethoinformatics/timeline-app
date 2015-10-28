@@ -12,6 +12,7 @@ var $ = require('jquery'),
 
 
 function _getTopLevelDomains(){
+	// get all domains except "code-domain" and those that start with an underscore
 	var domains = app.getDomains()
 		.filter(function(domain){
 			return !domain.getService('code-domain') && !/^_/.test(domain.name);
@@ -50,6 +51,7 @@ function _getEntities(){
 		});
 }
 
+// create an object for the domain that includes label, name, and id
 function _createViewModel(entity){
 	var domain = app.getDomain(entity.domainName),
 		descManager = domain.getService('description-manager');
@@ -71,6 +73,7 @@ function ListPage(){
 
 	self.refresh = function(){
 		_getEntities()
+			// populate li tags with records fetched
 			.then(function(entities){
 				var $ul = self.$element.find('ul.list');
 				$ul.empty();
@@ -93,10 +96,11 @@ function ListPage(){
 		var domain = app.getDomain(domainName),
 			entityManager = domain.getService('entity-manager');
 
-
+		// get the item clicked
 		entityManager.byId(_id)
 			.then(function(entity){
 				if (!entity) return window.alert('unable to find entity');
+				// load page (with tabs) for this record 
 				var m = new ViewExistingDialog({ entity: entity, });
 				m.show();
 			})

@@ -185,6 +185,7 @@ function ViewExistingDialog(opts){
 		$this.addClass('selected');
 		$tabContainer.children().hide();
 
+		// show the content of the clicked tab: map, remarks, timeline, etc
 		if (_.isFunction(clickedTab.show)){
 			clickedTab.show();
 		} else {

@@ -2,6 +2,7 @@ require('./main.less');
 require('../node_modules/leaflet/dist/leaflet.css');
 
 var $ = require('jquery'),
+	// bring in UI elements
 	GlobalAddButton = require('./controls/global-add-button/'),
 	UploadDialog = require('./views/upload-dialog/'),
 	CodeManager = require('./views/code-manager/'),
@@ -35,6 +36,7 @@ ready(function appLoad(){
 		.css('height', window.innerHeight-44);
 
 	var $content = $mainContainer.find('#main-content');
+	// add main content
 	$body.append($mainContainer);
 
 	var sideMenu = new SideMenu({content: $mainContainer}),
@@ -45,10 +47,13 @@ ready(function appLoad(){
 		addButton = new GlobalAddButton(),
 		geolocationViewer = new GeolocationViewer();
 
+	// append side menu
 	$body.append(sideMenu.$element);
+	// append add button
 	$body.find('.js-menu').append(addButton.$element);
+	// append list view
 	$body.find('#main-content').append(listView.$element);
-
+	// create listeners
 	addButton.on('created', function(){ listView.refresh(); });
 	sideMenu.on('click', function(moduleName){
 		sideMenu.close();
@@ -62,7 +67,7 @@ ready(function appLoad(){
 	uploadDialog.on('closed', function(){
 		//activityPage.render();
 	});
-
+	// close side menu when main area is clicked
 	$content.click(function(){
 		sideMenu.close();
 	});
