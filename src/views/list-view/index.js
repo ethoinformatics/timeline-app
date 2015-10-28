@@ -28,24 +28,31 @@ function _getTopLevelDomains(){
 }
 
 function _getEntities(){
+	// get all the entities from the entity-manager service:
 	return _.chain(_getTopLevelDomains())
 		.map(function(domain){
 			var entityManager = domain.getService('entity-manager');
+			// this is connected to PouchDB, essentially getting all the records
+			// for this domain:
 			return entityManager.getAll();
 		})
 		.thru(q.all)
+		// return their value when they're all registered:
 		.value()
+		// chain them as a chain of promise events:
 		.then(function(results){
 			return _.chain(results)
+				// flatten them (presumably into an array?) and sort them:
 				.flatten()
 				.sortBy(function(d){
 					var domain = app.getDomain(d.domainName);
 					var sortBy = domain ? domain.getService('sort-by') : false;
 
 					if (!sortBy) return d._id || d.id;
-
+					// return the sorted array of entities:
 					return d[sortBy];
 				})
+				// reverse the sort, and return the final value of that reversal:
 				.reverse()
 				.value();
 		});
