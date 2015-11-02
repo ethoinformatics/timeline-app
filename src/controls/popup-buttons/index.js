@@ -4,7 +4,7 @@ var $ = require('jquery'),
 	velocity = require('velocity-animate'),
 	EventEmitter = require('events').EventEmitter,
 	util = require('util'),
-	Hammer = require('util'),
+	//Hammer = require('util'),
 	template = require('./index.vash');
 
 function PopupButtons(opt){
