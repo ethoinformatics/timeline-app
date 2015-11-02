@@ -31,6 +31,7 @@ function _getEntities(){
 	return _.chain(_getTopLevelDomains())
 		.map(function(domain){
 			var entityManager = domain.getService('entity-manager');
+			//get all records for each top-level domain (?)
 			return entityManager.getAll();
 		})
 		.thru(q.all)

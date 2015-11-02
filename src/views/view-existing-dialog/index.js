@@ -20,6 +20,7 @@ TabMap = require('./tabs/map/index.js'),
 TabRemarks = require('./tabs/remarks/index.js'),
 TabTimeline = require('./tabs/timeline/index.js');
 
+//get device settings stored in db
 function _getDeviceSettingsObject(){
 	var settingsDomain = app.getDomain('_etho-settings');
 	var entityManager = settingsDomain.getService('entity-manager');
@@ -71,7 +72,7 @@ function ViewExistingDialog(opts){
 				console.error(err);
 			});
 	}
-
+	// make this (self) an EventEmitter (?)
 	EventEmitter.call(self);
 
 	var $content = $(template({
@@ -80,6 +81,7 @@ function ViewExistingDialog(opts){
 		})),
 		$tabContainer = $content.find('.js-tabcontainer');
 
+	// load the current entity
 	_changeEntity(opts.entity || opts.rootEntity);
 
 	function _getColor(entity){
