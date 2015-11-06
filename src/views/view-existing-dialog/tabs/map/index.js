@@ -32,6 +32,7 @@ function MapTab(){
 	};
 
 	function _renderChildren(entity, depth){
+		console.log("_renderChildren called.");
 		var children = _context.getChildren(entity);
 
 		var arr = [];
@@ -39,7 +40,8 @@ function MapTab(){
 			.toArray()
 			.value()
 			.forEach(function(child){
-				_.values(child.geo)
+				console.log(child);
+				_.values(child.footprint)
 					.forEach(function(geojson){
 						var geoJsonLayer = L.geoJson(geojson, {
 							//style: GEOJSON_STYLE,
@@ -68,7 +70,7 @@ function MapTab(){
 		self.$element.show();
 
 		if (!path){
-			path = L.geoJson(_context.entity.geo.footprint, {
+			path = L.geoJson(_context.entity.footprint, {
 				//style: GEOJSON_STYLE,
 			});
 			path.addTo(lmap);

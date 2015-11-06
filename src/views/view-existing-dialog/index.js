@@ -261,6 +261,7 @@ function ViewExistingDialog(opts){
 	}
 
 	this.show = function(){
+		console.log('show!');
 		_updateAddButton();
 
 		var form = formBuilder.buildDataEntryForm(domain);

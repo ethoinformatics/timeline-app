@@ -61,7 +61,8 @@ function MapView(){
 	var map = L.map($map[0],{
 		//center: [-13.4484, 28.072],
 		//maxBounds: bounds,
-		center: [40.774484, -73.917],
+		//center: [40.774484, -73.917],
+		center: [-0.63306469,-76.15418904],
 		zoom: 15,
 	});
 	self.getLeaflet = function(){return L;};
@@ -71,8 +72,8 @@ function MapView(){
 	L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
 	//L.tileLayer('lib/img/MapQuest/{z}/{x}/{y}.jpg', {
 	//L.tileLayer(tiles, {
-		maxZoom: 17,
-		minZoom: 8,
+		maxZoom: 25,
+		minZoom: 1,
 		id: 'examples.map-i875mjb7'
 	}).addTo(map);
 

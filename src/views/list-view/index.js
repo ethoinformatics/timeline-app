@@ -108,6 +108,7 @@ function ListPage(){
 			.then(function(entity){
 				if (!entity) return window.alert('unable to find entity');
 				// load page (with tabs) for this record 
+				console.log('loaded entity');
 				var m = new ViewExistingDialog({ entity: entity, });
 				m.show();
 			})
