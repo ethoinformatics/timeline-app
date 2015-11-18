@@ -1,6 +1,7 @@
 /* This file is the entry point for an app */
 var _ = require('lodash'),
-	DOMAIN_SETTINGS_KEY = 'DOMAIN_SETTING_KEY', 
+	DOMAIN_SETTINGS_KEY = 'DOMAIN_SETTING_KEY',
+	lookup = Object.create(null), 
 	domainDefaults = Object.create(null),
 	// entity manager handles the connection to DB
 	EntityManager = require('../services/entity-manager'),

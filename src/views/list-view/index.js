@@ -4,7 +4,7 @@ var $ = require('jquery'),
 	_ = require('lodash'),
 	Hammer = require('hammerjs'),
 	q = require('q'),
-	Scroll = require('iscroll'),
+	//Scroll = require('iscroll'),
 	app = require('app')(),
 	ViewExistingDialog = require('../view-existing-dialog'),
 	pageTemplate = require('./index.vash'),
@@ -73,10 +73,10 @@ function ListPage(){
 	var self = this;
 
 	self.$element = $(pageTemplate({ }));
-	var scroll = new Scroll(self.$element.find('.scroll-wrapper')[0], {
+	/*var scroll = new Scroll(self.$element.find('.scroll-wrapper')[0], {
 			mouseWheel: true,
 			scrollbars: true,
-		});
+		});*/
 
 	self.refresh = function(){
 		_getEntities()
@@ -94,7 +94,7 @@ function ListPage(){
 
 				});
 
-				scroll.refresh();
+				//scroll.refresh();
 			});
 	};
 
