@@ -32,7 +32,7 @@
     "leaflet": "^0.7.7",
     "lodash": "^3.6.0",
     "merle": "^0.1.5",
-    "moment": "^2.8.2",
+    "moment": "^2.11.2",
     "node-lessify": "0.0.5",
     "pouchdb": "^5.2.1",
     "pouchdb-upsert": "^2.0.0",
