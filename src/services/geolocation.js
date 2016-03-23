@@ -45,6 +45,9 @@ var success = function(data){
 				},
 				timestamp: data.timestamp,
 			};
+			
+			console.log("success");
+			console.log(latestCoordinates);
 		}
 
 	} catch (e){
@@ -61,9 +64,14 @@ var error = function(err){
 	callbacks.fire(err);
 };
 
-var fireFireFire = function(){ callbacks.fire(null, latestCoordinates); };
+var fireFireFire = function(){ 
+	console.log(callbacks);
+	callbacks.fire(null, latestCoordinates);
+};
 
 exports.watch = function(fnSuccess){ 
+	console.log("watch");
+	console.log(fnSuccess);
 	var myCoords = latestCoordinates;
 	if (myCoords){
 		process.nextTick(function(){
@@ -76,6 +84,7 @@ exports.watch = function(fnSuccess){
 };
 
 exports.unwatch = function(fnSuccess){ 
+	console.log("unwatch");
 	callbacks.remove(fnSuccess);
 };
 
@@ -102,6 +111,8 @@ exports.once = function(){
 				source: 'current',
 				timestamp: data.timestamp,
 			});
+			
+			console.log(data);
 	};
 
 	var fnError = function(err){

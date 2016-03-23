@@ -22,6 +22,7 @@ function _getDeviceSettingsObject(){
 
 module.exports = function(){
 	function onLocationUpdate(err, data){
+		console.log("activity-location-watch::onLocationUpdate()");
 		if (err){
 			console.log('geolocation error');
 			return console.error(err);
@@ -31,7 +32,7 @@ module.exports = function(){
 			.then(function(settings){
 				var savePromises = _.chain(app.getDomains('geo-aware'))
 					.map(function(domain){
-						debugger
+						// debugger
 
 						var locationService = domain.getService('geo-aware');
 						var entityManager = domain.getService('entity-manager');
@@ -53,6 +54,9 @@ module.exports = function(){
 					.filter(Boolean)
 					.flatten()
 					.value();
+					
+					console.log("savePromises:");
+					console.log(savePromises);
 
 				q.all(savePromises)
 					.then(function(results){
@@ -72,4 +76,5 @@ module.exports = function(){
 	}
 
 	geolocation.watch(onLocationUpdate, onLocationError);
+	console.log('activity-location-watch, registered watch');
 };

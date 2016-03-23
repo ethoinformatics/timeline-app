@@ -4,7 +4,8 @@ require('./leaflet.usermarker.js');
 var template = require('./index.vash'),
 	L = require('leaflet'),
 	geolocation = require('geolocation'),
-	$ = require('jquery');
+	$ = require('jquery')
+	app = require('app')();
 
 L.Icon.Default.imagePath = 'images';
 
@@ -61,8 +62,8 @@ function MapView(){
 	var map = L.map($map[0],{
 		//center: [-13.4484, 28.072],
 		//maxBounds: bounds,
-		//center: [40.774484, -73.917],
-		center: [-0.63306469,-76.15418904],
+		center: app.setting('map-center'),
+		// center: [-0.63306469,-76.15418904],
 		zoom: 15,
 	});
 	self.getLeaflet = function(){return L;};

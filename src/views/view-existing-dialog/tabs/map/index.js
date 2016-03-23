@@ -44,8 +44,9 @@ function MapTab(){
 	};
 
 	function _renderPath(entity){
-		
-		var footprint = entity.entity.footprint;
+		console.log("_renderPath");
+		console.log(entity);
+		var footprint = entity.entity.geo.footprint;
 		/*if (typeof footprint == 'string'){
 			footprint = JSON.parse(footprint);
 		}*/

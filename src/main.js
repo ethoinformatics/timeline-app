@@ -12,7 +12,7 @@ var $ = require('jquery'),
 	ListView = require('./views/list-view/'),
 	mainTemplate = require('./main.vash'),
 	ready = require('dom-ready');
-	//locationWatch = require('./activity-location-watch');
+	locationWatch = require('./activity-location-watch');
 
 // function keepAppAlive(){
 // 	if (typeof cordova == 'undefined') return;
@@ -72,7 +72,7 @@ ready(function appLoad(){
 		sideMenu.close();
 	});
 
-	//locationWatch();
+	locationWatch();
 	//keepAppAlive();
 });
 
