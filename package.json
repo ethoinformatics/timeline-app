@@ -21,6 +21,9 @@
   },
   "homepage": "https://github.com/ethoinformatics/sample-ui-browserify",
   "dependencies": {
+    "async": "~0.9.0",
+    "bn.js": "^0.15.0",
+    "mkdirp": "~0.3.5",
     "browserify": "^6.3.4",
     "d3-timeline": "1.0.1",
     "date-math": "0.0.1",
