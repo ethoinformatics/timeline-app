@@ -11,8 +11,10 @@ var $ = require('jquery'),
 	SideMenu = require('./views/side-menu/'),
 	ListView = require('./views/list-view/'),
 	mainTemplate = require('./main.vash'),
-	ready = require('dom-ready');
-	locationWatch = require('./activity-location-watch');
+	ready = require('dom-ready'),
+	locationWatch = require('./activity-location-watch'),
+	FastClick = require('fastclick');
+	
 
 // function keepAppAlive(){
 // 	if (typeof cordova == 'undefined') return;
@@ -34,6 +36,7 @@ ready(function appLoad(){
 	var $body = $('body');
 	var $mainContainer = $(mainTemplate({}))
 		.css('height', window.innerHeight-44);
+		FastClick(document.body);
 
 	var $content = $mainContainer.find('#main-content');
 	// add main content
