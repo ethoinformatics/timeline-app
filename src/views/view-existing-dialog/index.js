@@ -50,6 +50,8 @@ function ViewExistingDialog(opts){
 	var tabOptions = {
 		rootEntity: rootEntity,
 	};
+	
+	console.log(rootEntity);
 
 	var tabEdit = new TabEdit(tabOptions),
 		tabMap = new TabMap(tabOptions),
