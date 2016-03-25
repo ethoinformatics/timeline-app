@@ -50,17 +50,24 @@ function MapTab(){
 		/*if (typeof footprint == 'string'){
 			footprint = JSON.parse(footprint);
 		}*/
+
+		console.log("_renderPath");
 		console.log(JSON.stringify(footprint));
 		var path = L.geoJson(footprint, {
 			style: mainPathOptions
 		});
 		path.addTo(lmap);
+		
+
 	}
 
 	function _renderChildren(entity, depth){
 		//console.log("_renderChildren called.");
 		var children = _context.getChildren(entity);
 
+		console.log('geojson children');
+		console.log(children);
+		
 		var arr = [];
 		_.chain(children)
 			.toArray()
@@ -73,6 +80,7 @@ function MapTab(){
 						if (typeof geojson == "string"){
 							geojson = JSON.parse(geojson);
 						}
+						
 						console.log(JSON.stringify(geojson));
 						var geoJsonLayer = L.geoJson(geojson, {
 							style: childPathOptions
@@ -110,6 +118,15 @@ function MapTab(){
 		_renderPath(_context);
 		_renderChildren(_context.entity, 0);
 		map.show();
+
+		var circle = L.circle([41.3839, -73.9405], 500, {
+		    color: 'red',
+		    fillColor: '#f03',
+		    fillOpacity: 0.5
+		}).addTo(lmap);
+				
+//		L.marker([41.3839, -73.9405]).addTo(map).bindPopup('A pretty CSS3 popup.<br> Easily customizable.').openPopup();
+		
 	};
 }
 
