@@ -91,6 +91,15 @@ function CrudManager(registry, domainName){
 			});
 
 	};
+	
+	self.getGeo = function(entity){
+		//console.log("getGeo");
+		//console.log(entity);
+		if( entity.geo && entity.geo.footprint ) return entity.geo.footprint;		 
+		var arr = [[41.3839, -73.9405]]; // Garrison
+		if( arr.length > 1 ) return { "type": "LineString", "coordinates": arr };
+		else return { "type": "Point", "coordinates": arr[0] };
+	};
 }
 
 module.exports = CrudManager;

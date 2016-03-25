@@ -51,11 +51,11 @@ function CreateNewDialog(opt){
 	function _handleSave(keepOpen){
 		var now = Date.now();
 
+		console.log("_handleSave");
 		var entity = {
 				domainName: domain.name,
 				beginTime: now,
 				endTime: keepOpen ? null : now,
-				geo: {},
 			};
 
 		entity = _.extend(entity, form.getData());
@@ -76,17 +76,17 @@ function CreateNewDialog(opt){
 			])
 			.spread(function(settings, locationData){
 				entity.observerId = settings.user;
-				entity.geo.create = {
-					type: 'Point',
-					coordinates: [
-						locationData.coords.longitude,
-						locationData.coords.latitude,
-						locationData.coords.altitude,
-					],
-					properties: {
-						timestamp: Date.now(),
-					},
-				};
+				// entity.geo.create = {
+// 					type: 'Point',
+// 					coordinates: [
+// 						locationData.coords.longitude,
+// 						locationData.coords.latitude,
+// 						locationData.coords.altitude,
+// 					],
+// 					properties: {
+// 						timestamp: Date.now(),
+// 					},
+// 				};
 				return entity;
 			});
 	}
