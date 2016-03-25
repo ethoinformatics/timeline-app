@@ -41,8 +41,6 @@ var $ = require('jquery'),
 
 
 ready(function appLoad(){
-	var app = require('app');
-
 	var $body = $('body');
 	var $mainContainer = $(mainTemplate({}))
 		.css('height', window.innerHeight-44);
