@@ -64,17 +64,21 @@ function MapView(){
 		//maxBounds: bounds,
 		center: app.setting('map-center'),
 		// center: [-0.63306469,-76.15418904],
-		zoom: 15,
+		zoom: 14,
 	});
 	self.getLeaflet = function(){return L;};
 	self.getLeafletMap = function(){return map;};
 
+
 	//var tiles = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png';
-	L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
-	//L.tileLayer('lib/img/MapQuest/{z}/{x}/{y}.jpg', {
+	//L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png', {
+
+
+
+	L.tileLayer( app.setting('tile-layer-url'), {
 	//L.tileLayer(tiles, {
-		maxZoom: 25,
-		minZoom: 1,
+		maxZoom: 19,
+		minZoom: 11,
 		id: 'examples.map-i875mjb7'
 	}).addTo(map);
 

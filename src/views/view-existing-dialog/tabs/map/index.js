@@ -1,8 +1,8 @@
 var $ = require('jquery'),
 	_ = require('lodash'),
+	app = require('app')(),
 	MapView = require('map');
-
-
+	
 var tmpl = require('./index.vash');
 
 function MapTab(){
@@ -11,12 +11,17 @@ function MapTab(){
 	var map = new MapView();
 	var L = map.getLeaflet();
 
+	var settingsDomain = app.getDomain('_etho-settings');
+	var entityManager = settingsDomain.getService('entity-manager');
+
 	self.label = 'Map';
 
 	self.$element = $(tmpl({}));
 	self.$element.append(map.$element);
 
 	var lmap = map.getLeafletMap();
+	var lmapLayerGroup = L.layerGroup();
+	lmapLayerGroup.addTo(lmap);
 
 	self.setContext = function(ctx){
 		_context = ctx;
@@ -43,24 +48,45 @@ function MapTab(){
 		opacity: 0.75,
 	};
 
-	function _renderPath(entity){
+	function _renderPoint(context){
+		
+		
+		
+		var coordinates = entityManager.getGeo( context.entity ).coordinates;
+		var circle = L.circle( coordinates, 500, {
+		    color: 'red',
+		    fillColor: '#f03',
+		    fillOpacity: 0.5
+		}).addTo(lmapLayerGroup);
+		
+	}
+	
+	function _renderPath(context){
 		console.log("_renderPath");
-		console.log(entity);
-		var footprint = entity.entity.geo.footprint;
+		console.log(entityManager.getGeo( context.entity ));
+		
+		var footprint = entityManager.getGeo( context.entity );
 		/*if (typeof footprint == 'string'){
 			footprint = JSON.parse(footprint);
 		}*/
+
+		console.log("_renderPath");
 		console.log(JSON.stringify(footprint));
 		var path = L.geoJson(footprint, {
 			style: mainPathOptions
 		});
-		path.addTo(lmap);
+		path.addTo(lmapLayerGroup);
+		
+
 	}
 
 	function _renderChildren(entity, depth){
 		//console.log("_renderChildren called.");
 		var children = _context.getChildren(entity);
 
+		console.log('geojson children');
+		console.log(children);
+		
 		var arr = [];
 		_.chain(children)
 			.toArray()
@@ -73,6 +99,7 @@ function MapTab(){
 						if (typeof geojson == "string"){
 							geojson = JSON.parse(geojson);
 						}
+						
 						console.log(JSON.stringify(geojson));
 						var geoJsonLayer = L.geoJson(geojson, {
 							style: childPathOptions
@@ -89,7 +116,7 @@ function MapTab(){
 					});
 			
 		var group = L.layerGroup(arr);
-		group.addTo(lmap);
+		group.addTo(lmap); 
 	}
 
 	self.descend = function(){
@@ -99,7 +126,9 @@ function MapTab(){
 	self.show = function(){
 		self.$element.show();
 		lmap.invalidateSize();
+		console.log( lmapLayerGroup.getLayers() );
 
+		lmapLayerGroup.clearLayers();
 		/*if (!path){
 			path = L.geoJson(_context.entity.footprint, {
 				//style: GEOJSON_STYLE,
@@ -107,9 +136,19 @@ function MapTab(){
 			path.addTo(lmap);
 		}*/
 		//var children = _context.getChildren();
-		_renderPath(_context);
+		
+		var footprint = entityManager.getGeo( _context.entity );
+		
+		
+		if(footprint.type == 'Point') _renderPoint(_context);
+		else if(footprint.type == 'LineString') _renderPath(_context);
 		_renderChildren(_context.entity, 0);
 		map.show();
+
+
+				
+//		L.marker([41.3839, -73.9405]).addTo(map).bindPopup('A pretty CSS3 popup.<br> Easily customizable.').openPopup();
+		
 	};
 }
 
