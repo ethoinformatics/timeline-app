@@ -42,7 +42,8 @@
     "q": "^1.0.1",
     "rgba-generate": "^1.0.0",
     "vashify": "^0.3.3",
-    "velocity-animate": "^1.2.1"
+    "velocity-animate": "^1.2.1",
+		"fastclick": "^1.0.6"
   },
   "devDependencies": {
     "chai": "^3.2.0",

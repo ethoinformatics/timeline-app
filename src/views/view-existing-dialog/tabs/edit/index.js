@@ -79,6 +79,9 @@ function EditTab(){
 				standardChildren: standardChildren,
 				label: ctx.domain.label,
 			}));
+			
+		self.$element
+			.find('.iScrollVerticalScrollbar').remove();
 
 		self.$element
 			.find('.edit-form')
@@ -89,10 +92,17 @@ function EditTab(){
 			.css('width', window.innerWidth)
 			.css('height', window.innerHeight-(96+44));
 
-		var scroll = new Scroll(self.$element[0], {
-				mouseWheel: true,
-				scrollbars: true,
-			});
+			
+		// give the browser a chance to reflow the new elements
+		setTimeout(function() {
+			var scroll = new Scroll(self.$element[0], {
+					mouseWheel: true,
+					scrollbars: true,
+					tap:true
+				});
+		
+				console.log(scroll);				
+		},100);
 
 
 		function _collapseChildren(collectionName){
@@ -201,7 +211,7 @@ function EditTab(){
 
 	};
 
-	self.$element.on('click', '.js-child-link', function(){
+	self.$element.on('tap', '.js-child-link', function(){
 		var $this = $(this),
 			collectionName = $this.data('collection'),
 			_id = $this.data('id');

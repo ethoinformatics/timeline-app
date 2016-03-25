@@ -57,21 +57,21 @@ function ViewExistingDialog(opts){
 		tabTimeline = new TabTimeline(tabOptions);
 
 	var rootDomain = app.getDomain(rootEntity.domainName);
-	var geoAware = rootDomain.getService('geo-aware');
-	if (geoAware){
-		_getDeviceSettingsObject()
-			.then(function(settings){
-				geolocation.watch(function(err, data){
-					if (err) return console.log('geo-aware watch error');
-
-					geoAware.update(rootEntity, data, settings);
-				});
-			})
-			.catch(function(err){
-				console.log('error getting device settings');
-				console.error(err);
-			});
-	}
+	// var geoAware = rootDomain.getService('geo-aware');
+	// if (geoAware){
+	// 	_getDeviceSettingsObject()
+	// 		.then(function(settings){
+	// 			geolocation.watch(function(err, data){
+	// 				if (err) return console.log('geo-aware watch error');
+	//
+	// 				geoAware.update(rootEntity, data, settings);
+	// 			});
+	// 		})
+	// 		.catch(function(err){
+	// 			console.log('error getting device settings');
+	// 			console.error(err);
+	// 		});
+	// }
 	// make this (self) an EventEmitter (?)
 	EventEmitter.call(self);
 
@@ -300,7 +300,6 @@ function ViewExistingDialog(opts){
 			});
 
 			m.on('created', function(child){
-				debugger
 				var childDomain = app.getDomain(child.domainName),
 					entityManager = childDomain.getService('entity-manager');
 
