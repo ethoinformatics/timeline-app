@@ -69,7 +69,8 @@ function _createViewModel(entity){
 		id: entity._id || entity.id,
 	};
 }
-function ListPage(){
+
+function ListView(){
 	var self = this;
 
 	self.$element = $(pageTemplate({ }));
@@ -119,4 +120,4 @@ function ListPage(){
 	self.refresh();
 }
 
-module.exports = ListPage;
+module.exports = ListView;

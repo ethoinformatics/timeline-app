@@ -1,3 +1,12 @@
+///////////////////////////////////////
+//
+// ethoinfo-framework/src/main.js
+//
+// Sets up DOM on app launch
+// Creates menus, list views, etc, and appends them to DOM for launch state
+//
+///////////////////////////////////////
+
 require('./main.less');
 require('../node_modules/leaflet/dist/leaflet.css');
 
@@ -30,9 +39,8 @@ var $ = require('jquery'),
 // 	}
 // }
 
-ready(function appLoad(){
-	var app = require('app');
 
+ready(function appLoad(){
 	var $body = $('body');
 	var $mainContainer = $(mainTemplate({}))
 		.css('height', window.innerHeight-44);
