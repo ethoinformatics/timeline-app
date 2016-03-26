@@ -84,7 +84,6 @@ function ListPage(){
 			.then(function(entities){
 				var $ul = self.$element.find('ul.list');
 				$ul.empty();
-
 				entities.forEach(function(entity){
 					var $item = $(itemTemplate(_createViewModel(entity)));
 					$ul.append($item);

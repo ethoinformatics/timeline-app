@@ -31,6 +31,8 @@ function CodeManager(){
 			return domain.getService('entity-manager').getAll()
 				.then(function(entities){
 					var $select = $element.find('#'+domain.name);
+					$select.find('option').remove(); // clear out option elements so we're not appending extras if we return
+					$select.append('<option></option>');
 					entities.forEach(function(entity){
 						var $opt = $('<option></option>');
 						$opt.val(entity._id);
