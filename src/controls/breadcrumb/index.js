@@ -58,9 +58,9 @@ function Breadcrumb(opt){
 	self.add = function(crumb){
 		var el = toElement(crumb);
 		$cntr.append(el);
+//		$cntr.append('<span style="color:#ff0000;">d00d</span>');
 
-		$cntr.find('.js-crumb-container.js-faded')
-			.remove();
+		$cntr.find('.js-crumb-container.js-faded').remove();
 	};
 	self.$element.find('.js-breadcrumb-close')
 		.on('click', function(){self.emit('close');});

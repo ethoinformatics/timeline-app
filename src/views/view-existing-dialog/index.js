@@ -412,6 +412,18 @@ function ViewExistingDialog(opts){
 				return info;
 			});
 	}
+
+	///////////
+	
+	var $showLeftMenu = $('#js-show-left-menu-modal-version'),
+	isLeftMenuOpen = false;
+	
+	$showLeftMenu.click(function(ev){
+		ev.stopPropagation();
+		isLeftMenuOpen = !isLeftMenuOpen;
+		modal.slideForSettings(isLeftMenuOpen);
+	});
+	
 }
 
 

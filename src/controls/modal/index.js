@@ -97,6 +97,21 @@ function Modal(options){
 		});
 	};
 
+	this.slideForSettings = function( isLeftMenuOpen ){
+		velocity($modal, {left: isLeftMenuOpen? '0':'240'}, {
+			duration:140,
+			complete: function(){
+
+			},
+		});
+		velocity($('#main-container'), {left: isLeftMenuOpen? '0':'240'}, {
+			duration:140,
+			complete: function(){
+
+			},
+		});
+	};
+	
 	this.show = function(){
 		$modal
 			.css('height', window.innerHeight+1)
