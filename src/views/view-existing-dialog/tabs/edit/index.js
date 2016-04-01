@@ -92,6 +92,11 @@ function EditTab(){
 			.css('width', window.innerWidth)
 			.css('height', window.innerHeight-(96+44));
 
+		self.$element
+			.find('.float-right')
+			.css('float', 'right');
+
+
 			
 		// give the browser a chance to reflow the new elements
 		setTimeout(function() {

@@ -77,6 +77,11 @@ function CodeManager(){
 
 	self.show = function(){ 
 		loadSettings();
+		// 		.css('z-index', 10000)
+		console.log("settings modal");
+		console.log(modal);
+		modal.modalElement.css('z-index', 10000);
+		
 		modal.show();
 	};
 

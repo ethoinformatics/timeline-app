@@ -2,7 +2,7 @@
 	<div class="etho-header">
 		<ul class="etho-tabs js-etho-tabs"></ul>
 		<span class="buttons">
-			<button type="button" class="js-child-add child-add button button-balanced button-small">Add</button>
+			<button type="button" class="js-child-add child-add button button-balanced button-small"><i class="icon ion-plus-circled"></i></button>
 		</span>
 	</div>
 	<div class="js-tabcontainer etho-tabcontainer">

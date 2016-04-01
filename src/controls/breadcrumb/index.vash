@@ -1,8 +1,12 @@
+<button id="js-show-left-menu-modal-version" class="js-show-left-menu button button-icon icon ion-navicon"></button>
+
 <div class="js-Breadcrumb etho-breadcrumb">
+
+
 	<div class="js-crumbs breadcrumb flat">
 	
 		<span class="home-crumb-container crumb-container">
-  	  		<button id="js-show-left-menu-modal-version" class="js-show-left-menu button button-icon icon ion-navicon"></button>
+  	  		
 			<a href="#" class="js-breadcrumb-close"><i class="icon ion-home"></i></a>
 			<span class="spacer">
 				<span class="space"></span>

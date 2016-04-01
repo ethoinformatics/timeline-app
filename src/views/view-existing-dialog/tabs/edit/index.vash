@@ -10,7 +10,8 @@
 	@model.standardChildren.forEach(function(data){
 	<ul class="list list-inset accordian js-collection-@data.collectionName">
 		<li class="item item-divider header">
-			@data.collectionName
+			@data.collectionName 
+			 <button type="button" data-collection="@data.collectionName" data-domains="@data.domainNames" class=" child-add button button-balanced button-small float-right js-inline-add"><i class="icon ion-plus-circled"></i></button>
 		</li>
 		@data.entities.forEach(function(childEntity){
 			<li title= "@childEntity._id" class="item js-child-link" data-collection="@data.collectionName" data-id="@childEntity._id">
@@ -22,7 +23,7 @@
 	})
 
 	@model.childData.forEach(function(data){
-	<ul class="list list-inset accordian js-collection-@data.collectionName">
+		<ul class="list list-inset accordian js-collection-@data.collectionName">
 		<li class="item item-divider header item-button-right">
 			@data.collectionName
 			<button data-collection="@data.collectionName" data-domains="@data.domainNames" class="js-inline-add button-small button header-button button-balanced">

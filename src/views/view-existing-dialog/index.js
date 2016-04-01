@@ -247,10 +247,15 @@ function ViewExistingDialog(opts){
 	}
 
 	function _updateAddButton(){
-		var $btnAddChild = $content.find('.js-child-add');
-		$btnAddChild.text('Add');
 		
+		var $btnAddChild = $content.find('.js-child-add');
+		//$btnAddChild.text('Add');
+		console.log("_updateAddButton");
 		var popupChildDomains = myDomains.filter(function(d){return !d.inline;});
+
+		// to do jrc: make sure this 
+
+		console.log(popupChildDomains);
 
 		if (_.size(popupChildDomains) == 1){
 		//	$btnAddChild.text('Add ' + popupChildDomains[0].label);
@@ -273,6 +278,8 @@ function ViewExistingDialog(opts){
 			$btnAddChild = $content.find('.js-child-add'),
 			$btnRemove = $content.find('.js-view-remove');
 
+			$btnAddChild.hide();
+
 
 		$btnRemove.click(function(){
 			if (rootEntity!=entity) return window.alert('not implemeneted yet');
@@ -294,6 +301,7 @@ function ViewExistingDialog(opts){
 
 			var descMgr = domain.getService('description-manager');
 			var title = 'Add a child to ' + descMgr.getShortDescription(entity);
+
 
 			var m = new CreateSelectMenu({
 				title: title,

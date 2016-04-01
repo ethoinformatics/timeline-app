@@ -1,5 +1,7 @@
 <div style="display:none;" class="modal">
-	<div class="bar bar-header bar-dark">
+  	  		
+
+	<div class="bar bar-header bar-dark" style="">
 		@if (model.showBackButton){
 		<a class="js-back button icon-left ion-chevron-left button-clear button-light"></a>
 		}

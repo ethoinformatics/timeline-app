@@ -136,6 +136,8 @@ function Modal(options){
 			},
 		});
 	};
+	
+	this.modalElement = $modal;
 }
 
 util.inherits(Modal, EventEmitter);
