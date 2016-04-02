@@ -4,12 +4,14 @@ var $ = require('jquery'),
 	MapView = require('map');
 	
 var tmpl = require('./index.vash');
+var mapMarkers = [];
 
 function MapTab(){
 	var self = this,
 		_context;
 	var map = new MapView();
 	var L = map.getLeaflet();
+	mapMarkers = [];
 
 	var settingsDomain = app.getDomain('_etho-settings');
 	var entityManager = settingsDomain.getService('entity-manager');
@@ -47,6 +49,52 @@ function MapTab(){
 		weight: 2,
 		opacity: 0.75,
 	};
+
+	function _updateEntityCoordinates(coordinates){
+		console.log( coordinates );		
+	}
+	 
+	function _clearMarkers(){
+		console.log('_clearMarkers');
+		for(var i=0; i<mapMarkers.length; i++){
+			lmapLayerGroup.removeLayer(mapMarkers[i]);
+		}		
+	}
+	 
+	function _renderMarker(context, draggable){
+		
+		
+		///////////////////////
+		///////////////////////
+		///////////////////////
+		///////////////////////
+		// // todo: 
+		// a.) make it so the markers are a small, but tap-able circle when loaded (with an alpha 50% state for when not highlighted)
+		// b.) make it so click on the marker makes it draggable
+		// c.) make it so click on a marker makes the size bigger and no alpha
+		///////////////////////
+		///////////////////////
+		///////////////////////
+		///////////////////////
+		
+
+		var coordinates = entityManager.getGeo( context.entity ).coordinates;
+		var markerOptions = {
+			draggable: draggable	
+		};
+		
+		var marker = L.marker( coordinates, markerOptions ).addTo(lmapLayerGroup);
+		marker.bindPopup('<strong>Heading Here</strong><br>Body of pop up here below heading.');
+		marker.on('click', function(e) {
+		    //marker.setIcon(bigIcon);
+		});
+		marker.on('drag', function(e) {
+		    //marker.setIcon(bigIcon);
+			_updateEntityCoordinates( [ marker.getLatLng().lat, marker.getLatLng().lng ] );
+		});
+	
+		mapMarkers.push(marker);
+	}
 
 	function _renderPoint(context){
 		
@@ -140,7 +188,7 @@ function MapTab(){
 		var footprint = entityManager.getGeo( _context.entity );
 		
 		
-		if(footprint.type == 'Point') _renderPoint(_context);
+		if(footprint.type == 'Point') _renderMarker(_context, true);//_renderPoint(_context);
 		else if(footprint.type == 'LineString') _renderPath(_context);
 		_renderChildren(_context.entity, 0);
 		map.show();
