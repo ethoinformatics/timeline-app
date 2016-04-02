@@ -67,12 +67,10 @@ function MapTab(){
 		///////////////////////
 		///////////////////////
 		///////////////////////
-		///////////////////////
 		// // todo: 
 		// a.) make it so the markers are a small, but tap-able circle when loaded (with an alpha 50% state for when not highlighted)
 		// b.) make it so click on the marker makes it draggable
 		// c.) make it so click on a marker makes the size bigger and no alpha
-		///////////////////////
 		///////////////////////
 		///////////////////////
 		///////////////////////
