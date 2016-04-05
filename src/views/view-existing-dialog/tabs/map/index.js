@@ -60,6 +60,8 @@ function MapTab(){
 			lmapLayerGroup.removeLayer(mapMarkers[i]);
 		}		
 	}
+	
+//	var icon = L.icon( { iconSize: [138, 195] } );
 	 
 	function _renderMarker(context, draggable){
 		
@@ -75,35 +77,150 @@ function MapTab(){
 		///////////////////////
 		///////////////////////
 		
-
+		var popupOffset = [0,-40];
 		var coordinates = entityManager.getGeo( context.entity ).coordinates;
-		var markerOptions = {
-			draggable: draggable	
-		};
+
+
+
+		var circleMarkerDrag = L.circleMarker( coordinates, {
+		    color:     '#62ce21', //'rgb(38,126,202)',
+			weight: 	6,
+		    fillColor: 'rgb(255,255,255)',
+			opacity: 1.0
+		});//.addTo(lmapLayerGroup);
+		circleMarkerDrag.setRadius(6);
+
+
+
+
 		
-		var marker = L.marker( coordinates, markerOptions ).addTo(lmapLayerGroup);
-		marker.bindPopup('<strong>Heading Here</strong><br>Body of pop up here below heading.');
+		var myIcon = L.icon({
+		    iconUrl: 'images/marker-icon.png',
+		    iconRetinaUrl: 'images/marker-icon-2x.png',
+			popupAnchor: popupOffset
+		});
+		var myIconSelected = L.icon({
+		    iconUrl: 'images/marker-icon-GREEN-2x.png',
+		    iconRetinaUrl: 'images/marker-icon-GREEN-2x.png',
+			popupAnchor: popupOffset
+		});
+
+
+
+		
+		var marker = L.marker( coordinates, { draggable: draggable	} ).addTo(lmapLayerGroup);
+		marker.setIcon( myIcon );
+		//marker.bindPopup('<strong>Heading Here</strong><br>Body of pop up here below heading.');
+		marker.bindPopup( '<strong>Contact 1</strong><br>Body of pop up here below heading.<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
 		marker.on('click', function(e) {
-		    //marker.setIcon(bigIcon);
+			marker.setPopupContent( '<strong>Contact 1</strong><br>Body of pop up here below heading.<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
 		});
+
+		marker.on('dragstart', function(e) {
+			circleMarkerDrag.setLatLng( [ marker.getLatLng().lat, marker.getLatLng().lng ] );
+			circleMarkerDrag.addTo(lmapLayerGroup);
+			marker.setIcon( myIconSelected );
+		});
+
 		marker.on('drag', function(e) {
-		    //marker.setIcon(bigIcon);
 			_updateEntityCoordinates( [ marker.getLatLng().lat, marker.getLatLng().lng ] );
+			marker.setPopupContent( '<strong>Contact 1</strong><br>Body of pop up here below heading.<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">Relocating to<br>lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
+			marker.openPopup();
+		});	
+
+		marker.on('dragend', function(e) {
+			lmapLayerGroup.removeLayer(circleMarkerDrag);
+			marker.setIcon( myIcon );			
 		});
-	
+
 		mapMarkers.push(marker);
+		
+		
+		_renderMarker_TEMPORARY_DEMO( [41.37874070257893, -73.94545555114746],  true, 'Contact 2' );
+		_renderMarker_TEMPORARY_DEMO( [41.397608221508406, -73.94330978393555], true, 'Contact 3' );
+		_renderMarker_TEMPORARY_DEMO( [41.398187683195665, -73.92931938171387], true, 'Contact 4' );
+		_renderMarker_TEMPORARY_DEMO( [41.37242884295152, -73.92751693725586],  true, 'Contact 5' );
+		/*
+		
+		*/
+	}
+	
+	function _renderMarker_TEMPORARY_DEMO(coordinates, draggable, heading){
+		
+		
+		var popupOffset = [0,-40];
+
+
+
+		var circleMarkerDrag = L.circleMarker( coordinates, {
+		    color:     '#62ce21', //'rgb(38,126,202)',
+			weight: 	6,
+		    fillColor: 'rgb(255,255,255)',
+			opacity: 1.0
+		});//.addTo(lmapLayerGroup);
+		circleMarkerDrag.setRadius(6);
+
+
+
+
+		
+		var myIcon = L.icon({
+		    iconUrl: 'images/marker-icon.png',
+		    iconRetinaUrl: 'images/marker-icon-2x.png',
+			popupAnchor: popupOffset
+		});
+		var myIconSelected = L.icon({
+		    iconUrl: 'images/marker-icon-GREEN-2x.png',
+		    iconRetinaUrl: 'images/marker-icon-GREEN-2x.png',
+			popupAnchor: popupOffset
+		});
+
+
+
+		
+		var marker = L.marker( coordinates, { draggable: draggable	} ).addTo(lmapLayerGroup);
+		marker.setIcon( myIcon );
+		//marker.bindPopup('<strong>Heading Here</strong><br>Body of pop up here below heading.');
+		marker.bindPopup( '<strong>'+heading+'</strong><br>Body of pop up here below heading.<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
+		marker.on('click', function(e) {
+			marker.setPopupContent( '<strong>'+heading+'</strong><br>Body of pop up here below heading.<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
+		});
+
+		marker.on('dragstart', function(e) {
+			circleMarkerDrag.setLatLng( [ marker.getLatLng().lat, marker.getLatLng().lng ] );
+			circleMarkerDrag.addTo(lmapLayerGroup);
+			marker.setIcon( myIconSelected );
+		});
+
+		marker.on('drag', function(e) {
+			_updateEntityCoordinates( [ marker.getLatLng().lat, marker.getLatLng().lng ] );
+			marker.setPopupContent( '<strong>'+heading+'</strong><br>Body of pop up here below heading.<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">Relocating to<br>lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
+			marker.openPopup();
+		});	
+
+		marker.on('dragend', function(e) {
+			lmapLayerGroup.removeLayer(circleMarkerDrag);
+			marker.setIcon( myIcon );			
+		});
+
+		mapMarkers.push(marker);
+		
+		
+		/*
+		[41.37874070257893, -73.94545555114746]
+		
+		*/
 	}
 
 	function _renderPoint(context){
 		
-		
-		
 		var coordinates = entityManager.getGeo( context.entity ).coordinates;
-		var circle = L.circle( coordinates, 500, {
+		var circleMarker = L.circleMarker( coordinates, {
 		    color: 'red',
 		    fillColor: '#f03',
 		    fillOpacity: 0.5
 		}).addTo(lmapLayerGroup);
+		circleMarker.setRadius(10);
 		
 	}
 	
@@ -186,7 +303,7 @@ function MapTab(){
 		var footprint = entityManager.getGeo( _context.entity );
 		
 		
-		if(footprint.type == 'Point') _renderMarker(_context, true);//_renderPoint(_context);
+		if(footprint.type == 'Point') _renderMarker(_context, true);//_renderPoint(_context); // 
 		else if(footprint.type == 'LineString') _renderPath(_context);
 		_renderChildren(_context.entity, 0);
 		map.show();
