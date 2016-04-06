@@ -202,6 +202,7 @@ function EditTab(){
 					domainNames = $this.data('domains').split(','),
 					domains = childDomains.filter(function(d){return _.contains(domainNames, d.name);});
 
+
 				var popupButtons = new PopupButtons({
 					items: domains.map(function(d){ return {value: d.name, label: d.label};}),
 				});
