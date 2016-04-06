@@ -1,5 +1,15 @@
+/////////////////////////////////
+//
+// ethoinfo-framework/src/views/view-existing-dialog/registrar/index.js
+//
+// Defines the app object
+//
+/////////////////////////////////
+
+
 /* This file is the entry point for an app */
 var _ = require('lodash'),
+	q = require('q'),
 	DOMAIN_SETTINGS_KEY = 'DOMAIN_SETTING_KEY',
 	lookup = Object.create(null), 
 	domainDefaults = Object.create(null),
@@ -39,6 +49,22 @@ var registry = {
 			.map(function(n){ 
 				return self.createDomain(n);
 			});
+	},
+	getTopLevelDomains: function(){
+		var self = this;
+		// get all domains except "code-domain" and those that start with an underscore
+		var domains = self.getDomains()
+			.filter(function(domain){
+				return !domain.getService('code-domain') && !/^_/.test(domain.name);
+			});
+
+		return domains.filter(function(d){
+			return !_.any(domains, function(otherDomain){
+				return !!_.find(otherDomain.getChildren(), function(d2){
+					return d2.name == d.name;
+				});
+			});
+		});
 	},
 	getDomain: function(domainName){
 		var domain = this.getDomains()
@@ -93,6 +119,37 @@ var registry = {
 
 		return domains;
 	},
+	getEntities: function(){
+		var self = this;
+		// get all the entities from the entity-manager service:
+		return _.chain(self.getTopLevelDomains())
+			.map(function(domain){
+				var entityManager = domain.getService('entity-manager');
+				// this is connected to PouchDB, essentially getting all the records
+				// for this domain:
+				return entityManager.getAll();
+			})
+			.thru(q.all)
+			// return their value when they're all registered:
+			.value()
+			// chain them as a chain of promise events:
+			.then(function(results){
+				return _.chain(results)
+					// flatten them (presumably into an array?) and sort them:
+					.flatten()
+					.sortBy(function(d){
+						var domain = app.getDomain(d.domainName);
+						var sortBy = domain ? domain.getService('sort-by') : false;
+
+						if (!sortBy) return d._id || d.id;
+						// return the sorted array of entities:
+						return d[sortBy];
+					})
+					// reverse the sort, and return the final value of that reversal:
+					.reverse()
+					.value();
+			});
+	}
 };
 
 function App(){
