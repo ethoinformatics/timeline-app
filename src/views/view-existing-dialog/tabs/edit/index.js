@@ -38,17 +38,24 @@ function _createChildCollectionData(parentDomain, childDomains){
 		});
 }
 
-function EditTab(){
+function EditTab(opts){
+	console.log('Edittab');
+	console.log(opts);
 	EventEmitter.call(this);
 
 	var self = this, editForm;
 	var _context; 
 	self.label = 'Data';
 	self.$element = $(scrollTmpl({}));
+	var	rootEntity = opts.rootEntity || opts.entity;
 
 
 	self.setContext = function(ctx){
 		_context = ctx;
+		
+		console.log('EditTab _context');
+		console.log(_context);
+		
 		editForm = new EditExistingForm({entity: ctx.entity});
 		editForm.updateFields();
 
@@ -109,7 +116,20 @@ function EditTab(){
 				console.log(scroll);				
 		},100);
 
-
+		function _doSave(){
+			// var rootDomain = app.getDomain(rootEntity.domainName),
+			// 	rootEntityManager = rootDomain.getService('entity-manager');
+			//
+			// 	console.log("DO SAVE");
+			//
+			// return rootEntityManager.save(rootEntity)
+			// 	.then(function(info){
+			// 		rootEntity._id = info.id;
+			// 		rootEntity._rev = info.rev;
+			//
+			// 		return info;
+			// 	});
+		}
 		function _collapseChildren(collectionName){
 			var $accordians = self.$element.find('.js-collection-'+ collectionName);
 
@@ -201,6 +221,8 @@ function EditTab(){
 				scroll.refresh();
 			}, 100);
 		}
+		
+
 
 		self.$element.find('.js-inline-add')
 			.on('click', function(ev){
@@ -236,13 +258,25 @@ function EditTab(){
 	});
 
 	self.loseFocus = function(){
+		console.log("loseFocus");
 		editForm.updateFields();
+		
+	var rootDomain = app.getDomain(rootEntity.domainName),
+		rootEntityManager = rootDomain.getService('entity-manager');
 
-		// _doSave()
-		// 	.then(function(){
+		console.log("DO SAVE");
+		console.log(rootEntityManager);
+	rootEntityManager.save(_context.entity)
+		.then(function(info){
+			_context._id = info.id;
+			_context._rev = info.rev;
+
+			return info;
+		});
+//rootEntity		//
+		// _doSave().then(function(){
 		// 		_update(true);
-		// 	})
-		// 	.catch(function(err){
+		// 	}).catch(function(err){
 		// 		console.error(err);
 		// 	});
 	};

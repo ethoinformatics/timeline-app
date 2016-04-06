@@ -181,6 +181,7 @@ function ViewExistingDialog(opts){
 	function _tabClick(ev, clickedTab){
 		var $this = $(this);
 
+
 		if (previousTab && _.isFunction(previousTab.loseFocus))
 			previousTab.loseFocus();
 

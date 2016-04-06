@@ -87,6 +87,33 @@ function MapTab(){
 		// format it
 		// return it
 		
+		var count = 1;
+		if(endTime) {
+			count = endTime - beginTime;
+		}
+		if(count == 0) count = 1;
+		
+		return new Promise(function(resolve, reject) {
+			diaryPromise.then(function(diary) {
+				var startPoint = diary.geo.footprint.coordinates[0]; // this will break on empty data
+				var coordinates = [];
+				for(var i = 0; i < count; i++) {
+					coordinates.push([startPoint[0] + Math.random() * 0.1, startPoint[1] + Math.random() * 0.1, startPoint[2]]);
+				}
+				if(coordinates.length == 1) {
+					var geoJson = { "type": "Point", "coordinates": coordinates };					
+				} else {
+					var geoJson = { "type": "LineString", "coordinates": coordinates };
+				}
+				resolve(geoJson);
+			});
+		});
+
+		// var arr = [[41.3839, -73.9405]]; // Garrison
+		// if( arr.length > 1 ) return { "type": "LineString", "coordinates": arr };
+		// else return { "type": "Point", "coordinates": arr[0] };
+		
+		
 	}
 	
 	 
@@ -286,6 +313,10 @@ function MapTab(){
 		diaryPromise.then(function(diary) {
 			var footprint = diary.geo.footprint;
 			
+			
+			console.log('data study');
+			console.log(diary.contacts);
+			
 			if(footprint.type == 'Point') _renderMarker(_context, true);//_renderPoint(_context); // 
 			else if(footprint.type == 'LineString') _renderPath(_context);
 			_renderChildren(_context.entity, 0);
@@ -299,7 +330,10 @@ function MapTab(){
 		});
 		
 
-
+		_getGeo(12345,12346).then(function(geoJson) {
+			console.log("geoJson");
+			console.log(geoJson);
+		});
 
 
 				
