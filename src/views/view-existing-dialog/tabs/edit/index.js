@@ -122,6 +122,7 @@ function EditTab(){
 		}
 
 		function _addInlineChild(collectionName, domainName){
+
 			_collapseChildren(collectionName);
 			var domain = _.find(childDomains, function(d){return d.name == domainName;}),
 				$containerLi = $('<li></li>')
@@ -191,6 +192,12 @@ function EditTab(){
 				});
 
 			setTimeout(function(){
+				
+				var scroll = new Scroll(self.$element[0], {
+						mouseWheel: true,
+						scrollbars: true,
+						tap:true
+					});
 				scroll.refresh();
 			}, 100);
 		}
