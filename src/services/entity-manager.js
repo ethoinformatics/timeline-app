@@ -138,20 +138,30 @@ function CrudManager(registry, domainName){
 				resolve(match);
 			});
 		});
-	}
+	};
 	
 	self.getGeo = function(entity){
+		return new Promise(function(resolve, reject) {
+			var id = entity._id || entity.id;
+			console.log('id: ' + id);
+		
+			if( entity.geo && entity.geo.footprint ) {
+				console.log("the diary is the entity");
+				resolve(entity.geo.footprint);
+				// return entity.geo.footprint;
+			} else {
+				self.diaryByChildId(id).then(function(diary) {
+					console.log("DIARY: ");
+					console.log(diary);
+				
+					resolve(diary.geo.footprint);
+				});				
+			}
+
+		});
+		
 		//console.log("getGeo");
 		//console.log(entity);
-		var id = entity._id || entity.id;
-		console.log('id: ' + id);
-		
-		if( entity.geo && entity.geo.footprint ) return entity.geo.footprint;
-
-		self.diaryByChildId(id).then(function(diary) {
-			console.log("DIARY: ");
-			console.log(diary);
-		});
 		// for(var i = 0; i < entities.length; i++) {
 		// 	var entity = entities[i];
 		// 	console.log(entity);
