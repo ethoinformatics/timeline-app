@@ -140,21 +140,21 @@ function CrudManager(registry, domainName){
 		});
 	};
 	
-	self.getGeo = function(entity){
+	self.getDiary = function(entity){
 		return new Promise(function(resolve, reject) {
 			var id = entity._id || entity.id;
 			console.log('id: ' + id);
 		
 			if( entity.geo && entity.geo.footprint ) {
 				console.log("the diary is the entity");
-				resolve(entity.geo.footprint);
+				resolve(entity);
 				// return entity.geo.footprint;
 			} else {
 				self.diaryByChildId(id).then(function(diary) {
 					console.log("DIARY: ");
 					console.log(diary);
 				
-					resolve(diary.geo.footprint);
+					resolve(diary);
 				});				
 			}
 
