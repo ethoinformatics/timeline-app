@@ -1,3 +1,12 @@
+/////////////////////////////////
+//
+// ethoinfo-framework/src/views/view-existing-dialog/tabs/map/index.js
+//
+// Maps tab
+//
+/////////////////////////////////
+
+
 var $ = require('jquery'),
 	_ = require('lodash'),
 	app = require('app')(),
