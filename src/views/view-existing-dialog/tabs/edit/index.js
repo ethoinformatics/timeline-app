@@ -232,10 +232,10 @@ function EditTab(opts){
 		self.$element.find('.js-child-add').each(function( index ){
 			
 			console.log($(this));
-
-			if( $(this).attr('id') != '#addContactBtn' ){
+			console.log($(this).attr('id'));
+			if( $(this).attr('id') != 'addContactBtn' ){
 			
-			$(this).on('click', function(ev){
+			  $(this).on('click', function(ev){
 				var $this = $(this),
 					collectionName = $this.data('collection'),
 					domainNames = $this.data('domains').split(','),

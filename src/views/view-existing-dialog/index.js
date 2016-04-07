@@ -289,6 +289,7 @@ function ViewExistingDialog(opts){
 			
 			// this means it's the contact button
 			if( $btnAddChild.length == 1 ) {
+				$btnAddChild.unbind( "click" ); // remove click in case it was added by the EditTab class
 				$btnAddChild.attr('id', 'addContactBtn');
 			}
 
