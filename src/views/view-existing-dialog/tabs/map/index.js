@@ -238,6 +238,8 @@ function MapTab(){
 		
 		// entityManager.getDiary( context.entity ).then(function(diary) {
 		diaryPromise.then(function(diary) {
+			console.log("geoJson path");
+			console.log(diary.geo.footprint);
 			var path = L.geoJson(diary.geo.footprint, {
 				style: mainPathOptions
 			});
@@ -294,6 +296,67 @@ function MapTab(){
 	self.descend = function(){
 	};
 
+
+	function _doSave(entity){
+			console.log("_doSave");
+		var rootDomain = app.getDomain(entity.domainName),
+			rootEntityManager = rootDomain.getService('entity-manager');
+
+
+		return rootEntityManager.save(entity)
+			.then(function(info){
+				console.log("_doSave response");
+				console.log(info);
+				console.log(entity);
+				entity._id = info.id;
+				entity._rev = info.rev;
+
+				return info;
+			});
+	}
+
+	function _createFakeGeo(diary) {
+		// diary.newTestField = "new test";
+
+		var numPoints = 100;		
+		// var startPoint = [-0.6261, -76.1153,null];
+		// var startPoint = [-76.1153,-0.6261,null];
+		var startPoint = [-76.15, -0.638333, null];
+		var offset = [0,0];
+		var timeStep = 1;
+		var startTimestamp = 1460050794000;
+		var offsetStepLimit = 0.001;
+		var offsetLimit = 0.001;
+		
+		var geo = {
+			footprint: {
+				coordinates: [startPoint],
+				type: "LineString"
+			},
+			timestamps: [startTimestamp]
+		};
+		
+		for(var i = 0; i < numPoints-1; i++) {
+			var newTimestamp = geo.timestamps[i] + timeStep;
+			offset = [
+				offset[0] + Math.random() * offsetStepLimit - offsetStepLimit / 2, 
+				offset[1] + Math.random() * offsetStepLimit - offsetStepLimit / 2
+			];
+			if(offset[0] < -offsetLimit) offset[0] = -offsetLimit;
+			if(offset[0] > offsetLimit) offset[0] = offsetLimit;
+			if(offset[1] < -offsetLimit) offset[1] = -offsetLimit;
+			if(offset[1] > offsetLimit) offset[1] = offsetLimit;
+
+			var lastPoint = geo.footprint.coordinates[i];
+			var newPoint = [lastPoint[0] + offset[0], lastPoint[1] + offset[1], null];
+			geo.footprint.coordinates.push(newPoint);
+			geo.timestamps.push(newTimestamp);
+		}
+		
+		// console.log(geo);
+		diary.geo = geo;
+	}
+
 	var path;
 	self.show = function(){
 		self.$element.show();
@@ -312,7 +375,13 @@ function MapTab(){
 		// entityManager.getDiary( _context.entity ).then(function(diary) {
 		diaryPromise.then(function(diary) {
 			var footprint = diary.geo.footprint;
-			
+
+
+			// This is where fake geo data is created. Comment out the next two lines to disable it
+			_createFakeGeo(diary);
+			_doSave(diary);				
+
+
 			
 			console.log('data study');
 			console.log(diary.contacts);
