@@ -1,7 +1,10 @@
 var PouchDb = require('pouchdb'),
 	_ = require('lodash'),
+	app = require('app')(),
 	q = require('q');
 
+	console.log("app!");
+	console.log(app);
 var DB_NAME = 'new_pp_db';
 
 PouchDb.plugin(require('pouchdb-upsert'));
@@ -141,12 +144,15 @@ function CrudManager(registry, domainName){
 	};
 	
 	self.getGeo = function(entity){
+		
+		
 		return new Promise(function(resolve, reject) {
 			var id = entity._id || entity.id;
 			console.log('id: ' + id);
 		
 			if( entity.geo && entity.geo.footprint ) {
 				console.log("the diary is the entity");
+				
 				resolve(entity.geo.footprint);
 				// return entity.geo.footprint;
 			} else {

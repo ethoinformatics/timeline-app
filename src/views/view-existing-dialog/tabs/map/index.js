@@ -336,6 +336,7 @@ function MapTab(){
 			
 			
 			
+			
 			if(footprint.type == 'Point') _renderMarker(_context, true);//_renderPoint(_context); // 
 			else if(footprint.type == 'LineString') _renderPath(_context);
 			_renderChildren(_context.entity, 0);
