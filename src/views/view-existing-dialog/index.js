@@ -109,7 +109,9 @@ function ViewExistingDialog(opts){
 
 	breadcrumb.on('selection', function(data){
 		if (!_changeEntity(data.context)) return;
-
+		if( data.context.domainName == 'diary' ){
+			self.show( false );
+		}
 		_updateAddButton();
 	});
 
@@ -249,26 +251,27 @@ function ViewExistingDialog(opts){
 
 	function _updateAddButton(){
 		
-		var $btnAddChild = $content.find('.js-child-add');
-		//$btnAddChild.text('Add');
-		console.log("_updateAddButton");
-		var popupChildDomains = myDomains.filter(function(d){return !d.inline;});
-
-		// to do jrc: make sure this
-
-		console.log(popupChildDomains);
-
-		if (_.size(popupChildDomains) == 1){
-		//	$btnAddChild.text('Add ' + popupChildDomains[0].label);
-			$btnAddChild.removeClass('disabled');
-		} else if (_.size(popupChildDomains) === 0){
-			$btnAddChild.addClass('disabled');
-		} else {
-			$btnAddChild.removeClass('disabled');
-		}
+		// var $btnAddChild = $content.find('.js-child-add');
+		// //$btnAddChild.text('Add');
+		// console.log("_updateAddButton");
+		// var popupChildDomains = myDomains.filter(function(d){return !d.inline;});
+		//
+		// // to do jrc: make sure this
+		//
+		// console.log("popupChildDomains");
+		// console.log(popupChildDomains);
+		//
+		// if (_.size(popupChildDomains) == 1){
+		// //	$btnAddChild.text('Add ' + popupChildDomains[0].label);
+		// 	$btnAddChild.removeClass('disabled');
+		// } else if (_.size(popupChildDomains) === 0){
+		// 	$btnAddChild.addClass('disabled');
+		// } else {
+		// 	$btnAddChild.removeClass('disabled');
+		// }
 	}
 
-	this.show = function(){
+	this.show = function( showAnimated ){
 		console.log('show!');
 		_updateAddButton();
 
@@ -282,10 +285,12 @@ function ViewExistingDialog(opts){
 			$btnAddChild = $content.find('.js-child-add'),
 			$btnRemove = $content.find('.js-view-remove');
 
-			console.log("$btnAddChild");
-			console.log($btnAddChild);
 			
-		//	$btnAddChild.hide();
+			// this means it's the contact button
+			if( $btnAddChild.length == 1 ) {
+				$btnAddChild.attr('id', 'addContactBtn');
+			}
+
 
 
 		$btnRemove.click(function(){
@@ -302,6 +307,7 @@ function ViewExistingDialog(opts){
 		});
 
 		$btnAddChild.click(function(ev){
+			console.log('add contact button jrc');
 			ev.preventDefault();
 
 			if ($(this).hasClass('disabled')) return console.log('ignore click');
@@ -335,9 +341,9 @@ function ViewExistingDialog(opts){
 					console.error(err);
 				});
 
-		});
+			});
 			m.show(ev);
-	});
+		});
 
 	function _handleSave(keepOpen){
 		var now = Date.now();
@@ -374,6 +380,7 @@ function ViewExistingDialog(opts){
 		}
 
 		function _createButtonClick(keepActivityRunning, ev){
+			// this is the creation of a new contact
 			console.log('gotta click');
 
 			var $this = $(this),
@@ -406,10 +413,9 @@ function ViewExistingDialog(opts){
 
 		$btnSnapshot.click(_.partial(_createButtonClick, false));
 		$btnFollow.click(_.partial(_createButtonClick, true));
-		$btnAddChild.click(function(){
-		});
 
-		modal.show();
+		if(showAnimated) modal.show();
+		else modal.showInstant();
 	};
 
 	this.hide = modal.hide.bind(modal);

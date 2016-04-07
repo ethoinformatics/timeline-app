@@ -227,9 +227,17 @@ function EditTab(opts){
 		var $btnAddChild = self.$element.find('.js-child-add');
 
 		console.log("$btnAddChild");
-		console.log($btnAddChild);
+
 
 		self.$element.find('.js-child-add').each(function( index ){
+			
+			console.log($(this));
+
+			if( $(this).attr('id') == '#addContactBtn' ){
+				console.log('not making internal buttons');
+
+			}else{
+				console.log('beyond the add contact');
 			
 			$(this).on('click', function(ev){
 				var $this = $(this),
@@ -265,20 +273,23 @@ function EditTab(opts){
 			console.log('created child');
 			console.log(_context.entity);
 			console.log(child);
+			
+
 		entityManager.addToParent(_context.entity, child);
 
+	var rootDomain = app.getDomain(_context.entity.domainName),
+		rootEntityManager = rootDomain.getService('entity-manager');
 
+		rootEntityManager.save(_context.entity)
+			.then(function(info){
+			
+			console.log(_context.entity);
+			
+			// child._id = info.id;
+			// child._rev = info.rev;
 
-	// var rootDomain = app.getDomain(_context.entity.domainName),
-	// 	rootEntityManager = rootDomain.getService('entity-manager');
-	//
-	// rootEntityManager.save(child)
-	// 	.then(function(info){
-	// 		child._id = info.id;
-	// 		child._rev = info.rev;
-	//
-	// 		return info;
-	// 	});
+			return info;
+		});
 	
 	
 
@@ -323,6 +334,9 @@ function EditTab(opts){
 			// $(this).focusout(function(){
 			// 	console.log('focusout');
 			// });
+			
+			}// end of if that blocks elem id: #addContactBtn
+			
 		});
 
 		self.$element.find('.js-inline-add')
@@ -344,6 +358,7 @@ function EditTab(opts){
 
 				popupButtons.show(ev);
 			});
+
 
 	};
 

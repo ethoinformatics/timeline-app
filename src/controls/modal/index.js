@@ -112,6 +112,31 @@ function Modal(options){
 		});
 	};
 	
+	this.showInstant = function(){
+		$modal
+			.css('height', window.innerHeight+1)
+			.css('top', 0)
+			.show();
+
+	
+
+		// velocity($modal, {top:0}, {
+		// 	duration:ANIMATION_DURATION,
+		// 	complete: function(){
+		// 		if (options.scroll){
+		// 			var $content = $modal.find('.content');
+		// 			$content
+		// 				.css('height', window.innerHeight-44);
+		//
+		// 			var scroll = new Scroll($content[0], {
+		// 				mouseWheel: true,
+		// 				scrollbars: true,
+		// 			});
+		// 		}
+		// 	},
+		// });
+	};
+	
 	this.show = function(){
 		$modal
 			.css('height', window.innerHeight+1)

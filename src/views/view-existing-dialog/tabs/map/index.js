@@ -311,7 +311,11 @@ function MapTab(){
 		
 		// entityManager.getDiary( _context.entity ).then(function(diary) {
 		diaryPromise.then(function(diary) {
+			
 			var footprint = diary.geo.footprint;
+			
+			console.log('diary');
+			console.log(diary);
 			
 			
 			console.log('data study');
