@@ -233,11 +233,7 @@ function EditTab(opts){
 			
 			console.log($(this));
 
-			if( $(this).attr('id') == '#addContactBtn' ){
-				console.log('not making internal buttons');
-
-			}else{
-				console.log('beyond the add contact');
+			if( $(this).attr('id') != '#addContactBtn' ){
 			
 			$(this).on('click', function(ev){
 				var $this = $(this),

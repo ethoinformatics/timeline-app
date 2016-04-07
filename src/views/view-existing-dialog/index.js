@@ -104,6 +104,7 @@ function ViewExistingDialog(opts){
 	var breadcrumb = new Breadcrumb({crumbs: crumbs});
 
 	breadcrumb.on('close', function(data){
+		
 		modal.remove();
 	});
 
