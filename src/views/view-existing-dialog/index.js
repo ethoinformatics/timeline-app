@@ -181,6 +181,7 @@ function ViewExistingDialog(opts){
 	function _tabClick(ev, clickedTab){
 		var $this = $(this);
 
+
 		if (previousTab && _.isFunction(previousTab.loseFocus))
 			previousTab.loseFocus();
 
@@ -253,7 +254,7 @@ function ViewExistingDialog(opts){
 		console.log("_updateAddButton");
 		var popupChildDomains = myDomains.filter(function(d){return !d.inline;});
 
-		// to do jrc: make sure this 
+		// to do jrc: make sure this
 
 		console.log(popupChildDomains);
 
@@ -273,12 +274,18 @@ function ViewExistingDialog(opts){
 
 		var form = formBuilder.buildDataEntryForm(domain);
 
+
+//		$('input').css('background-color', '#dddddd');
+
 		var $btnSnapshot = $content.find('.js-snapshot'),
 			$btnFollow = $content.find('.js-follow'),
 			$btnAddChild = $content.find('.js-child-add'),
 			$btnRemove = $content.find('.js-view-remove');
 
-			$btnAddChild.hide();
+			console.log("$btnAddChild");
+			console.log($btnAddChild);
+			
+		//	$btnAddChild.hide();
 
 
 		$btnRemove.click(function(){

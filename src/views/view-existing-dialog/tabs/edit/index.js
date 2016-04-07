@@ -11,6 +11,8 @@ var $ = require('jquery'),
 	scrollTmpl = require('./scroll.vash'),
 	Scroll = require('iscroll');
 
+var CreateSelectMenu = require('../../../create-select-dialog');
+
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
@@ -38,17 +40,24 @@ function _createChildCollectionData(parentDomain, childDomains){
 		});
 }
 
-function EditTab(){
+function EditTab(opts){
+	console.log('Edittab');
+	console.log(opts);
 	EventEmitter.call(this);
 
 	var self = this, editForm;
 	var _context; 
 	self.label = 'Data';
 	self.$element = $(scrollTmpl({}));
+	var	rootEntity = opts.rootEntity || opts.entity;
 
 
 	self.setContext = function(ctx){
 		_context = ctx;
+		
+		console.log('EditTab _context');
+		console.log(_context);
+		
 		editForm = new EditExistingForm({entity: ctx.entity});
 		editForm.updateFields();
 
@@ -109,7 +118,20 @@ function EditTab(){
 				console.log(scroll);				
 		},100);
 
-
+		function _doSave(){
+			// var rootDomain = app.getDomain(rootEntity.domainName),
+			// 	rootEntityManager = rootDomain.getService('entity-manager');
+			//
+			// 	console.log("DO SAVE");
+			//
+			// return rootEntityManager.save(rootEntity)
+			// 	.then(function(info){
+			// 		rootEntity._id = info.id;
+			// 		rootEntity._rev = info.rev;
+			//
+			// 		return info;
+			// 	});
+		}
 		function _collapseChildren(collectionName){
 			var $accordians = self.$element.find('.js-collection-'+ collectionName);
 
@@ -122,6 +144,7 @@ function EditTab(){
 		}
 
 		function _addInlineChild(collectionName, domainName){
+
 			_collapseChildren(collectionName);
 			var domain = _.find(childDomains, function(d){return d.name == domainName;}),
 				$containerLi = $('<li></li>')
@@ -191,9 +214,116 @@ function EditTab(){
 				});
 
 			setTimeout(function(){
+				
+				var scroll = new Scroll(self.$element[0], {
+						mouseWheel: true,
+						scrollbars: true,
+						tap:true
+					});
 				scroll.refresh();
 			}, 100);
 		}
+		
+		var $btnAddChild = self.$element.find('.js-child-add');
+
+		console.log("$btnAddChild");
+		console.log($btnAddChild);
+
+		self.$element.find('.js-child-add').each(function( index ){
+			
+			$(this).on('click', function(ev){
+				var $this = $(this),
+					collectionName = $this.data('collection'),
+					domainNames = $this.data('domains').split(','),
+					domains = childDomains.filter(function(d){return _.contains(domainNames, d.name);});
+
+
+				var popupButtons = new PopupButtons({
+					items: domains.map(function(d){ return {value: d.name, label: d.label};}),
+				});
+
+				popupButtons.on('click', function(domainName){
+//					_addInlineChild(collectionName, domainName);
+
+////////////
+
+
+	// var descMgr = domain.getService('description-manager');
+	// var title = 'Add a child to ' + descMgr.getShortDescription(entity);
+
+
+	var m = new CreateSelectMenu({
+		title: domainName,
+		domains: domains.filter(function(d){return !d.inline;}),
+		//crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
+	});
+
+	m.on('created', function(child){
+		var childDomain = app.getDomain(child.domainName),
+			entityManager = childDomain.getService('entity-manager');
+
+			console.log('created child');
+			console.log(_context.entity);
+			console.log(child);
+		entityManager.addToParent(_context.entity, child);
+
+
+
+	// var rootDomain = app.getDomain(_context.entity.domainName),
+	// 	rootEntityManager = rootDomain.getService('entity-manager');
+	//
+	// rootEntityManager.save(child)
+	// 	.then(function(info){
+	// 		child._id = info.id;
+	// 		child._rev = info.rev;
+	//
+	// 		return info;
+	// 	});
+	
+	
+
+
+		// _doSave().then(function(info){
+// 				console.log("info.id");
+// 				console.log(info.id);
+// 				child._id = info.id;
+// 				child._rev = info.rev;
+//
+// 			//_changeEntity(child);
+// 			//_updateAddButton();
+// 			//breadcrumb.add({context:child, label: _getLabel(child), color: _getColor(child)});
+// 		})
+// 		.catch(function(err){
+// 			console.error(err);
+// 		});
+
+});
+	m.show(ev);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////
+					popupButtons.remove();
+				});
+
+				popupButtons.show(ev);
+			});
+			// $(this).focusout(function(){
+			// 	console.log('focusout');
+			// });
+		});
 
 		self.$element.find('.js-inline-add')
 			.on('click', function(ev){
@@ -229,13 +359,25 @@ function EditTab(){
 	});
 
 	self.loseFocus = function(){
+		console.log("loseFocus");
 		editForm.updateFields();
+		
+	var rootDomain = app.getDomain(rootEntity.domainName),
+		rootEntityManager = rootDomain.getService('entity-manager');
 
-		// _doSave()
-		// 	.then(function(){
+		console.log("DO SAVE");
+		console.log(rootEntityManager);
+	rootEntityManager.save(_context.entity)
+		.then(function(info){
+			_context._id = info.id;
+			_context._rev = info.rev;
+
+			return info;
+		});
+//rootEntity		//
+		// _doSave().then(function(){
 		// 		_update(true);
-		// 	})
-		// 	.catch(function(err){
+		// 	}).catch(function(err){
 		// 		console.error(err);
 		// 	});
 	};
