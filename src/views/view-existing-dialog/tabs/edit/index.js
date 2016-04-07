@@ -11,6 +11,8 @@ var $ = require('jquery'),
 	scrollTmpl = require('./scroll.vash'),
 	Scroll = require('iscroll');
 
+var CreateSelectMenu = require('../../../create-select-dialog');
+
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
 
@@ -222,7 +224,106 @@ function EditTab(opts){
 			}, 100);
 		}
 		
+		var $btnAddChild = self.$element.find('.js-child-add');
 
+		console.log("$btnAddChild");
+		console.log($btnAddChild);
+
+		self.$element.find('.js-child-add').each(function( index ){
+			
+			$(this).on('click', function(ev){
+				var $this = $(this),
+					collectionName = $this.data('collection'),
+					domainNames = $this.data('domains').split(','),
+					domains = childDomains.filter(function(d){return _.contains(domainNames, d.name);});
+
+
+				var popupButtons = new PopupButtons({
+					items: domains.map(function(d){ return {value: d.name, label: d.label};}),
+				});
+
+				popupButtons.on('click', function(domainName){
+//					_addInlineChild(collectionName, domainName);
+
+////////////
+
+
+	// var descMgr = domain.getService('description-manager');
+	// var title = 'Add a child to ' + descMgr.getShortDescription(entity);
+
+
+	var m = new CreateSelectMenu({
+		title: domainName,
+		domains: domains.filter(function(d){return !d.inline;}),
+		//crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
+	});
+
+	m.on('created', function(child){
+		var childDomain = app.getDomain(child.domainName),
+			entityManager = childDomain.getService('entity-manager');
+
+			console.log('created child');
+			console.log(_context.entity);
+			console.log(child);
+		entityManager.addToParent(_context.entity, child);
+
+
+
+	// var rootDomain = app.getDomain(_context.entity.domainName),
+	// 	rootEntityManager = rootDomain.getService('entity-manager');
+	//
+	// rootEntityManager.save(child)
+	// 	.then(function(info){
+	// 		child._id = info.id;
+	// 		child._rev = info.rev;
+	//
+	// 		return info;
+	// 	});
+	
+	
+
+
+		// _doSave().then(function(info){
+// 				console.log("info.id");
+// 				console.log(info.id);
+// 				child._id = info.id;
+// 				child._rev = info.rev;
+//
+// 			//_changeEntity(child);
+// 			//_updateAddButton();
+// 			//breadcrumb.add({context:child, label: _getLabel(child), color: _getColor(child)});
+// 		})
+// 		.catch(function(err){
+// 			console.error(err);
+// 		});
+
+});
+	m.show(ev);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////
+					popupButtons.remove();
+				});
+
+				popupButtons.show(ev);
+			});
+			// $(this).focusout(function(){
+			// 	console.log('focusout');
+			// });
+		});
 
 		self.$element.find('.js-inline-add')
 			.on('click', function(ev){

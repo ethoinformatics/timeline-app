@@ -7,6 +7,8 @@ var Modal = require('modal'),
 	EventEmitter = require('events').EventEmitter;
 
 function EditExistingDialog(opt){
+	
+	
 	var entity = opt.entity,
 		form = new EditExistingForm(opt),
 		domain = app.getDomain(entity.domainName);

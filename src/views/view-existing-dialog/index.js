@@ -282,6 +282,9 @@ function ViewExistingDialog(opts){
 			$btnAddChild = $content.find('.js-child-add'),
 			$btnRemove = $content.find('.js-view-remove');
 
+			console.log("$btnAddChild");
+			console.log($btnAddChild);
+			
 		//	$btnAddChild.hide();
 
 
