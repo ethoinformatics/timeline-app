@@ -1,7 +1,10 @@
 var PouchDb = require('pouchdb'),
 	_ = require('lodash'),
+	app = require('app')(),
 	q = require('q');
 
+	console.log("app!");
+	console.log(app);
 var DB_NAME = 'new_pp_db';
 
 PouchDb.plugin(require('pouchdb-upsert'));
