@@ -60,6 +60,7 @@ function ViewExistingDialog(opts){
 		tabTimeline = new TabTimeline(tabOptions);
 
 	var rootDomain = app.getDomain(rootEntity.domainName);
+// test
 	// var geoAware = rootDomain.getService('geo-aware');
 	// if (geoAware){
 	// 	_getDeviceSettingsObject()
