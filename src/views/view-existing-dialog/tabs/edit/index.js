@@ -292,7 +292,9 @@ function EditTab(opts){
 		});
 	
 	
-		self.doParentSave();
+		// self.doParentSave().then(function(info){
+		// 			return info;
+		// 		});
 
 		// _doSave().then(function(info){
 // 				console.log("info.id");
