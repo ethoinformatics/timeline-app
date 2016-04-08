@@ -144,6 +144,9 @@ function CrudManager(registry, domainName){
 	};
 	
 	self.getDiary = function(entity){
+		if(!app) {
+			app = require('app')();
+		}
 		return new Promise(function(resolve, reject) {
 			var id = entity._id || entity.id;
 			console.log('id: ' + id);
