@@ -87,10 +87,12 @@ function MapTab(){
 		// format it
 		// return it
 		
-		var count = 1;
-		if(endTime) {
-			count = endTime - beginTime;
+		var count;
+		if(!endTime) {
+			endTime - beginTime;
 		}
+		
+		count = endTime - beginTime;
 		if(count == 0) count = 1;
 		
 		// return new Promise(function(resolve, reject) {
@@ -114,19 +116,29 @@ function MapTab(){
 		return new Promise(function(resolve, reject) {
 			diaryPromise.then(function(diary) {
 				var startIndex, endIndex;
-				
-				
-				
+
+				for(var i = 0; i < diary.geo.timestamps.length; i++) {
+					var thisTimestamp = diary.geo.timestamps[0];
+					if(beginTime >= thisTimestamp) startIndex = i;
+					if(endTime >= thisTimestamp) endIndex = i;
+				}
+
+				if(!startIndex) startIndex = diary.geo.timestamps.length - 1;				
+				if(!endIndex) endIndex = diary.geo.timestamps.length - 1;
+
 				var startPoint = diary.geo.footprint.coordinates[0]; // this will break on empty data
 				var coordinates = [];
-				for(var i = 0; i < count; i++) {
+				for(var i = startIndex; i <= endIndex; i++) {
 					coordinates.push([startPoint[0] + Math.random() * 0.1, startPoint[1] + Math.random() * 0.1, startPoint[2]]);
 				}
 				if(coordinates.length == 1) {
-					var geoJson = { "type": "Point", "coordinates": coordinates };					
+					var geoJson = { "type": "Point", "coordinates": coordinates[0] };					
 				} else {
 					var geoJson = { "type": "LineString", "coordinates": coordinates };
 				}
+				console.log("beginTime: " + beginTime + ", endTime: " + endTime);
+				console.log("startIndex: " + startIndex + ", endIndex: " + endIndex);
+				console.log(geoJson);
 				resolve(geoJson);
 			});
 		});
@@ -238,6 +250,104 @@ function MapTab(){
 		
 	}
 	
+	
+	function _renderGeoJsonMarker(geoJson, draggable){
+
+		console.log('_renderGeoJsonMarker');
+		
+		
+		///////////////////////
+		///////////////////////
+		///////////////////////
+		// // todo: 
+		// a.) make it so the markers are a small, but tap-able circle when loaded (with an alpha 50% state for when not highlighted)
+		// b.) make it so click on the marker makes it draggable
+		// c.) make it so click on a marker makes the size bigger and no alpha
+		///////////////////////
+		///////////////////////
+		///////////////////////
+		
+		var popupOffset = [0,-40];
+		
+		
+		
+		// Promise-based
+		// entityManager.getDiary( context.entity ).then(function(diary) {
+			var coordinates = geoJson.coordinates;
+			
+			console.log(coordinates);
+			
+			var circleMarkerDrag = L.circleMarker( coordinates, {
+			    color:     '#62ce21', //'rgb(38,126,202)',
+				weight: 	6,
+			    fillColor: 'rgb(255,255,255)',
+				opacity: 1.0
+			});//.addTo(lmapLayerGroup);
+			circleMarkerDrag.setRadius(6);
+
+			var myIcon = L.icon({
+			    iconUrl: 'images/marker-icon.png',
+			    iconRetinaUrl: 'images/marker-icon-2x.png',
+				popupAnchor: popupOffset
+			});
+			var myIconSelected = L.icon({
+			    iconUrl: 'images/marker-icon-GREEN-2x.png',
+			    iconRetinaUrl: 'images/marker-icon-GREEN-2x.png',
+				popupAnchor: popupOffset
+			});
+
+
+
+// >>>>>>> origin/master
+		
+			var marker = L.marker( coordinates, { draggable: draggable	} ).addTo(lmapLayerGroup);
+			marker.setIcon( myIcon );
+			//marker.bindPopup('<strong>Heading Here</strong><br>Body of pop up here below heading.');
+			marker.bindPopup( '<strong>Contact 1</strong><br>Body of pop up here below heading.<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
+			marker.on('click', function(e) {
+				marker.setPopupContent( '<strong>Contact 1</strong><br>Body of pop up here below heading.<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
+			});
+
+			marker.on('dragstart', function(e) {
+				circleMarkerDrag.setLatLng( [ marker.getLatLng().lat, marker.getLatLng().lng ] );
+				circleMarkerDrag.addTo(lmapLayerGroup);
+				marker.setIcon( myIconSelected );
+			});
+
+			marker.on('drag', function(e) {
+				_updateEntityCoordinates( [ marker.getLatLng().lat, marker.getLatLng().lng ] );
+				marker.setPopupContent( '<strong>Contact 1</strong><br>Body of pop up here below heading.<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">Relocating to<br>lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
+				marker.openPopup();
+			});	
+
+			marker.on('dragend', function(e) {
+				lmapLayerGroup.removeLayer(circleMarkerDrag);
+				marker.setIcon( myIcon );			
+			});
+
+			mapMarkers.push(marker);
+		
+			//
+			// _renderMarker_TEMPORARY_DEMO( [41.37874070257893, -73.94545555114746],  true, 'Contact 2' );
+			// _renderMarker_TEMPORARY_DEMO( [41.397608221508406, -73.94330978393555], true, 'Contact 3' );
+			// _renderMarker_TEMPORARY_DEMO( [41.398187683195665, -73.92931938171387], true, 'Contact 4' );
+			// _renderMarker_TEMPORARY_DEMO( [41.37242884295152, -73.92751693725586],  true, 'Contact 5' );
+
+
+
+
+
+
+// <<<<<<< HEAD
+// 		mapMarkers.push(marker);
+//
+//
+// =======
+		
+//>>>>>>> origin/master
+		
+	}
+	
 	function _renderContactTrace(coordinates, heading){
 
 		var circleMarker = L.circleMarker( coordinates, {
@@ -277,6 +387,27 @@ function MapTab(){
 		
 
 	}
+
+
+
+	function _renderGeoJsonPath(geoJson){
+		console.log("_renderGeoJsonPath");
+		
+	// entityManager.getDiary( context.entity ).then(function(diary) {
+		var path = L.geoJson(geoJson, {
+			style: mainPathOptions
+		});
+		path.addTo(lmapLayerGroup);
+		
+	/*if (typeof footprint == 'string'){
+		footprint = JSON.parse(footprint);
+	}*/
+
+		
+
+	}
+
+
 
 	function _renderChildren(entity, depth){
 		//console.log("_renderChildren called.");
@@ -409,8 +540,10 @@ function MapTab(){
 
 
 			// This is where fake geo data is created. Comment out the next two lines to disable it
-			_createFakeGeo(diary);
-			_doSave(diary);				
+			if(!(diary.geo && diary.geo.footprint && diary.geo.timestamps && diary.geo.timestamps.length > 50)) {
+				_createFakeGeo(diary);
+				_doSave(diary);				
+			}
 
 
 //>>>>>>> origin/master
@@ -419,23 +552,35 @@ function MapTab(){
 			console.log(diary.contacts);
 			
 			
-			if(footprint.type == 'Point') _renderMarker(_context, true);//_renderPoint(_context); // 
-			else if(footprint.type == 'LineString') _renderPath(_context);
-			_renderChildren(_context.entity, 0);
+			// if(footprint.type == 'Point') _renderMarker(_context, true);//_renderPoint(_context); //
+			// else if(footprint.type == 'LineString') _renderPath(_context);
+			//
+			// _renderContactTrace( [41.37874070257893,  -73.94545555114746],  'Contact Name 2' );
+			// _renderContactTrace( [41.397608221508406, -73.94330978393555], 'Contact Name 3' );
+			// _renderContactTrace( [41.398187683195665, -73.92931938171387], 'Contact Name 4' );
+			// _renderContactTrace( [41.37242884295152,  -73.92751693725586],  'Contact Name 5' );
+
+			if(_context.entity.geo && _context.entity.geo.footprint) {
+				if(_context.entity.geo.footprint.type == 'Point') _renderGeoJsonMarker(_context.entity.geo.footprint, true);//_renderPoint(_context); // 
+				else if(_context.entity.geo.footprint.type == 'LineString') _renderGeoJsonPath(_context.entity.geo.footprint);
+			} else {
+				_getGeo(_context.entity.beginTime,_context.entity.endTime).then(function(footprint) {
+					console.log("footprint");
+					console.log(footprint);
+					if(footprint.type == 'Point') _renderGeoJsonMarker(footprint, true);//_renderPoint(_context); // 
+					else if(footprint.type == 'LineString') _renderGeoJsonPath(footprint);
+				
+
+				});				
+			}
+			
+			_renderChildren(_context.entity, 0);			
 			map.show();
 
-			_renderContactTrace( [41.37874070257893,  -73.94545555114746],  'Contact Name 2' );
-			_renderContactTrace( [41.397608221508406, -73.94330978393555], 'Contact Name 3' );
-			_renderContactTrace( [41.398187683195665, -73.92931938171387], 'Contact Name 4' );
-			_renderContactTrace( [41.37242884295152,  -73.92751693725586],  'Contact Name 5' );
 
 		});
 		
 
-		_getGeo(12345,12346).then(function(geoJson) {
-			console.log("geoJson");
-			console.log(geoJson);
-		});
 
 
 				
