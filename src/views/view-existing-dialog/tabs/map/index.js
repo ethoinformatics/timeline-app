@@ -379,11 +379,11 @@ function MapTab(){
 
 
 			// This is where fake geo data is created. Comment out the next two lines to disable it
-			if(!(diary.geo && diary.geo.footprint && diary.geo.timestamps && diary.geo.timestamps.length > 50)) {
-				console.log("Creating fake geo");
-				_createFakeGeo(diary);
-				_doSave(diary);				
-			}
+			// if(!(diary.geo && diary.geo.footprint && diary.geo.timestamps && diary.geo.timestamps.length > 50)) {
+			// 	console.log("Creating fake geo");
+			// 	_createFakeGeo(diary);
+			// 	_doSave(diary);
+			// }
 
 			var footprint = diary.geo.footprint;
 			

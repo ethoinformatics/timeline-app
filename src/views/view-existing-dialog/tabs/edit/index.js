@@ -264,13 +264,13 @@ function EditTab(opts){
 	var rootDomain = app.getDomain(_context.entity.domainName),
 		rootEntityManager = rootDomain.getService('entity-manager');
 
-		rootEntityManager.save(_context.entity)
-			.then(function(info){
-				// child._id = info.id;
-			// child._rev = info.rev;
-
-			return info;
-		});
+		// rootEntityManager.save(_context.entity)
+		// 	.then(function(info){
+		// 		// child._id = info.id;
+		// 	// child._rev = info.rev;
+		//
+		// 	return info;
+		// });
 	
 	
 		// self.doParentSave().then(function(info){
@@ -359,15 +359,18 @@ function EditTab(opts){
 	self.loseFocus = function(){
 		editForm.updateFields();
 		
-	var rootDomain = app.getDomain(rootEntity.domainName),
-		rootEntityManager = rootDomain.getService('entity-manager');
-	rootEntityManager.save(_context.entity)
-		.then(function(info){
-			_context._id = info.id;
-			_context._rev = info.rev;
+	// var rootDomain = app.getDomain(rootEntity.domainName),
+	// 	rootEntityManager = rootDomain.getService('entity-manager');
+	// rootEntityManager.save(_context.entity)
+	// 	.then(function(info){
+	// 		_context._id = info.id;
+	// 		_context._rev = info.rev;
+	//
+	// 		return info;
+	// 	});
 
-			return info;
-		});
+
+
 //rootEntity		//
 		// _doSave().then(function(){
 		// 		_update(true);
