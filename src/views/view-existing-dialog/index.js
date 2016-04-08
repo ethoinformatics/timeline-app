@@ -51,8 +51,7 @@ function ViewExistingDialog(opts){
 		rootEntity: rootEntity,
 	};
 	
-	console.log("ViewExistingDialog()");
-	console.log(rootEntity);
+
 
 	var tabEdit = new TabEdit(tabOptions),
 		tabMap = new TabMap(tabOptions),
@@ -111,19 +110,19 @@ function ViewExistingDialog(opts){
 
 	breadcrumb.on('selection', function(data){
 		if (!_changeEntity(data.context)) return;
-		//
-	// _doSave()
-	// 	.then(function(info){
-	// 		rootEntity._id = info.id;
-	// 		rootEntity._rev = info.rev;
-	// })
-	// .catch(function(err){
-	// 	console.error(err);
-	// });
-	//
-	// 	if( data.context.domainName == 'diary' ){
-	// 		self.show( false );
-	// 	}
+		
+	_doSave()
+		.then(function(info){
+			rootEntity._id = info.id;
+			rootEntity._rev = info.rev;
+	})
+	.catch(function(err){
+		console.error(err);
+	});
+		
+		if( data.context.domainName == 'diary' ){
+			self.show( false );
+		}
 		_updateAddButton();
 	});
 
@@ -309,7 +308,6 @@ function ViewExistingDialog(opts){
 		$btnRemove.click(function(){
 			if (rootEntity!=entity) return window.alert('not implemeneted yet');
 
-			console.log('removing');
 			var entityManager = domain.getService('entity-manager');
 
 			entityManager.remove(entity)
@@ -320,7 +318,7 @@ function ViewExistingDialog(opts){
 		});
 
 		$btnAddChild.click(function(ev){
-			console.log('add contact button jrc');
+
 			ev.preventDefault();
 
 			if ($(this).hasClass('disabled')) return console.log('ignore click');
@@ -384,17 +382,13 @@ function ViewExistingDialog(opts){
 			return entityManager.save(data)
 				.then(function(savedData){
 					self.emit('new', data);
-
-					console.log('saved data: ');
-					console.dir(savedData);
-
 					return data;
 				});
 		}
 
 		function _createButtonClick(keepActivityRunning, ev){
 			// this is the creation of a new contact
-			console.log('gotta click');
+
 
 			var $this = $(this),
 				oldText = $this.text();
@@ -435,7 +429,6 @@ function ViewExistingDialog(opts){
 	this.remove = modal.remove.bind(modal);
 
 	function _doSave(){
-		console.log('ved-_doSave');
 		var rootDomain = app.getDomain(rootEntity.domainName),
 			rootEntityManager = rootDomain.getService('entity-manager');
 

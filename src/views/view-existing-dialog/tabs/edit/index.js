@@ -41,8 +41,7 @@ function _createChildCollectionData(parentDomain, childDomains){
 }
 
 function EditTab(opts){
-	console.log('Edittab');
-	console.log(opts);
+
 	EventEmitter.call(this);
 
 	var self = this, editForm;
@@ -55,10 +54,7 @@ function EditTab(opts){
 	self.setContext = function(ctx){
 		
 		_context = ctx;
-		
-		console.log('EditTab _context');
-		console.log(_context);
-		
+				
 		editForm = new EditExistingForm({entity: ctx.entity});
 		editForm.updateFields();
 
@@ -116,16 +112,11 @@ function EditTab(opts){
 					scrollbars: true,
 					tap:true
 				});
-		
-				console.log(scroll);				
 		},100);
 
 		self.doParentSave = function(){
-			console.log('do parent save');
 			var rootDomain = app.getDomain(rootEntity.domainName),
 				rootEntityManager = rootDomain.getService('entity-manager');
-
-				console.log("DO SAVE");
 
 			return rootEntityManager.save(rootEntity)
 				.then(function(info){
@@ -230,13 +221,10 @@ function EditTab(opts){
 		
 		var $btnAddChild = self.$element.find('.js-child-add');
 
-		console.log("$btnAddChild");
 
 
 		self.$element.find('.js-child-add').each(function( index ){
 			
-			console.log($(this));
-			console.log($(this).attr('id'));
 			if( $(this).attr('id') != 'addContactBtn' ){
 			
 			  $(this).on('click', function(ev){
@@ -270,10 +258,6 @@ function EditTab(opts){
 		var childDomain = app.getDomain(child.domainName),
 			entityManager = childDomain.getService('entity-manager');
 
-			console.log('created child');
-			console.log(_context.entity);
-			console.log(child);
-			
 
 		entityManager.addToParent(_context.entity, child);
 
@@ -282,10 +266,7 @@ function EditTab(opts){
 
 		rootEntityManager.save(_context.entity)
 			.then(function(info){
-			
-			console.log(_context.entity);
-			
-			// child._id = info.id;
+				// child._id = info.id;
 			// child._rev = info.rev;
 
 			return info;
@@ -365,7 +346,6 @@ function EditTab(opts){
 	};
 
 	self.$element.on('tap', '.js-child-link', function(){
-		console.log('tap contact');
 		var $this = $(this),
 			collectionName = $this.data('collection'),
 			_id = $this.data('id');
@@ -377,14 +357,10 @@ function EditTab(opts){
 	});
 
 	self.loseFocus = function(){
-		console.log("loseFocus");
 		editForm.updateFields();
 		
 	var rootDomain = app.getDomain(rootEntity.domainName),
 		rootEntityManager = rootDomain.getService('entity-manager');
-
-		console.log("DO SAVE");
-		console.log(rootEntityManager);
 	rootEntityManager.save(_context.entity)
 		.then(function(info){
 			_context._id = info.id;

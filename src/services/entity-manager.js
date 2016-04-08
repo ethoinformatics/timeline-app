@@ -3,8 +3,8 @@ var PouchDb = require('pouchdb'),
 	app = require('app')(),
 	q = require('q');
 
-	console.log("app!");
-	console.log(app);
+	//console.log("app!");
+	//console.log(app);
 var DB_NAME = 'new_pp_db';
 
 PouchDb.plugin(require('pouchdb-upsert'));
@@ -57,7 +57,7 @@ function CrudManager(registry, domainName){
 	        for(var prop in theObject) {
 	            // console.log(prop + ': ' + theObject[prop]);
 	            if(prop == '_id' || prop == 'id') {
-									console.log(prop, theObject[prop], id);
+									// console.log(prop, theObject[prop], id);
 	                if(theObject[prop] == id) {
 	                    return theObject;
 	                }
@@ -95,8 +95,6 @@ function CrudManager(registry, domainName){
 	self.getAll = function(){
 		return viewsLoadedPromise
 			.then(function(){
-				console.log('domainName');				
-				console.log(domainName);
 				return q(db.query('domain_name_index', {key: domainName, include_docs:true}))
 					.then(function(result){
 						return _.map(result.rows, 'doc');
@@ -149,17 +147,11 @@ function CrudManager(registry, domainName){
 		}
 		return new Promise(function(resolve, reject) {
 			var id = entity._id || entity.id;
-			console.log('id: ' + id);
-		
 			if( entity.geo && entity.geo.footprint ) {
-				console.log("the diary is the entity");
 				resolve(entity);
 				// return entity.geo.footprint;
 			} else {
-				self.diaryByChildId(id).then(function(diary) {
-					console.log("DIARY: ");
-					console.log(diary);
-				
+				self.diaryByChildId(id).then(function(diary) {				
 					resolve(diary);
 				});				
 			}

@@ -37,13 +37,10 @@ function MapTab(){
 	var diaryPromise = null;
 
 	self.setContext = function(ctx){
-		console.log("setContext");
-		console.log(ctx);
 		_context = ctx;
 		
 		if(!diaryPromise) {
 			diaryPromise = entityManager.getDiary( ctx.entity );
-			console.log("diaryPromise");
 		}
 	};
 
@@ -77,11 +74,10 @@ function MapTab(){
 
 	 
 	function _updateEntityCoordinates(coordinates){
-		console.log( coordinates );		
+		// console.log( coordinates );
 	}
 	 
 	function _clearMarkers(){
-		console.log('_clearMarkers');
 		for(var i=0; i<mapMarkers.length; i++){
 			lmapLayerGroup.removeLayer(mapMarkers[i]);
 		}		
@@ -143,20 +139,12 @@ function MapTab(){
 				} else {
 					var geoJson = { "type": "LineString", "coordinates": coordinates };
 				}
-				console.log("beginTime: " + beginTime + ", endTime: " + endTime);
-				console.log("startIndex: " + startIndex + ", endIndex: " + endIndex);
-				console.log(geoJson);
+				// console.log("beginTime: " + beginTime + ", endTime: " + endTime);
+				// console.log("startIndex: " + startIndex + ", endIndex: " + endIndex);
+				// console.log(geoJson);
 				resolve(geoJson);
 			});
 		});
-
-
-
-		// var arr = [[41.3839, -73.9405]]; // Garrison
-		// if( arr.length > 1 ) return { "type": "LineString", "coordinates": arr };
-		// else return { "type": "Point", "coordinates": arr[0] };
-		
-		
 	}
 	
 	 
@@ -165,12 +153,8 @@ function MapTab(){
 	
 	function _renderGeoJsonMarker(geoJson, draggable, copyOptions){
 
-		// !IMPORTANT \/
+		// !IMPORTANT Converts GeoJSON to Leaflet standard LatLon order. Should be automatic in leaflet. Isn't yet, but is with the path?
 		var coordinates = [geoJson.coordinates[1], geoJson.coordinates[0]];
-
-
-		console.log('_renderGeoJsonMarker');
-		console.log(coordinates);
 		
 		var popupOffset = [0,-40];
 			
@@ -255,7 +239,6 @@ function MapTab(){
 
 
 	function _renderGeoJsonPath(geoJson){
-		console.log("_renderGeoJsonPath");
 		
 	// entityManager.getDiary( context.entity ).then(function(diary) {
 		var path = L.geoJson(geoJson, {
@@ -277,8 +260,8 @@ function MapTab(){
 		//console.log("_renderChildren called.");
 		var children = _context.getChildren(entity);
 
-		console.log('geojson children');
-		console.log(children);
+		//console.log('geojson children');
+		//console.log(children);
 		
 		var arr = [];
 		_.chain(children)
@@ -293,7 +276,7 @@ function MapTab(){
 							geojson = JSON.parse(geojson);
 						}
 						
-						console.log(JSON.stringify(geojson));
+						//console.log(JSON.stringify(geojson));
 						var geoJsonLayer = L.geoJson(geojson, {
 							style: childPathOptions
 							/*pointToLayer: function (feature, latlng) {
@@ -317,7 +300,6 @@ function MapTab(){
 
 
 	function _doSave(entity){
-			console.log("_doSave");
 		var rootDomain = app.getDomain(entity.domainName),
 			rootEntityManager = rootDomain.getService('entity-manager');
 
@@ -380,7 +362,7 @@ function MapTab(){
 	self.show = function(){
 		self.$element.show();
 		lmap.invalidateSize();
-		console.log( lmapLayerGroup.getLayers() );
+
 
 		lmapLayerGroup.clearLayers();
 		/*if (!path){
