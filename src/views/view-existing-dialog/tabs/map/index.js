@@ -67,6 +67,11 @@ function MapTab(){
 		weight: 2,
 		opacity: 0.75,
 	};
+
+	var markerCopyOptions = {
+		heading: "heading copy",
+		body: "body"
+	};
 	
 	var popupOffset = [0,-40];
 
@@ -158,7 +163,7 @@ function MapTab(){
 	
 	
 	
-	function _renderGeoJsonMarker(geoJson, draggable){
+	function _renderGeoJsonMarker(geoJson, draggable, copyOptions){
 
 		// !IMPORTANT \/
 		var coordinates = [geoJson.coordinates[1], geoJson.coordinates[0]];
@@ -195,9 +200,9 @@ function MapTab(){
 			var marker = L.marker( coordinates, { draggable: draggable	} ).addTo(lmapLayerGroup);
 			marker.setIcon( myIcon );
 			//marker.bindPopup('<strong>Heading Here</strong><br>Body of pop up here below heading.');
-			marker.bindPopup( '<strong>Contact 1</strong><br>Body of pop up here below heading.<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
+			marker.bindPopup( '<strong>'+copyOptions.heading+'</strong><br>'+copyOptions.body+'<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
 			marker.on('click', function(e) {
-				marker.setPopupContent( '<strong>Contact 1</strong><br>Body of pop up here below heading.<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
+				marker.setPopupContent( '<strong>'+copyOptions.heading+'</strong><br>'+copyOptions.body+'<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
 			});
 
 			marker.on('dragstart', function(e) {
@@ -208,7 +213,7 @@ function MapTab(){
 
 			marker.on('drag', function(e) {
 				_updateEntityCoordinates( [ marker.getLatLng().lat, marker.getLatLng().lng ] );
-				marker.setPopupContent( '<strong>Contact 1</strong><br>Body of pop up here below heading.<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">Relocating to<br>lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
+				marker.setPopupContent( '<strong>'+copyOptions.heading+'</strong><br>'+copyOptions.body+'<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">Relocating to<br>lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
 				marker.openPopup();
 			});	
 
@@ -390,13 +395,6 @@ function MapTab(){
 		diaryPromise.then(function(diary) {
 			
 
-// <<<<<<< HEAD
-//
-// 			console.log('diary');
-// 			console.log(diary);
-//
-// =======
-
 
 			// This is where fake geo data is created. Comment out the next two lines to disable it
 			if(!(diary.geo && diary.geo.footprint && diary.geo.timestamps && diary.geo.timestamps.length > 50)) {
@@ -406,25 +404,25 @@ function MapTab(){
 			}
 
 			var footprint = diary.geo.footprint;
-//>>>>>>> origin/master
 			
 			console.log('data study');
 			console.log(diary.contacts);
 			
 			
-			// if(footprint.type == 'Point') _renderMarker(_context, true);//_renderPoint(_context); //
-			// else if(footprint.type == 'LineString') _renderPath(_context);
-			//
-			// _renderContactTrace( [41.37874070257893,  -73.94545555114746],  'Contact Name 2' );
-			// _renderContactTrace( [41.397608221508406, -73.94330978393555], 'Contact Name 3' );
-			// _renderContactTrace( [41.398187683195665, -73.92931938171387], 'Contact Name 4' );
 			// _renderContactTrace( [41.37242884295152,  -73.92751693725586],  'Contact Name 5' );
 
 			if(diary._id != _context.entity._id) { // if we're looking at something other than the diary
 				_getGeo(_context.entity.beginTime,_context.entity.endTime).then(function(footprint) {
 					console.log("footprint");
 					console.log(footprint);
-					if(footprint.type == 'Point') _renderGeoJsonMarker(footprint, true);//_renderPoint(_context); // 
+					console.log(_context.entity.samplingProtocol);
+					
+					markerCopyOptions = {
+						heading: _context.entity.title,
+						body: 'Taxon: ' + _context.entity.taxon +'<br>Subject ID: '+ _context.entity.subjectId +'<br>Sampling Protocol: '+ _context.entity.samplingProtocol
+					};
+					
+					if(footprint.type == 'Point') _renderGeoJsonMarker(footprint, true, markerCopyOptions);//_renderPoint(_context); // 
 					else if(footprint.type == 'LineString') _renderGeoJsonPath(footprint);
 				});				
 			}
