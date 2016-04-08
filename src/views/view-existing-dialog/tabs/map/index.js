@@ -95,7 +95,7 @@ function MapTab(){
 		
 		var count;
 		if(!endTime) {
-			endTime - beginTime;
+			endTime = beginTime;
 		}
 		
 		count = endTime - beginTime;
@@ -124,7 +124,7 @@ function MapTab(){
 				var startIndex, endIndex;
 
 				for(var i = 0; i < diary.geo.timestamps.length; i++) {
-					var thisTimestamp = diary.geo.timestamps[0];
+					var thisTimestamp = diary.geo.timestamps[i];
 					if(beginTime >= thisTimestamp) startIndex = i;
 					if(endTime >= thisTimestamp) endIndex = i;
 				}
@@ -342,8 +342,8 @@ function MapTab(){
 		// var startPoint = [-76.1153,-0.6261,null];
 		var startPoint = [-76.15, -0.638333, null];
 		var offset = [0,0];
-		var timeStep = 1;
-		var startTimestamp = 1460050794000;
+		var timeStep = 10000;
+		var startTimestamp = 1460060882197 - 500000;
 		var offsetStepLimit = 0.001;
 		var offsetLimit = 0.001;
 		
