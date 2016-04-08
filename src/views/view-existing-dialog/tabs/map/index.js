@@ -93,8 +93,30 @@ function MapTab(){
 		}
 		if(count == 0) count = 1;
 		
+		// return new Promise(function(resolve, reject) {
+		// 	diaryPromise.then(function(diary) {
+		// 		var startPoint = diary.geo.footprint.coordinates[0]; // this will break on empty data
+		// 		var coordinates = [];
+		// 		for(var i = 0; i < count; i++) {
+		// 			coordinates.push([startPoint[0] + Math.random() * 0.1, startPoint[1] + Math.random() * 0.1, startPoint[2]]);
+		// 		}
+		// 		if(coordinates.length == 1) {
+		// 			var geoJson = { "type": "Point", "coordinates": coordinates };
+		// 		} else {
+		// 			var geoJson = { "type": "LineString", "coordinates": coordinates };
+		// 		}
+		// 		resolve(geoJson);
+		// 	});
+		// });
+
+
+
 		return new Promise(function(resolve, reject) {
 			diaryPromise.then(function(diary) {
+				var startIndex, endIndex;
+				
+				
+				
 				var startPoint = diary.geo.footprint.coordinates[0]; // this will break on empty data
 				var coordinates = [];
 				for(var i = 0; i < count; i++) {
@@ -108,6 +130,8 @@ function MapTab(){
 				resolve(geoJson);
 			});
 		});
+
+
 
 		// var arr = [[41.3839, -73.9405]]; // Garrison
 		// if( arr.length > 1 ) return { "type": "LineString", "coordinates": arr };
