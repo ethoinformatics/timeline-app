@@ -110,6 +110,16 @@ function ViewExistingDialog(opts){
 
 	breadcrumb.on('selection', function(data){
 		if (!_changeEntity(data.context)) return;
+		
+	_doSave()
+		.then(function(info){
+			rootEntity._id = info.id;
+			rootEntity._rev = info.rev;
+	})
+	.catch(function(err){
+		console.error(err);
+	});
+		
 		if( data.context.domainName == 'diary' ){
 			self.show( false );
 		}
@@ -273,7 +283,7 @@ function ViewExistingDialog(opts){
 	}
 
 	this.show = function( showAnimated ){
-		console.log('show!');
+		console.log('show view existing dialogue!');
 		_updateAddButton();
 
 		var form = formBuilder.buildDataEntryForm(domain);
@@ -424,6 +434,7 @@ function ViewExistingDialog(opts){
 	this.remove = modal.remove.bind(modal);
 
 	function _doSave(){
+		console.log('ved-_doSave');
 		var rootDomain = app.getDomain(rootEntity.domainName),
 			rootEntityManager = rootDomain.getService('entity-manager');
 

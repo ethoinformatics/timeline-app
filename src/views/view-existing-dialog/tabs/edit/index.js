@@ -53,6 +53,7 @@ function EditTab(opts){
 
 
 	self.setContext = function(ctx){
+		
 		_context = ctx;
 		
 		console.log('EditTab _context');
@@ -106,6 +107,7 @@ function EditTab(opts){
 			.css('float', 'right');
 
 
+
 			
 		// give the browser a chance to reflow the new elements
 		setTimeout(function() {
@@ -118,20 +120,22 @@ function EditTab(opts){
 				console.log(scroll);				
 		},100);
 
-		function _doSave(){
-			// var rootDomain = app.getDomain(rootEntity.domainName),
-			// 	rootEntityManager = rootDomain.getService('entity-manager');
-			//
-			// 	console.log("DO SAVE");
-			//
-			// return rootEntityManager.save(rootEntity)
-			// 	.then(function(info){
-			// 		rootEntity._id = info.id;
-			// 		rootEntity._rev = info.rev;
-			//
-			// 		return info;
-			// 	});
+		self.doParentSave = function(){
+			console.log('do parent save');
+			var rootDomain = app.getDomain(rootEntity.domainName),
+				rootEntityManager = rootDomain.getService('entity-manager');
+
+				console.log("DO SAVE");
+
+			return rootEntityManager.save(rootEntity)
+				.then(function(info){
+					rootEntity._id = info.id;
+					rootEntity._rev = info.rev;
+
+					return info;
+				});
 		}
+		
 		function _collapseChildren(collectionName){
 			var $accordians = self.$element.find('.js-collection-'+ collectionName);
 
@@ -288,7 +292,7 @@ function EditTab(opts){
 		});
 	
 	
-
+		self.doParentSave();
 
 		// _doSave().then(function(info){
 // 				console.log("info.id");
@@ -359,6 +363,7 @@ function EditTab(opts){
 	};
 
 	self.$element.on('tap', '.js-child-link', function(){
+		console.log('tap contact');
 		var $this = $(this),
 			collectionName = $this.data('collection'),
 			_id = $this.data('id');
