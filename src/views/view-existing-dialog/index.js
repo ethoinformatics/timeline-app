@@ -359,6 +359,8 @@ function ViewExistingDialog(opts){
 		});
 
 	function _handleSave(keepOpen){
+		debugger;
+		return;
 		var now = Date.now();
 
 		var data = {
@@ -435,6 +437,8 @@ function ViewExistingDialog(opts){
 	this.remove = modal.remove.bind(modal);
 
 	function _doSave(){
+		debugger;
+		return;
 		console.log('ved-_doSave');
 		var rootDomain = app.getDomain(rootEntity.domainName),
 			rootEntityManager = rootDomain.getService('entity-manager');
