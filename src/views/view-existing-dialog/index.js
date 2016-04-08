@@ -51,6 +51,7 @@ function ViewExistingDialog(opts){
 		rootEntity: rootEntity,
 	};
 	
+	console.log("ViewExistingDialog()");
 	console.log(rootEntity);
 
 	var tabEdit = new TabEdit(tabOptions),
@@ -110,19 +111,19 @@ function ViewExistingDialog(opts){
 
 	breadcrumb.on('selection', function(data){
 		if (!_changeEntity(data.context)) return;
-		
-	_doSave()
-		.then(function(info){
-			rootEntity._id = info.id;
-			rootEntity._rev = info.rev;
-	})
-	.catch(function(err){
-		console.error(err);
-	});
-		
-		if( data.context.domainName == 'diary' ){
-			self.show( false );
-		}
+		//
+	// _doSave()
+	// 	.then(function(info){
+	// 		rootEntity._id = info.id;
+	// 		rootEntity._rev = info.rev;
+	// })
+	// .catch(function(err){
+	// 	console.error(err);
+	// });
+	//
+	// 	if( data.context.domainName == 'diary' ){
+	// 		self.show( false );
+	// 	}
 		_updateAddButton();
 	});
 
