@@ -398,7 +398,14 @@ function MapTab(){
 		
 		// entityManager.getDiary( _context.entity ).then(function(diary) {
 		diaryPromise.then(function(diary) {
+			
 			var footprint = diary.geo.footprint;
+// <<<<<<< HEAD
+//
+// 			console.log('diary');
+// 			console.log(diary);
+//
+// =======
 
 
 			// This is where fake geo data is created. Comment out the next two lines to disable it
@@ -406,6 +413,7 @@ function MapTab(){
 			_doSave(diary);				
 
 
+//>>>>>>> origin/master
 			
 			console.log('data study');
 			console.log(diary.contacts);

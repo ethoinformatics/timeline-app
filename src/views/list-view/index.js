@@ -110,7 +110,7 @@ function ListView(){
 				// load page (with tabs) for this record 
 				console.log('loaded entity');
 				var m = new ViewExistingDialog({ entity: entity, });
-				m.show();
+				m.show( true );
 			})
 			.catch(function(err){
 				console.error(err);

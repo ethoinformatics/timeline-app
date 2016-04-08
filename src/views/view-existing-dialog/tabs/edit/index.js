@@ -53,6 +53,7 @@ function EditTab(opts){
 
 
 	self.setContext = function(ctx){
+		
 		_context = ctx;
 		
 		console.log('EditTab _context');
@@ -106,6 +107,7 @@ function EditTab(opts){
 			.css('float', 'right');
 
 
+
 			
 		// give the browser a chance to reflow the new elements
 		setTimeout(function() {
@@ -118,20 +120,22 @@ function EditTab(opts){
 				console.log(scroll);				
 		},100);
 
-		function _doSave(){
-			// var rootDomain = app.getDomain(rootEntity.domainName),
-			// 	rootEntityManager = rootDomain.getService('entity-manager');
-			//
-			// 	console.log("DO SAVE");
-			//
-			// return rootEntityManager.save(rootEntity)
-			// 	.then(function(info){
-			// 		rootEntity._id = info.id;
-			// 		rootEntity._rev = info.rev;
-			//
-			// 		return info;
-			// 	});
+		self.doParentSave = function(){
+			console.log('do parent save');
+			var rootDomain = app.getDomain(rootEntity.domainName),
+				rootEntityManager = rootDomain.getService('entity-manager');
+
+				console.log("DO SAVE");
+
+			return rootEntityManager.save(rootEntity)
+				.then(function(info){
+					rootEntity._id = info.id;
+					rootEntity._rev = info.rev;
+
+					return info;
+				});
 		}
+		
 		function _collapseChildren(collectionName){
 			var $accordians = self.$element.find('.js-collection-'+ collectionName);
 
@@ -227,11 +231,15 @@ function EditTab(opts){
 		var $btnAddChild = self.$element.find('.js-child-add');
 
 		console.log("$btnAddChild");
-		console.log($btnAddChild);
+
 
 		self.$element.find('.js-child-add').each(function( index ){
 			
-			$(this).on('click', function(ev){
+			console.log($(this));
+			console.log($(this).attr('id'));
+			if( $(this).attr('id') != 'addContactBtn' ){
+			
+			  $(this).on('click', function(ev){
 				var $this = $(this),
 					collectionName = $this.data('collection'),
 					domainNames = $this.data('domains').split(','),
@@ -265,23 +273,26 @@ function EditTab(opts){
 			console.log('created child');
 			console.log(_context.entity);
 			console.log(child);
+			
+
 		entityManager.addToParent(_context.entity, child);
 
+	var rootDomain = app.getDomain(_context.entity.domainName),
+		rootEntityManager = rootDomain.getService('entity-manager');
 
+		rootEntityManager.save(_context.entity)
+			.then(function(info){
+			
+			console.log(_context.entity);
+			
+			// child._id = info.id;
+			// child._rev = info.rev;
 
-	// var rootDomain = app.getDomain(_context.entity.domainName),
-	// 	rootEntityManager = rootDomain.getService('entity-manager');
-	//
-	// rootEntityManager.save(child)
-	// 	.then(function(info){
-	// 		child._id = info.id;
-	// 		child._rev = info.rev;
-	//
-	// 		return info;
-	// 	});
+			return info;
+		});
 	
 	
-
+		self.doParentSave();
 
 		// _doSave().then(function(info){
 // 				console.log("info.id");
@@ -323,6 +334,9 @@ function EditTab(opts){
 			// $(this).focusout(function(){
 			// 	console.log('focusout');
 			// });
+			
+			}// end of if that blocks elem id: #addContactBtn
+			
 		});
 
 		self.$element.find('.js-inline-add')
@@ -345,9 +359,11 @@ function EditTab(opts){
 				popupButtons.show(ev);
 			});
 
+
 	};
 
 	self.$element.on('tap', '.js-child-link', function(){
+		console.log('tap contact');
 		var $this = $(this),
 			collectionName = $this.data('collection'),
 			_id = $this.data('id');
