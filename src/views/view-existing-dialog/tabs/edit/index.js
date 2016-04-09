@@ -379,9 +379,7 @@ function EditTab(opts){
 		console.log("Root entity:");
 		console.log(rootEntity);
 
-		rootEntityManager.getDiary(rootEntity).then(function(diary) {
-			console.log("Saving diary: ");
-			console.log(diary.contacts[0].title);
+		// rootEntityManager.getDiary(rootEntity).then(function(diary) {
 		rootEntityManager.save(rootEntity) // was diary
 			.then(function(info){
 				console.log("Save success");
@@ -392,7 +390,7 @@ function EditTab(opts){
 			}).catch(function(err) {
 				console.error(err);
 			});			
-		});
+		// });
 	
 		
 //rootEntity		//
