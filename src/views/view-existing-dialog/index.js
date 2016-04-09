@@ -58,6 +58,8 @@ function ViewExistingDialog(opts){
 		tabMap = new TabMap(tabOptions),
 		tabRemarks = new TabRemarks(tabOptions),
 		tabTimeline = new TabTimeline(tabOptions);
+		
+	var previousTab = tabEdit; // because edit is the tab that is open when dialog shows
 
 	var rootDomain = app.getDomain(rootEntity.domainName);
 // test
@@ -106,11 +108,11 @@ function ViewExistingDialog(opts){
 	var breadcrumb = new Breadcrumb({crumbs: crumbs});
 
 	breadcrumb.on('close', function(data){
-		
-		modal.remove();
+		self.remove();
 	});
 
 	breadcrumb.on('selection', function(data){
+		previousTab.loseFocus();
 		if (!_changeEntity(data.context)) return;
 		//
 	// _doSave()
@@ -187,15 +189,18 @@ function ViewExistingDialog(opts){
 			$tabHeaderContainer.append($header);
 			$tabContainer.append(tab.$element);
 
+			console.log("setting up header click");
 			$header.on('click', function(){
 				_tabClick.call(this, arguments[0], tab);
 			});
 		});
 
-	var previousTab;
+
 	function _tabClick(ev, clickedTab){
 		var $this = $(this);
 
+		console.log("_tabClick");		
+		console.log(previousTab);
 
 		if (previousTab && _.isFunction(previousTab.loseFocus))
 			previousTab.loseFocus();
@@ -360,8 +365,6 @@ function ViewExistingDialog(opts){
 		});
 
 	function _handleSave(keepOpen){
-		debugger;
-		return;
 		var now = Date.now();
 
 		var data = {
@@ -434,12 +437,19 @@ function ViewExistingDialog(opts){
 		else modal.showInstant();
 	};
 
-	this.hide = modal.hide.bind(modal);
-	this.remove = modal.remove.bind(modal);
+	this.hide = function() {
+		previousTab.loseFocus();
+		modal.hide.bind(modal)();
+	}
+	
+
+	this.remove = function() {
+		previousTab.loseFocus();
+		modal.remove.bind(modal)();
+	}
 
 	function _doSave(){
-		debugger;
-		return;
+
 		console.log('ved-_doSave');
 		var rootDomain = app.getDomain(rootEntity.domainName),
 			rootEntityManager = rootDomain.getService('entity-manager');
