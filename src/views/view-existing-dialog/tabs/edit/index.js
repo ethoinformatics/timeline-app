@@ -318,19 +318,6 @@ function EditTab(opts){
 	m.show(ev);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 //////////////
 					popupButtons.remove();
 				});
@@ -394,12 +381,12 @@ function EditTab(opts){
 
 		rootEntityManager.getDiary(rootEntity).then(function(diary) {
 			console.log("Saving diary: ");
-			console.log(diary);
-		rootEntityManager.save(diary)
+			console.log(diary.contacts[0].title);
+		rootEntityManager.save(rootEntity) // was diary
 			.then(function(info){
 				console.log("Save success");
-				diary._id = info.id;
-				diary._rev = info.rev;
+				// diary._id = info.id;
+				// diary._rev = info.rev;
 
 				return info;
 			}).catch(function(err) {
