@@ -408,7 +408,7 @@ function MapTab(){
 				
 				console.log('data study');
 				console.log(diary.contacts);
-				for( int i=0; i < diary.contacts; i++){
+				for( var i=0; i < diary.contacts; i++){
 					
 					diary.contacts[i].beginTime
 					diary.contacts[i].endTime
