@@ -41,7 +41,8 @@ function _createChildCollectionData(parentDomain, childDomains){
 }
 
 function EditTab(opts){
-
+	console.log('Edittab');
+	console.log(opts);
 	EventEmitter.call(this);
 
 	var self = this, editForm;
@@ -52,11 +53,30 @@ function EditTab(opts){
 
 
 	self.setContext = function(ctx){
-		
 		_context = ctx;
-				
+		
+		console.log('EditTab _context');
+		console.log(_context);
+		if(_context.entity.subjectId) {
+			console.log('_context.entity.subjectId');			
+			console.log(_context.entity.subjectId);			
+		}
+
+	
 		editForm = new EditExistingForm({entity: ctx.entity});
-		editForm.updateFields();
+		// Do not use updateFields() because it probably will not yet have the data.
+		// Plus, you don't need it anyway (at this point).
+		// updateFields() gets the data FROM the form and uses it to 
+		// update the entity. 		
+		// editForm.updateFields();
+		
+		if(_context.entity.subjectId) {
+			console.log('_context.entity.subjectId');			
+			console.log(_context.entity.subjectId);			
+		} else {
+			console.log('_context.entity.subjectId not set');						
+		}
+
 
 		var childDomains = ctx.domain.getChildren();
 
@@ -103,7 +123,6 @@ function EditTab(opts){
 			.css('float', 'right');
 
 
-
 			
 		// give the browser a chance to reflow the new elements
 		setTimeout(function() {
@@ -112,21 +131,25 @@ function EditTab(opts){
 					scrollbars: true,
 					tap:true
 				});
+		
+				console.log(scroll);				
 		},100);
 
-		self.doParentSave = function(){
-			var rootDomain = app.getDomain(rootEntity.domainName),
-				rootEntityManager = rootDomain.getService('entity-manager');
-
-			return rootEntityManager.save(rootEntity)
-				.then(function(info){
-					rootEntity._id = info.id;
-					rootEntity._rev = info.rev;
-
-					return info;
-				});
+		function _doSave(){
+			console.log("_doSave in tab -- this is empty!");
+			// var rootDomain = app.getDomain(rootEntity.domainName),
+			// 	rootEntityManager = rootDomain.getService('entity-manager');
+			//
+			// 	console.log("DO SAVE");
+			//
+			// return rootEntityManager.save(rootEntity)
+			// 	.then(function(info){
+			// 		rootEntity._id = info.id;
+			// 		rootEntity._rev = info.rev;
+			//
+			// 		return info;
+			// 	});
 		}
-		
 		function _collapseChildren(collectionName){
 			var $accordians = self.$element.find('.js-collection-'+ collectionName);
 
@@ -221,13 +244,12 @@ function EditTab(opts){
 		
 		var $btnAddChild = self.$element.find('.js-child-add');
 
-
+		console.log("$btnAddChild");
+		console.log($btnAddChild);
 
 		self.$element.find('.js-child-add').each(function( index ){
 			
-			if( $(this).attr('id') != 'addContactBtn' ){
-			
-			  $(this).on('click', function(ev){
+			$(this).on('click', function(ev){
 				var $this = $(this),
 					collectionName = $this.data('collection'),
 					domainNames = $this.data('domains').split(','),
@@ -255,27 +277,28 @@ function EditTab(opts){
 	});
 
 	m.on('created', function(child){
+		// This seems to never get called
 		var childDomain = app.getDomain(child.domainName),
 			entityManager = childDomain.getService('entity-manager');
 
-
+			console.log('created child');
+			console.log(_context.entity);
+			console.log(child);
 		entityManager.addToParent(_context.entity, child);
 
-	var rootDomain = app.getDomain(_context.entity.domainName),
-		rootEntityManager = rootDomain.getService('entity-manager');
+	// var rootDomain = app.getDomain(_context.entity.domainName),
+	// 	rootEntityManager = rootDomain.getService('entity-manager');
+	//
+	// rootEntityManager.save(child)
+	// 	.then(function(info){
+	// 		child._id = info.id;
+	// 		child._rev = info.rev;
+	//
+	// 		return info;
+	// 	});
+	
+	
 
-		// rootEntityManager.save(_context.entity)
-		// 	.then(function(info){
-		// 		// child._id = info.id;
-		// 	// child._rev = info.rev;
-		//
-		// 	return info;
-		// });
-	
-	
-		// self.doParentSave().then(function(info){
-		// 			return info;
-		// 		});
 
 		// _doSave().then(function(info){
 // 				console.log("info.id");
@@ -317,9 +340,6 @@ function EditTab(opts){
 			// $(this).focusout(function(){
 			// 	console.log('focusout');
 			// });
-			
-			}// end of if that blocks elem id: #addContactBtn
-			
 		});
 
 		self.$element.find('.js-inline-add')
@@ -342,7 +362,6 @@ function EditTab(opts){
 				popupButtons.show(ev);
 			});
 
-
 	};
 
 	self.$element.on('tap', '.js-child-link', function(){
@@ -353,24 +372,42 @@ function EditTab(opts){
 		var child = _.find(_context.entity[collectionName], function(c){
 			return (c._id || c.id) == _id;
 		});
+		self.loseFocus();
 		_context.descend(child);
 	});
 
 	self.loseFocus = function(){
+		console.log("loseFocus");
+		console.log("Root entity before updateFields:");
+		console.log(rootEntity);
+		
+		// This gets the data FROM the form and uses it to 
+		// update the entity. Bad name! 
 		editForm.updateFields();
 		
-	// var rootDomain = app.getDomain(rootEntity.domainName),
-	// 	rootEntityManager = rootDomain.getService('entity-manager');
-	// rootEntityManager.save(_context.entity)
-	// 	.then(function(info){
-	// 		_context._id = info.id;
-	// 		_context._rev = info.rev;
-	//
-	// 		return info;
-	// 	});
+	var rootDomain = app.getDomain(rootEntity.domainName),
+		rootEntityManager = rootDomain.getService('entity-manager');
 
+		console.log("DO SAVE");
+		console.log("Root entity:");
+		console.log(rootEntity);
 
+		rootEntityManager.getDiary(rootEntity).then(function(diary) {
+			console.log("Saving diary: ");
+			console.log(diary);
+		rootEntityManager.save(diary)
+			.then(function(info){
+				console.log("Save success");
+				diary._id = info.id;
+				diary._rev = info.rev;
 
+				return info;
+			}).catch(function(err) {
+				console.error(err);
+			});			
+		});
+	
+		
 //rootEntity		//
 		// _doSave().then(function(){
 		// 		_update(true);
