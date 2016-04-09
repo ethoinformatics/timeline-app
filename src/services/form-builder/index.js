@@ -113,7 +113,7 @@ function _buildDataEntryForm(domain, data, fieldFilter){
 							var $opt = $('<option></option>')
 								.attr('value', codeValue._id)
 								.text(codeValue.text);
-
+								// debugger;
 							if (data && data[field.name] == codeValue._id){
 								$opt.prop('selected', true);
 							}
@@ -327,6 +327,7 @@ function _buildDataEntryForm(domain, data, fieldFilter){
 
 	return {
 		setData: function(formData){
+			console.log("setData");
 			$root
 				.find('*[data-name]')
 				.each(function(){
@@ -334,10 +335,12 @@ function _buildDataEntryForm(domain, data, fieldFilter){
 						name = $this.data('name'),
 						value = formData[name];
 
+						console.log($this, name, value);
 						$this.val(value);
 				});
 		},
 		getData: function(){
+			console.log("getData");
 			var formData = {
 				domainName: domain.name,
 			};
@@ -347,6 +350,15 @@ function _buildDataEntryForm(domain, data, fieldFilter){
 					var $this = $(this),
 						name = $this.data('name'),
 						value = $this.val();
+						
+						// if(/select/i.test($this[0].tagName)) {
+						// 	console.log("select");
+						// 	value = $this.find(":selected").val();
+						// } else {
+						// 	value = $this.val();
+						// }
+						
+						console.log($this, "getData: ", name, value);
 
 					formData[name] = value;
 				});

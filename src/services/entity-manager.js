@@ -72,8 +72,23 @@ function CrudManager(registry, domainName){
 	    }
 	    return result;
 	}
+	
+	self.retryUntilWritten = function(doc) {
+	  return db.get(doc._id).then(function (origDoc) {
+	    doc._rev = origDoc._rev;
+	    return db.put(doc);
+	  }).catch(function (err) {
+	    if (err.status === 409) {
+	      return self.retryUntilWritten(doc);
+	    } else { // new doc
+	      return db.put(doc);
+	    }
+	  });
+	}
 
 	self.save = function(entity){
+		
+		console.log("SAVESAVESAVESAVE");
 		entity.domainName = entity.domainName || domainName;
 
 		var domain = registry.getDomain(domainName),
@@ -81,7 +96,9 @@ function CrudManager(registry, domainName){
 
 		entity._id = entity._id || uuidGenerator(entity);
 
-		return q.denodeify(db.put.bind(db, entity))();
+		return self.retryUntilWritten(entity);
+
+		// return q.denodeify(db.put.bind(db, entity))();
 	};
 
 	self.byId = function(id){

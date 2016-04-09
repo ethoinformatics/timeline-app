@@ -25,7 +25,6 @@ function Remarks(){
 
 	self.loseFocus = function(){
 		_entity.remarks = self.$element.find('textarea').val();
-
 		// _doSave()
 		// 	.then(function(){
 		// 		_update(true);
