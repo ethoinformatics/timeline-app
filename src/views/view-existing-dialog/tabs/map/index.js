@@ -65,10 +65,6 @@ function MapTab(){
 		opacity: 0.75,
 	};
 
-	var markerCopyOptions = {
-		heading: "heading copy",
-		body: "body"
-	};
 	
 	var popupOffset = [0,-40];
 
@@ -151,7 +147,7 @@ function MapTab(){
 	
 	
 	
-	function _renderGeoJsonMarker(geoJson, draggable, copyOptions){
+	function _renderGeoJsonMarker(geoJson, options){
 
 		// !IMPORTANT Converts GeoJSON to Leaflet standard LatLon order. Should be automatic in leaflet. Isn't yet, but is with the path?
 		var coordinates = [geoJson.coordinates[1], geoJson.coordinates[0]];
@@ -181,7 +177,7 @@ function MapTab(){
 
 // >>>>>>> origin/master
 		
-			var marker = L.marker( coordinates, { draggable: draggable	} ).addTo(lmapLayerGroup);
+			var marker = L.marker( coordinates, { draggable: options.draggable	} ).addTo(lmapLayerGroup);
 			marker.setIcon( myIcon );
 			//marker.bindPopup('<strong>Heading Here</strong><br>Body of pop up here below heading.');
 			marker.bindPopup( '<strong>'+copyOptions.heading+'</strong><br>'+copyOptions.body+'<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
@@ -387,26 +383,53 @@ function MapTab(){
 
 			var footprint = diary.geo.footprint;
 			
-			console.log('data study');
-			console.log(diary.contacts);
 			
 			
 			// _renderContactTrace( [41.37242884295152,  -73.92751693725586],  'Contact Name 5' );
 
-			if(diary._id != _context.entity._id) { // if we're looking at something other than the diary
+			if(diary._id != _context.entity._id) { 
+				// if we're looking at something other than the diary
 				_getGeo(_context.entity.beginTime,_context.entity.endTime).then(function(footprint) {
 					console.log("footprint");
 					console.log(footprint);
 					console.log(_context.entity.samplingProtocol);
 					
-					markerCopyOptions = {
+					var markerOptions = {
+						draggable: true,
 						heading: _context.entity.title,
 						body: 'Taxon: ' + _context.entity.taxon +'<br>Subject ID: '+ _context.entity.subjectId +'<br>Sampling Protocol: '+ _context.entity.samplingProtocol
 					};
 					
-					if(footprint.type == 'Point') _renderGeoJsonMarker(footprint, true, markerCopyOptions);//_renderPoint(_context); // 
+					if(footprint.type == 'Point') _renderGeoJsonMarker(footprint, markerOptions);//_renderPoint(_context); // 
 					else if(footprint.type == 'LineString') _renderGeoJsonPath(footprint);
 				});				
+			}else{
+				// if we're looking on the diary level (all contacts)
+				
+				console.log('data study');
+				console.log(diary.contacts);
+				for( int i=0; i < diary.contacts; i++){
+					
+					diary.contacts[i].beginTime
+					diary.contacts[i].endTime
+
+
+					var heading = 	'<strong>' 					+	diary.contacts[i].domainName + ': '+ diary.contacts[i].title+ '</strong>';				
+					var body = 	  	'Observer: ' 				+ diary.contacts[i].observerId;
+					body += 	  	'<br>Taxon: ' 				+ diary.contacts[i].taxon;
+					body +=       	'<br>Subject ID: '			+ diary.contacts[i].subjectId;
+					body += 		'<br>Sampling Protocol: '	+ diary.contacts[i].samplingProtocol;
+					body += 		'<br>Basis of record: '		+ diary.contacts[i].basisOfRecord;
+					body += 		'<br>Remarks: '				+ diary.contacts[i].remarks;
+
+					markerOptions = {
+						draggable: true,
+						id: diary.contacts[i].id,
+						heading: diary.contacts[i].title,
+						body: body,
+					};
+
+				}
 			}
 
 			// TODO: show everything else too (in some kind of grayed out fashion)
