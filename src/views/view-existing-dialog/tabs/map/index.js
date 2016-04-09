@@ -406,57 +406,7 @@ function MapTab(){
 			}else{
 				// if we're looking on the diary level (all contacts)
 				
-// <<<<<<< HEAD
-				// console.log('data study');
-// 				console.log(diary.contacts);
-// 				for( int i=0; i < diary.contacts; i++){
-//
-// 					diary.contacts[i].beginTime
-// 					diary.contacts[i].endTime
-//
-//
-// 					var heading = 	'<strong>' 					+	diary.contacts[i].domainName + ': '+ diary.contacts[i].title+ '</strong>';
-// 					var body = 	  	'Observer: ' 				+ diary.contacts[i].observerId;
-// 					body += 	  	'<br>Taxon: ' 				+ diary.contacts[i].taxon;
-// 					body +=       	'<br>Subject ID: '			+ diary.contacts[i].subjectId;
-// 					body += 		'<br>Sampling Protocol: '	+ diary.contacts[i].samplingProtocol;
-// 					body += 		'<br>Basis of record: '		+ diary.contacts[i].basisOfRecord;
-// 					body += 		'<br>Remarks: '				+ diary.contacts[i].remarks;
-//
-// 					markerOptions = {
-// 						draggable: true,
-// 						id: diary.contacts[i].id,
-// 						heading: diary.contacts[i].title,
-// 						body: body,
-// 					};
-//
-// 				}
-//=======
-				// console.log('data study');
-				// console.log(diary.contacts);
-				// for( var i=0; i < diary.contacts; i++){
-				//
-				// 	diary.contacts[i].beginTime
-				// 	diary.contacts[i].endTime
-				//
-				//
-				// 	var heading = 	'<strong>' 					+	diary.contacts[i].domainName + ': '+ diary.contacts[i].title+ '</strong>';
-				// 	var body = 	  	'Observer: ' 				+ diary.contacts[i].observerId;
-				// 	body += 	  	'<br>Taxon: ' 				+ diary.contacts[i].taxon;
-				// 	body +=       	'<br>Subject ID: '			+ diary.contacts[i].subjectId;
-				// 	body += 		'<br>Sampling Protocol: '	+ diary.contacts[i].samplingProtocol;
-				// 	body += 		'<br>Basis of record: '		+ diary.contacts[i].basisOfRecord;
-				// 	body += 		'<br>Remarks: '				+ diary.contacts[i].remarks;
-				//
-				// 	markerOptions = {
-				// 		draggable: true,
-				// 		id: diary.contacts[i].id,
-				// 		heading: diary.contacts[i].title,
-				// 		body: body,
-				// 	};
-				//
-				// }
-//>>>>>>> origin/master
+
 			}
 
 			// TODO: show everything else too (in some kind of grayed out fashion)
