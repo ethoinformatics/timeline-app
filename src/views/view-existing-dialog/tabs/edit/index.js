@@ -93,6 +93,7 @@ function EditTab(opts){
 							_id: child._id || child.id,
 							domainLabel: child.domainName,
 							entityLabel: ctx.getShortDescription(child),
+							truncatedName: 	child.name || child.title || child._id
 						};
 					});
 			});

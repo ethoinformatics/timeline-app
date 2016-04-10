@@ -147,10 +147,11 @@ function MapTab(){
 	
 	
 	
-	function _renderGeoJsonMarker(geoJson, options){
+	function _renderGeoJsonMarker(options){
 
-		// !IMPORTANT Converts GeoJSON to Leaflet standard LatLon order. Should be automatic in leaflet. Isn't yet, but is with the path?
-		var coordinates = [geoJson.coordinates[1], geoJson.coordinates[0]];
+		// !IMPORTANT Converts GeoJSON of options.footprint to Leaflet standard LatLon order. 
+		// This should be automatic in leaflet. Isn't yet, but is with the path?
+		var coordinates = [options.footprint.coordinates[1], options.footprint.coordinates[0]];
 		
 		var popupOffset = [0,-40];
 			
@@ -173,16 +174,13 @@ function MapTab(){
 				popupAnchor: popupOffset
 			});
 
-
-
-// >>>>>>> origin/master
 		
 			var marker = L.marker( coordinates, { draggable: options.draggable	} ).addTo(lmapLayerGroup);
 			marker.setIcon( myIcon );
 			//marker.bindPopup('<strong>Heading Here</strong><br>Body of pop up here below heading.');
-			marker.bindPopup( '<strong>'+copyOptions.heading+'</strong><br>'+copyOptions.body+'<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
+			marker.bindPopup( '<strong>'+options.heading+'</strong><br>'+options.body+'<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
 			marker.on('click', function(e) {
-				marker.setPopupContent( '<strong>'+copyOptions.heading+'</strong><br>'+copyOptions.body+'<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
+				marker.setPopupContent( '<strong>'+options.heading+'</strong><br>'+options.body+'<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
 			});
 
 			marker.on('dragstart', function(e) {
@@ -193,7 +191,7 @@ function MapTab(){
 
 			marker.on('drag', function(e) {
 				_updateEntityCoordinates( [ marker.getLatLng().lat, marker.getLatLng().lng ] );
-				marker.setPopupContent( '<strong>'+copyOptions.heading+'</strong><br>'+copyOptions.body+'<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">Relocating to<br>lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
+				marker.setPopupContent( '<strong>'+options.heading+'</strong><br>'+options.body+'<div style="border-top: solid 1px #aaa; padding-top: 5px; color: #62ce21;">Relocating to<br>lat: ' + marker.getLatLng().lat + '<br>lon: ' + marker.getLatLng().lng +'</div>' );
 				marker.openPopup();
 			});	
 
@@ -395,21 +393,71 @@ function MapTab(){
 					console.log(_context.entity.samplingProtocol);
 					
 					var markerOptions = {
+						footprint: footprint,
 						draggable: true,
 						heading: _context.entity.title,
 						body: 'Taxon: ' + _context.entity.taxon +'<br>Subject ID: '+ _context.entity.subjectId +'<br>Sampling Protocol: '+ _context.entity.samplingProtocol
 					};
 					
-					if(footprint.type == 'Point') _renderGeoJsonMarker(footprint, markerOptions);//_renderPoint(_context); // 
+					if(footprint.type == 'Point') _renderGeoJsonMarker(markerOptions);//_renderPoint(_context); // 
 					else if(footprint.type == 'LineString') _renderGeoJsonPath(footprint);
 				});				
 			}else{
 				// if we're looking on the diary level (all contacts)
+
+				 console.log('data study');
+				// 				console.log(diary.contacts);
 				
 
-			}
+//				diary.geo.footprint
 
+//-76.20233438279647, -0.6373332742774868
+				var footprintSamples = [
+					{ type: "Point", coordinates: [-76.1555896532455, -0.6406325846444609, null] },
+					{ type: "Point", coordinates: [-76.16358585680835, -0.6400875383609167, null] },
+					{ type: "Point", coordinates: [-76.1678587136324, -0.6304865951878087, null] },
+					{ type: "Point", coordinates: [-76.17674225863762,-0.6275573607334943, null] }
+				];
+				
+				var coordinatesIndexIncrement = Math.floor(diary.geo.footprint.coordinates.length / ( diary.contacts.length + 1 ) );
+				var coordinatesIndex = coordinatesIndexIncrement;
+				for( var i=0; i < diary.contacts.length; i++){
+
+					// diary.contacts[i].beginTime
+					// diary.contacts[i].endTime
+
+					var heading = 	'<strong>' 					+	diary.contacts[i].domainName + ': '+ diary.contacts[i].title+ '</strong>';
+					var body = 	  	'Observer: ' 				+ diary.contacts[i].observerId;
+					body += 	  	'<br>Taxon: ' 				+ diary.contacts[i].taxon;
+					body +=       	'<br>Subject ID: '			+ diary.contacts[i].subjectId;
+					body += 		'<br>Sampling Protocol: '	+ diary.contacts[i].samplingProtocol;
+					body += 		'<br>Basis of record: '		+ diary.contacts[i].basisOfRecord;
+					body += 		'<br>Remarks: '				+ diary.contacts[i].remarks;
+
+
+					var newCoordinatesArray = diary.geo.footprint.coordinates[coordinatesIndex];
+					markerOptions = {
+						footprint: { type: "Point", coordinates: newCoordinatesArray }, 
+						draggable: true,
+						id: diary.contacts[i].id,
+						heading: diary.contacts[i].title,
+						body: body,
+					};
+
+					_renderGeoJsonMarker(markerOptions);
+					
+					coordinatesIndex += coordinatesIndexIncrement;
+					if(coordinatesIndex == diary.contacts.length) coordinatesIndex = 0;
+				}
+
+			}
+			
+			
+
+// {coordinates: Array[100], type: "LineString"}
 			// TODO: show everything else too (in some kind of grayed out fashion)
+			console.log('diary footprint');
+			console.log(diary.geo.footprint);
 			_renderGeoJsonPath(diary.geo.footprint);
 			_renderChildren(_context.entity, 0);		
 			map.show();

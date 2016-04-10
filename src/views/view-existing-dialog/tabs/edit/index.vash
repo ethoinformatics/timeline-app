@@ -19,7 +19,7 @@
 		</li>
 		@data.entities.forEach(function(childEntity){
 			<li title= "@childEntity._id" class="item js-child-link" data-collection="@data.collectionName" data-id="@childEntity._id">
-				@childEntity.entityLabel
+				<!-- @childEntity.entityLabel --> @childEntity.truncatedName
 				<span class="item-note">@childEntity.domainLabel</span>
 			</li>
 		})

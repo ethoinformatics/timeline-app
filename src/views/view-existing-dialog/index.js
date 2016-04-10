@@ -51,6 +51,7 @@ function ViewExistingDialog(opts){
 		rootEntity: rootEntity,
 	};
 	
+	
 	console.log("ViewExistingDialog()");
 	console.log(rootEntity);
 
@@ -81,11 +82,14 @@ function ViewExistingDialog(opts){
 	// make this (self) an EventEmitter (?)
 	EventEmitter.call(self);
 
+
+	var username = (rootEntity.hasOwnProperty('observerId')) ? rootEntity.observerId : '';
 	var $content = $(template({
+		username: (username == '') ? '' : 'You are logged in as: ' + username,
 		isNew: true,
 			crumbs: crumbs,
 		})),
-		$tabContainer = $content.find('.js-tabcontainer');
+	$tabContainer = $content.find('.js-tabcontainer');
 
 	// load the current entity
 	_changeEntity(opts.entity || opts.rootEntity);
