@@ -155,8 +155,43 @@ function MapTab(){
 		
 		var popupOffset = [0,-40];
 			
+			
+		if( options.circleOnly ){
+			
+			var circleMarkerStatic = L.circleMarker( coordinates, {
+			    color:     'rgb(251,119,0)', //'rgb(38,126,202)',
+				weight: 	4,
+			    fillColor: 'rgb(251,119,0)',
+				opacity: 1.0
+			});//.addTo(lmapLayerGroup);
+			circleMarkerStatic.setRadius(4);
+			circleMarkerStatic.addTo(lmapLayerGroup);
+			mapMarkers.push(circleMarkerStatic);
+			
+		}else{
+			
+			var iconUrl = 'images/marker-icon-GRAY.png';
+			var iconUrlRetina = 'images/marker-icon-GRAY-2x.png';
+			var dragColor = '#bbbbbb';
+			if(options.pinColor.toUpperCase() == 'ORANGE'){
+				iconUrl = 'images/marker-icon-ORANGE.png';
+				iconUrlRetina = 'images/marker-icon-ORANGE-2x.png';				
+				//dragColor = '#ff9900';
+			}else if(options.pinColor.toUpperCase() == 'GREEN'){
+				iconUrl = 'images/marker-icon-GREEN.png';
+				iconUrlRetina = 'images/marker-icon-GREEN-2x.png';				
+				//dragColor = '#62ce21';
+			}else if(options.pinColor.toUpperCase() == 'BLUE'){
+				iconUrl = 'images/marker-icon.png';
+				iconUrlRetina = 'images/marker-icon-2x.png';				
+				//dragColor = '#3a8ece';
+			}else if(options.pinColor.toUpperCase() == 'NONE'){
+				iconUrl = 'images/marker-icon-GRAY.png';
+				iconUrlRetina = 'images/marker-icon-GRAY-2x.png';
+				//dragColor = '#3a8ece';
+			}			
 			var circleMarkerDrag = L.circleMarker( coordinates, {
-			    color:     '#62ce21', //'rgb(38,126,202)',
+			    color:     dragColor, // 62ce21 //'rgb(38,126,202)',
 				weight: 	6,
 			    fillColor: 'rgb(255,255,255)',
 				opacity: 1.0
@@ -164,13 +199,13 @@ function MapTab(){
 			circleMarkerDrag.setRadius(6);
 
 			var myIcon = L.icon({
-			    iconUrl: 'images/marker-icon.png',
-			    iconRetinaUrl: 'images/marker-icon-2x.png',
+			    iconUrl: iconUrl,
+			    iconRetinaUrl: iconUrlRetina,
 				popupAnchor: popupOffset
 			});
 			var myIconSelected = L.icon({
-			    iconUrl: 'images/marker-icon-GREEN-2x.png',
-			    iconRetinaUrl: 'images/marker-icon-GREEN-2x.png',
+			    iconUrl: 'images/marker-icon-GRAY-2x.png',
+			    iconRetinaUrl: 'images/marker-icon-GRAY-2x.png',
 				popupAnchor: popupOffset
 			});
 
@@ -201,8 +236,8 @@ function MapTab(){
 			});
 
 			mapMarkers.push(marker);
-		
-			//
+		}
+
 			// _renderMarker_TEMPORARY_DEMO( [41.37874070257893, -73.94545555114746],  true, 'Contact 2' );
 			// _renderMarker_TEMPORARY_DEMO( [41.397608221508406, -73.94330978393555], true, 'Contact 3' );
 			// _renderMarker_TEMPORARY_DEMO( [41.398187683195665, -73.92931938171387], true, 'Contact 4' );
@@ -388,72 +423,92 @@ function MapTab(){
 			
 			// _renderContactTrace( [41.37242884295152,  -73.92751693725586],  'Contact Name 5' );
 
+			var showContactsAsDotsOnly = false;
 			if(diary._id != _context.entity._id) { 
 				// if we're looking at something other than the diary
+				showContactsAsDotsOnly = true;
+				
 				_getGeo(_context.entity.beginTime,_context.entity.endTime).then(function(footprint) {
 					console.log("footprint");
 					console.log(footprint);
-					console.log(_context.entity.samplingProtocol);
+					
+					var mainColor = 'none';
+					var titleCopy = _context.entity.title || _context.entity.name;
+					var bodyCopy = 'Taxon: ' + _context.entity.taxon +'<br>Subject ID: '+ _context.entity.subjectId +'<br>Sampling Protocol: '+ _context.entity.samplingProtocol;
+					if( _context.entity.domainName == 'contact' ){
+						mainColor = 'orange';
+					}else if( _context.entity.domainName == 'focal' ){
+						mainColor = 'green';
+					}else if( _context.entity.domainName == 'poop-sample' ){
+						mainColor = 'blue';
+						titleCopy = _context.entity.domainName;
+						bodyCopy = 'Location: ' + _context.entity.location;
+					}					
 					
 					var markerOptions = {
+						circleOnly: false,
+						pinColor: mainColor,
 						footprint: footprint,
 						draggable: true,
-						heading: _context.entity.title,
-						body: 'Taxon: ' + _context.entity.taxon +'<br>Subject ID: '+ _context.entity.subjectId +'<br>Sampling Protocol: '+ _context.entity.samplingProtocol
+						heading: titleCopy,
+						body: bodyCopy
 					};
 					
 					if(footprint.type == 'Point') _renderGeoJsonMarker(markerOptions);//_renderPoint(_context); // 
 					else if(footprint.type == 'LineString') _renderGeoJsonPath(footprint);
-				});				
+				});	
+				
+				console.log('_context.entity');
+				console.log(_context.entity);
+				
+							
 			}else{
+				
 				// if we're looking on the diary level (all contacts)
-
-				 console.log('data study');
-				// 				console.log(diary.contacts);
-				
-
-//				diary.geo.footprint
-
-//-76.20233438279647, -0.6373332742774868
-				var footprintSamples = [
-					{ type: "Point", coordinates: [-76.1555896532455, -0.6406325846444609, null] },
-					{ type: "Point", coordinates: [-76.16358585680835, -0.6400875383609167, null] },
-					{ type: "Point", coordinates: [-76.1678587136324, -0.6304865951878087, null] },
-					{ type: "Point", coordinates: [-76.17674225863762,-0.6275573607334943, null] }
-				];
-				
-				var coordinatesIndexIncrement = Math.floor(diary.geo.footprint.coordinates.length / ( diary.contacts.length + 1 ) );
-				var coordinatesIndex = coordinatesIndexIncrement;
-				for( var i=0; i < diary.contacts.length; i++){
-
-					// diary.contacts[i].beginTime
-					// diary.contacts[i].endTime
-
-					var heading = 	'<strong>' 					+	diary.contacts[i].domainName + ': '+ diary.contacts[i].title+ '</strong>';
-					var body = 	  	'Observer: ' 				+ diary.contacts[i].observerId;
-					body += 	  	'<br>Taxon: ' 				+ diary.contacts[i].taxon;
-					body +=       	'<br>Subject ID: '			+ diary.contacts[i].subjectId;
-					body += 		'<br>Sampling Protocol: '	+ diary.contacts[i].samplingProtocol;
-					body += 		'<br>Basis of record: '		+ diary.contacts[i].basisOfRecord;
-					body += 		'<br>Remarks: '				+ diary.contacts[i].remarks;
-
-
-					var newCoordinatesArray = diary.geo.footprint.coordinates[coordinatesIndex];
-					markerOptions = {
-						footprint: { type: "Point", coordinates: newCoordinatesArray }, 
-						draggable: true,
-						id: diary.contacts[i].id,
-						heading: diary.contacts[i].title,
-						body: body,
-					};
-
-					_renderGeoJsonMarker(markerOptions);
-					
-					coordinatesIndex += coordinatesIndexIncrement;
-					if(coordinatesIndex == diary.contacts.length) coordinatesIndex = 0;
-				}
-
+				showContactsAsDotsOnly = false;
 			}
+
+			// var footprintSamples = [
+			// 	{ type: "Point", coordinates: [-76.1555896532455, -0.6406325846444609, null] },
+			// 	{ type: "Point", coordinates: [-76.16358585680835, -0.6400875383609167, null] },
+			// 	{ type: "Point", coordinates: [-76.1678587136324, -0.6304865951878087, null] },
+			// 	{ type: "Point", coordinates: [-76.17674225863762,-0.6275573607334943, null] }
+			// ];
+			
+			var coordinatesIndexIncrement = Math.floor(diary.geo.footprint.coordinates.length / ( diary.contacts.length + 1 ) );
+			var coordinatesIndex = coordinatesIndexIncrement;
+			for( var i=0; i < diary.contacts.length; i++){
+
+				// diary.contacts[i].beginTime
+				// diary.contacts[i].endTime
+
+				var heading = 	'<strong>' 					+	diary.contacts[i].domainName + ': '+ diary.contacts[i].title+ '</strong>';
+				var body = 	  	'Observer: ' 				+ diary.contacts[i].observerId;
+				body += 	  	'<br>Taxon: ' 				+ diary.contacts[i].taxon;
+				body +=       	'<br>Subject ID: '			+ diary.contacts[i].subjectId;
+				body += 		'<br>Sampling Protocol: '	+ diary.contacts[i].samplingProtocol;
+				body += 		'<br>Basis of record: '		+ diary.contacts[i].basisOfRecord;
+				body += 		'<br>Remarks: '				+ diary.contacts[i].remarks;
+
+
+				var newCoordinatesArray = diary.geo.footprint.coordinates[coordinatesIndex];
+				markerOptions = {
+					circleOnly: showContactsAsDotsOnly,
+					pinColor: 'orange',					
+					footprint: { type: "Point", coordinates: newCoordinatesArray }, 
+					draggable: true,
+					id: diary.contacts[i].id,
+					heading: diary.contacts[i].title,
+					body: body,
+				};
+
+				_renderGeoJsonMarker(markerOptions);
+				
+				coordinatesIndex += coordinatesIndexIncrement;
+				if(coordinatesIndex == diary.contacts.length) coordinatesIndex = 0;
+			}
+
+			
 			
 			
 
