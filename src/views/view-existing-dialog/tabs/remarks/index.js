@@ -28,7 +28,7 @@ function Remarks(opts){
 	self.loseFocus = function(){
 		_entity.remarks = self.$element.find('textarea').val();
 		
-		// This should be DRY'ed somewhere!!!
+		// TODO: This should be DRY'ed somewhere!!!
 	var rootDomain = app.getDomain(rootEntity.domainName),
 		rootEntityManager = rootDomain.getService('entity-manager');
 
