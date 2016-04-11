@@ -317,7 +317,7 @@ function MapTab(){
 		// var startPoint = [-0.6261, -76.1153,null];
 		// var startPoint = [-76.1153,-0.6261,null];
 		var startPoint = [-76.15, -0.638333, null];
-		var offset = [0,0];
+		var offset = [0,0.001];
 		var timeStep = 10000;
 		var startTimestamp = 1460060882197 - 500000;
 		var offsetStepLimit = 0.001;
@@ -343,6 +343,9 @@ function MapTab(){
 			if(offset[1] > offsetLimit) offset[1] = offsetLimit;
 
 			var lastPoint = geo.footprint.coordinates[i];
+			if(lastPoint[1] < -0.633 && offset[1] < 0) {
+				offset[1] *= -1.0;
+			}
 			var newPoint = [lastPoint[0] + offset[0], lastPoint[1] + offset[1], null];
 			geo.footprint.coordinates.push(newPoint);
 			geo.timestamps.push(newTimestamp);
@@ -373,11 +376,11 @@ function MapTab(){
 
 
 			// This is where fake geo data is created. Comment out the next two lines to disable it
-			// if(!(diary.geo && diary.geo.footprint && diary.geo.timestamps && diary.geo.timestamps.length > 50)) {
-			// 	console.log("Creating fake geo");
-			// 	_createFakeGeo(diary);
-			// 	_doSave(diary);
-			// }
+			if(!(diary.geo && diary.geo.footprint && diary.geo.timestamps && diary.geo.timestamps.length > 50)) {
+				console.log("Creating fake geo");
+				_createFakeGeo(diary);
+				_doSave(diary);
+			}
 
 			var footprint = diary.geo.footprint;
 			
