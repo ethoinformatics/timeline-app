@@ -4,7 +4,8 @@ var insertAtCaret = require('insert-at-caret'),
 	moment = require('moment');
 
 
-function Remarks(){
+function Remarks(opts){
+	var	rootEntity = opts.rootEntity || opts.entity;
 	var self = this,
 		_entity;
 
@@ -21,10 +22,31 @@ function Remarks(){
 
 	self.setContext = function(ctx){
 		_entity = ctx.entity;
+		self.$element.find('textarea').val(_entity.remarks);
 	};
 
 	self.loseFocus = function(){
 		_entity.remarks = self.$element.find('textarea').val();
+		
+		// This should be DRY'ed somewhere!!!
+	var rootDomain = app.getDomain(rootEntity.domainName),
+		rootEntityManager = rootDomain.getService('entity-manager');
+
+		console.log("DO SAVE");
+		console.log("Root entity:");
+		console.log(rootEntity);
+
+		// rootEntityManager.getDiary(rootEntity).then(function(diary) {
+		rootEntityManager.save(rootEntity) // was diary
+			.then(function(info){
+				console.log("Save success");
+				// diary._id = info.id;
+				// diary._rev = info.rev;
+
+				return info;
+			}).catch(function(err) {
+				console.error(err);
+			});			
 		// _doSave()
 		// 	.then(function(){
 		// 		_update(true);
