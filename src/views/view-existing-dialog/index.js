@@ -172,7 +172,7 @@ function ViewExistingDialog(opts){
 	}
 
 	var modal;
-
+	
 	$tabContainer.css('height', (window.innerHeight-88)+'px');
 	var $tabHeaderContainer = $content.find('.js-etho-tabs');
 	
@@ -196,6 +196,14 @@ function ViewExistingDialog(opts){
 			console.log("setting up header click");
 			$header.on('click', function(){
 				_tabClick.call(this, arguments[0], tab);
+				
+				var usernameDiv = $content.find('.username-label-view-existing-dialogue');
+				if( usernameDiv != null ){
+					var usernameDivHeight = usernameDiv.height();
+					usernameDivHeight += parseInt( usernameDiv.css('margin-top') );
+					usernameDivHeight += parseInt( usernameDiv.css('margin-bottom') );
+					$tabContainer.css('height', (window.innerHeight-88-usernameDivHeight)+'px');
+				}
 			});
 		});
 
@@ -294,6 +302,8 @@ function ViewExistingDialog(opts){
 	}
 
 	this.show = function( showAnimated ){
+		
+		
 		console.log('show view existing dialogue!');
 		_updateAddButton();
 

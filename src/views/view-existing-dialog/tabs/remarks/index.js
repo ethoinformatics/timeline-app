@@ -17,7 +17,10 @@ function Remarks(opts){
 	$remarks.css('height', (window.innerHeight-(88+49))+'px'); //sorry
 
 	self.$element.find('.js-timestamp').click(function(){
-		insertAtCaret($remarks[0], moment().format(' HH:mm '));	
+		// 
+		insertAtCaret($remarks[0], moment().format('MMM DD, YYYY @ HH:mm:ss '));	
+		
+//		insertAtCaret($remarks[0], moment().format(' HH:mm '));	
 	});
 
 	self.setContext = function(ctx){
