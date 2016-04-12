@@ -18,7 +18,7 @@ function Remarks(opts){
 
 	self.$element.find('.js-timestamp').click(function(){
 		// 
-		insertAtCaret($remarks[0], moment().format('MMM DD, YYYY @ HH:mm:ss '));	
+		insertAtCaret($remarks[0], moment().format('YYYY-MM-DD @ HH:mm:ss '));	
 		
 //		insertAtCaret($remarks[0], moment().format(' HH:mm '));	
 	});

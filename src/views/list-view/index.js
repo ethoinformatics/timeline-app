@@ -98,6 +98,16 @@ function ListView(){
 			});
 	};
 
+	// makes it possible to move the dialog modal away back over the settings pane
+	self.viewExistingDialog = null;
+	self.dialogPushedOver = false;
+	self.restoreExistingDialog = function(){
+		if (self.dialogPushedOver && self.viewExistingDialog != null){
+			self.dialogPushedOver = false;
+			self.viewExistingDialog.peekBehindDialog( self.dialogPushedOver );
+		}
+	}
+	
 	function _itemClick(domainName, _id){
 		console.log('opening: ' + domainName + ' ' + _id);
 		var domain = app.getDomain(domainName),
@@ -111,6 +121,14 @@ function ListView(){
 				console.log('loaded entity');
 				var m = new ViewExistingDialog({ entity: entity, });
 				m.show( true );
+				self.viewExistingDialog = m;
+				var $showLeftMenu = $('#js-show-left-menu-modal-version');
+				$showLeftMenu.click(function(ev){
+					ev.stopPropagation();
+					self.dialogPushedOver = !self.dialogPushedOver;					
+					m.peekBehindDialog( self.dialogPushedOver );
+				});
+				
 			})
 			.catch(function(err){
 				console.error(err);

@@ -1,13 +1,30 @@
 var velocity = require('velocity-animate'),
 	$ = require('jquery'),
 	EventEmitter = require('events').EventEmitter,
-	template = require('./index.vash');
+	template = require('./index.vash'),
+	deviceSettings = require('device-settings'),
+	app = require('app')();
+	
 
 function SideMenu(opt){
 	var $content = $(opt.content);
 	var self = new EventEmitter();
 
-	self.$element = $(template({}));
+
+	console.log('app');
+
+	
+	self.$element = $(template({})); //username:''
+	
+	self.displayUser = function(){
+		deviceSettings()
+			.then(function(settings){			
+				if( settings['user'] ){
+					$('#left-title').text(settings['user']);
+			}
+		});	
+	}
+	self.displayUser();	
 
 	self.$element.on('click', '.js-upload', function(){
 			self.emit('click', 'sync');

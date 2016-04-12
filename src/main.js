@@ -68,11 +68,25 @@ ready(function appLoad(){
 	addButton.on('created', function(){ listView.refresh(); });
 	sideMenu.on('click', function(moduleName){
 		sideMenu.close();
+		listView.restoreExistingDialog();
 
-		if (moduleName == 'code-manager') codeManager.show();
-		if (moduleName == 'sync') uploadDialog.show();
-		if (moduleName == 'settings') settings.show();
-		if (moduleName == 'geolocation-viewer') geolocationViewer.show();
+
+		if (moduleName == 'code-manager'){ 
+			codeManager.zIndex(10000);
+			codeManager.show();		
+		}
+		if (moduleName == 'sync'){ 
+			uploadDialog.zIndex(10000);
+			uploadDialog.show();
+		}
+		if (moduleName == 'settings'){ 
+			settings.zIndex(10000);
+			settings.show();
+		}
+		if (moduleName == 'geolocation-viewer'){ 
+			geolocationViewer.zIndex(10000);
+			geolocationViewer.show();
+		}
 	});
 
 	uploadDialog.on('closed', function(){
@@ -85,6 +99,9 @@ ready(function appLoad(){
 
 	locationWatch();
 	//keepAppAlive();
+	
+
+	
 });
 
 

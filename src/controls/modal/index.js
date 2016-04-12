@@ -97,14 +97,14 @@ function Modal(options){
 		});
 	};
 
-	this.slideForSettings = function( isLeftMenuOpen ){
-		velocity($modal, {left: isLeftMenuOpen? '0':'240'}, {
+	this.peekBehindModal = function( peekBehind ){
+		velocity($modal, {left: peekBehind ? '240':'0'}, {
 			duration:140,
 			complete: function(){
 
 			},
 		});
-		velocity($('#main-container'), {left: isLeftMenuOpen? '0':'240'}, {
+		velocity($('#main-container'), {left: peekBehind ? '240':'0'}, {
 			duration:140,
 			complete: function(){
 

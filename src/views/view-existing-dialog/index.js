@@ -85,7 +85,7 @@ function ViewExistingDialog(opts){
 
 	var username = (rootEntity.hasOwnProperty('observerId')) ? rootEntity.observerId : '';
 	var $content = $(template({
-		username: (username == '') ? '' : 'You are logged in as: ' + username,
+		username: (username == '') ? '' : 'Diary created by: ' + username,
 		isNew: true,
 			crumbs: crumbs,
 		})),
@@ -463,6 +463,11 @@ function ViewExistingDialog(opts){
 		modal.remove.bind(modal)();
 	}
 
+	this.peekBehindDialog = function( _peekBehind ){
+				console.log('_peekBehind');
+		modal.peekBehindModal( _peekBehind );
+	}
+
 	function _doSave(){
 
 		console.log('ved-_doSave');
@@ -480,14 +485,17 @@ function ViewExistingDialog(opts){
 
 	///////////
 	
-	var $showLeftMenu = $('#js-show-left-menu-modal-version'),
-	isLeftMenuOpen = false;
-	
-	$showLeftMenu.click(function(ev){
-		ev.stopPropagation();
-		isLeftMenuOpen = !isLeftMenuOpen;
-		modal.slideForSettings(isLeftMenuOpen);
-	});
+	// var $showLeftMenu = $('#js-show-left-menu-modal-version'),
+	// isLeftMenuOpen = false;
+	//
+	// $showLeftMenu.click(function(ev){
+	// 	ev.stopPropagation();
+	// 	isLeftMenuOpen = !isLeftMenuOpen;
+	// 	modal.slideForSettings(isLeftMenuOpen);
+	//
+	// 	console.log('app ved');
+	// 			console.log(app);
+	// });
 	
 }
 
