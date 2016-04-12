@@ -75,15 +75,28 @@ function CodeManager(){
 		self.emit('closed');
 	});
 
+	self.zIndex = function( _newZ ){ 
+		modal.modalElement.css('z-index', _newZ);
+	};
 	self.show = function(){ 
 		loadSettings();
 		// 		.css('z-index', 10000)
 		console.log("settings modal");
 		console.log(modal);
-		modal.modalElement.css('z-index', 10000);
+		//modal.modalElement.css('z-index', 10000);
 		
 		modal.show();
 	};
+
+
+	self.setDisplayUser = function(){
+		deviceSettings()
+			.then(function(settings){			
+				if( settings['user'] ){
+					$('#left-title').text(settings['user']);
+				}
+			});		
+	}
 
 	$element.find('#btn-save-settings').click(function(){
 		deviceSettings()
@@ -97,6 +110,7 @@ function CodeManager(){
 					.then(function(res){
 						console.dir(res);
 						modal.hide();
+						self.setDisplayUser();
 					});
 
 			});

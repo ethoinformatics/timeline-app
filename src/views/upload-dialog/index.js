@@ -34,6 +34,9 @@ function UploadDialog(){
 		self.emit('closed');
 	});
 
+	self.zIndex = function( _newZ ){ 
+		modal.modalElement.css('z-index', _newZ);
+	};
 	self.show = function(){
 		modal.show();
 	};
