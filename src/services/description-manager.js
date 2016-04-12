@@ -72,19 +72,26 @@ function DescriptionManager(registry, domainName){
 				var codeLookups = _.zip(codedFields, results);
 				var self = {
 					getDescription: function(fieldName, value){
-						value = value || entity[fieldName];
-
-						var codeLookup = _.find(codeLookups, function(pair){
-								return pair[0].name == fieldName;
-							});
-
-						if (!codeLookup) return 'invalid value';
-
-						var code = _.find(codeLookup[1], function(code){
-								return code.value == value;
-							});
-
-						return code ? code.description : 'invalid value';
+						if(typeof entity.title == 'string' && entity.title.length > 0) {
+							return entity.title;
+						} else if(typeof entity.subjectId == 'string' && entity.subjectId.length > 0) {
+							return entity.subjectId;
+						} else {
+							return 'invalid value';
+						}
+						// value = value || entity[fieldName];
+						//
+						// var codeLookup = _.find(codeLookups, function(pair){
+						// 		return pair[0].name == fieldName;
+						// 	});
+						//
+						// if (!codeLookup) return 'invalid value';
+						//
+						// var code = _.find(codeLookup[1], function(code){
+						// 		return code.value == value;
+						// 	});
+						//
+						// return code ? code.description : 'invalid value';
 					},
 				};
 
