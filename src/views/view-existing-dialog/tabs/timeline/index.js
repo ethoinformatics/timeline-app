@@ -50,6 +50,7 @@ function TimelineTab(){
 	}
 
 	self.setContext = function(ctx){
+		console.log("timelinetab setContext", ctx);
 		_context = ctx;
 
 		_setTitleContent();

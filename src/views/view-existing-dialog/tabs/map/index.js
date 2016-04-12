@@ -37,6 +37,7 @@ function MapTab(){
 	var diaryPromise = null;
 
 	self.setContext = function(ctx){
+		console.log("maptab setContext", ctx);
 		_context = ctx;
 		
 		if(!diaryPromise) {

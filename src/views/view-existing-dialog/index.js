@@ -116,7 +116,9 @@ function ViewExistingDialog(opts){
 	});
 
 	breadcrumb.on('selection', function(data){
-		previousTab.loseFocus();
+		if(_.isFunction(previousTab.loseFocus)) {
+			previousTab.loseFocus();			
+		}
 		if (!_changeEntity(data.context)) return;
 		//
 	// _doSave()
@@ -161,6 +163,10 @@ function ViewExistingDialog(opts){
 			.forEach(function(tab){
 				tab.setContext(ctx);
 			});
+			
+			if(previousTab && _.isFunction(previousTab.show)) {
+				previousTab.show();
+			}
 
 		_updateAddButton();
 
