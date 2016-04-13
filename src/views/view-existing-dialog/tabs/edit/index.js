@@ -85,15 +85,28 @@ function EditTab(opts){
 
 		var standardChildDomains = childDomains.filter(function(d){return !d.inline;});
 		var standardChildren = _createChildCollectionData(ctx.domain, standardChildDomains);
-
+		console.log("ctx", ctx);
 		standardChildren.forEach(function(item){
 				item.entities = (ctx.entity[item.collectionName] || [])
 					.map(function(child){
+						// TODO: Use description manager
+						var title = child.name;
+						if(!_.isString(title) || title.length == 0) {
+							title = child.title;
+						}
+						if(!_.isString(title) || title.length == 0) {
+							title = child.subjectId;
+						}
+						if(!_.isString(title) || title.length == 0) {
+							title = child._id || child.id;
+						}
+
+
 						return {
 							_id: child._id || child.id,
 							domainLabel: child.domainName,
 							entityLabel: ctx.getShortDescription(child),
-							truncatedName: 	child.name || child.title || child._id
+							truncatedName: title // ctx.descManager.getLongDescription(child)//	child.name || child.title || child._id
 						};
 					});
 			});
