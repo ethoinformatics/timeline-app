@@ -69,13 +69,17 @@ function UploadDialog(){
 
 		db.replicate.to(_getUrl(), {live:false})
 			.on('complete', function(info){
-				passwordStore(password);
-				if (info.docs_written === 0){
-					_showSuccess('No new data to upload.');
-				} else if (info.docs_written === 1){
-					_showSuccess('Upload complete.  Sent 1 change.');
+				if(_.isArray(info.errors) && info.errors.length > 0) {
+					_showError(_.map(info.errors, 'message').join(', '));
 				} else {
-					_showSuccess('Upload complete.  Sent ' + info.docs_written + ' changes.');
+					passwordStore(password);
+					if (info.docs_written === 0){
+						_showSuccess('No new data to upload.');
+					} else if (info.docs_written === 1){
+						_showSuccess('Upload complete.  Sent 1 change.');
+					} else {
+						_showSuccess('Upload complete.  Sent ' + info.docs_written + ' changes.');
+					}
 				}
 			})
 			.on('error', function(err){
@@ -90,14 +94,19 @@ function UploadDialog(){
 		_showWorking('Downloading...');
 		db.replicate.from(_getUrl(), {live: false})
 			.on('complete', function(info){
-				passwordStore(password);
-				if (info.docs_written === 0){
-					_showSuccess('Already up to date.');
-				} else if (info.docs_written === 1){
-					_showSuccess('Download complete.  Received 1 change.');
+				if(_.isArray(info.errors) && info.errors.length > 0) {
+					_showError(_.map(info.errors, 'message').join(', '));
 				} else {
-					_showSuccess('Download complete.  Received ' + info.docs_written + ' changes.');
+					passwordStore(password);					
+					if (info.docs_written === 0){
+						_showSuccess('Already up to date.');
+					} else if (info.docs_written === 1){
+						_showSuccess('Download complete.  Received 1 change.');
+					} else {
+						_showSuccess('Download complete.  Received ' + info.docs_written + ' changes.');
+					}					
 				}
+
 			})
 			.on('error', function(err){
 				_showError('Download errror: ' + err.message);
