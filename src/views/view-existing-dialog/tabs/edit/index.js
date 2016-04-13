@@ -98,6 +98,9 @@ function EditTab(opts){
 							title = child.subjectId;
 						}
 						if(!_.isString(title) || title.length == 0) {
+							title = child.location;
+						}
+						if(!_.isString(title) || title.length == 0) {
 							title = child._id || child.id;
 						}
 
