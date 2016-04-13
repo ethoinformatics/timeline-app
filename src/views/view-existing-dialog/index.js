@@ -220,8 +220,9 @@ function ViewExistingDialog(opts){
 		console.log("_tabClick");		
 		console.log(previousTab);
 
-		if (previousTab && _.isFunction(previousTab.loseFocus))
+		if (previousTab && _.isFunction(previousTab.loseFocus)) {
 			previousTab.loseFocus();
+		}
 
 
 		$this.siblings().removeClass('selected');
@@ -459,13 +460,19 @@ function ViewExistingDialog(opts){
 	};
 
 	this.hide = function() {
-		previousTab.loseFocus();
+		if(previousTab && _.isFunction(previousTab.loseFocus)) {
+			previousTab.loseFocus();			
+		}
+
 		modal.hide.bind(modal)();
 	}
 	
 
 	this.remove = function() {
-		previousTab.loseFocus();
+		if(previousTab && _.isFunction(previousTab.loseFocus)) {
+			previousTab.loseFocus();			
+		}
+
 		modal.remove.bind(modal)();
 	}
 
