@@ -137,6 +137,9 @@ function CreateNewDialog(opt){
 	this.remove = function(){
 		modal.remove();
 	};
+	this.zIndex = function(_newZ) {
+		modal.modalElement.css('z-index', _newZ);
+	};
 }
 
 

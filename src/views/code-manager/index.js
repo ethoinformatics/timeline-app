@@ -98,6 +98,7 @@ function CodeManager(){
 			var createNewDialog = new CreateNewDialog({
 					domain: self.currentDomain,
 				});
+				createNewDialog.zIndex(10001);
 
 			createNewDialog.on('created', function(data){
 				createNewDialog.hide();
