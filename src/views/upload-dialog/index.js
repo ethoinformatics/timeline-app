@@ -25,7 +25,7 @@ function UploadDialog(){
 		$password = $element.find('.js-password'),
 		$url = $element.find('.js-url'),
 		modal = new Modal({
-				title:'Upload', 
+				title:'Data sync', 
 				$content:$element, 
 				hideOkay:true
 			});
@@ -96,7 +96,7 @@ function UploadDialog(){
 				} else if (info.docs_written === 1){
 					_showSuccess('Download complete.  Received 1 change.');
 				} else {
-					_showSuccess('Upload complete.  Received ' + info.docs_written + ' changes.');
+					_showSuccess('Download complete.  Received ' + info.docs_written + ' changes.');
 				}
 			})
 			.on('error', function(err){
