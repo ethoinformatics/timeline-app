@@ -8,6 +8,7 @@ var velocity = require('velocity-animate'),
 
 function SideMenu(opt){
 	var $content = $(opt.content);
+	var $mask = $content.find('.mask');
 	var self = new EventEmitter();
 
 
@@ -59,6 +60,11 @@ function SideMenu(opt){
 			},
 		});
 		isLeftMenuOpen = !isLeftMenuOpen;
+		if(isLeftMenuOpen) {
+			$mask.fadeIn(140);
+		} else {
+			$mask.fadeOut(140);
+		}
 	}
 
 	$showLeftMenu.click(function(ev){

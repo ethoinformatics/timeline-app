@@ -124,6 +124,7 @@ function ListView(){
 				self.viewExistingDialog = m;
 				var $showLeftMenu = $('#js-show-left-menu-modal-version');
 				$showLeftMenu.click(function(ev){
+					console.log('showLeftMenu:click');
 					ev.stopPropagation();
 					self.dialogPushedOver = !self.dialogPushedOver;					
 					m.peekBehindDialog( self.dialogPushedOver );
