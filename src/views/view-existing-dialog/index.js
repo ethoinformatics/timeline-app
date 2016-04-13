@@ -116,11 +116,16 @@ function ViewExistingDialog(opts){
 	});
 
 	breadcrumb.on('selection', function(data){
-		if(_.isFunction(previousTab.loseFocus)) {
+		if(previousTab && _.isFunction(previousTab.loseFocus)) {
 			previousTab.loseFocus();			
 		}
+		
 		if (!_changeEntity(data.context)) return;
-		//
+		
+		if(self && _.isFunction(self.show)) {
+			self.show();
+		}
+
 	// _doSave()
 	// 	.then(function(info){
 	// 		rootEntity._id = info.id;
@@ -329,7 +334,6 @@ function ViewExistingDialog(opts){
 			if( $btnAddChild.length == 1 ) {
 				console.log("should strip button");
 				$btnAddChild.unbind( "click" ); // remove click in case it was added by the EditTab class
-				$btnAddChild.attr('id', 'addContactBtn');
 			}
 
 
