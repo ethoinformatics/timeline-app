@@ -423,6 +423,26 @@ function MapTab(){
 				_createFakeGeo(diary);
 				_doSave(diary);
 			}
+			
+			var saveDiary = false;
+			if(_.isArray(diary.contacts)) {
+				_.forEach(diary.contacts, function(contact) {
+					if(_.isArray(contact.collections)) {
+						_.forEach(contact.collections, function(collection) {
+							console.log("COLLECTION", collection);
+							if(collection.beginTime < contact.beginTime || collection.beginTime > contact.endTime || collection.endTime < contact.beginTime || collection.endTime > contact.endTime) {
+								var newTime = parseInt(Math.random() * (contact.endTime - contact.beginTime) + contact.beginTime);
+								collection.beginTime = newTime;
+								collection.endTime = newTime;
+							}
+						});
+					}
+				});
+			}
+			if(saveDiary) {
+				_doSave(diary);
+			}
+			
 
 			var footprint = diary.geo.footprint;
 		
