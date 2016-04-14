@@ -110,6 +110,13 @@ function Modal(options){
 
 			},
 		});
+		var mask = $('.mask');
+		console.log(mask, $modal);
+		if(peekBehind) {
+			mask.fadeIn(140);
+		} else {
+			mask.fadeOut(140);
+		}
 	};
 	
 	this.showInstant = function(){

@@ -9,6 +9,7 @@
 		@if (!model.hideClose){
 		<button class="js-close button icon ion-close"></button>
 		}
+		<div class='mask header'></div>
 	</div>
 	<div class="content has-header">
 		<div class="modal-body">
@@ -20,4 +21,5 @@
 			</label>
 		</div>
 	</div>
+	<div class='mask main'></div>
 </div>

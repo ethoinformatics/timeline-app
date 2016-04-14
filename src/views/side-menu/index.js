@@ -8,7 +8,7 @@ var velocity = require('velocity-animate'),
 
 function SideMenu(opt){
 	var $content = $(opt.content);
-	var $mask = $content.find('.mask');
+	var $mask = $('.mask');
 	var self = new EventEmitter();
 
 
@@ -53,6 +53,7 @@ function SideMenu(opt){
 	};
 
 	function openCloseLeftMenu(){
+		console.log("oCLM");
 		velocity($content, {left: isLeftMenuOpen? '0':'240'}, {
 			duration:140,
 			complete: function(){
