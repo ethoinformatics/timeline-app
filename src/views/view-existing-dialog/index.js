@@ -366,10 +366,13 @@ function ViewExistingDialog(opts){
 			var descMgr = domain.getService('description-manager');
 			var title = 'Add a child to ' + descMgr.getShortDescription(entity);
 
+			var filteredDomains = myDomains;
+			var targetDomains = $(ev.target).data('domains');
 
 			var m = new CreateSelectMenu({
 				title: title,
-				domains: myDomains.filter(function(d){return !d.inline;}),
+				// domains: myDomains.filter(function(d){return !d.inline;}),
+				domains: myDomains.filter(function(d){return targetDomains.indexOf(d.name) >= 0;}), // TODO: This filtering is super hacked - fix it
 				crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
 			});
 
