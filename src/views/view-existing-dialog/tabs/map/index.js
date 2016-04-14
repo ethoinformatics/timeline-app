@@ -59,6 +59,12 @@ function MapTab(){
 		weight: 2,
 		opacity: 1
 	};
+	
+	var contactPathOptions = {
+		color: "#ffffff",
+		weight: 12,
+		opacity: 1
+	};
 
 	var childPathOptions = {
 		color: "#333",
@@ -268,11 +274,11 @@ function MapTab(){
 
 
 
-	function _renderGeoJsonPath(geoJson){
+	function _renderGeoJsonPath(geoJson, contact){
 		
 	// entityManager.getDiary( context.entity ).then(function(diary) {
 		var path = L.geoJson(geoJson, {
-			style: mainPathOptions
+			style: contact ? contactPathOptions : mainPathOptions
 		});
 		path.addTo(lmapLayerGroup);
 		
@@ -440,7 +446,7 @@ function MapTab(){
 						mainColor = 'orange';
 					}else if( _context.entity.domainName == 'focal' ){
 						mainColor = 'green';
-					}else if( _context.entity.domainName == 'poop-sample' ){
+					}else if( _context.entity.domainName == 'fecal-sample' ){
 						mainColor = 'blue';
 						titleCopy = _context.entity.domainName;
 						bodyCopy = 'Location: ' + _context.entity.location;
@@ -455,8 +461,13 @@ function MapTab(){
 						body: bodyCopy
 					};
 					
-					if(footprint.type == 'Point') _renderGeoJsonMarker(markerOptions);//_renderPoint(_context); // 
-					else if(footprint.type == 'LineString') _renderGeoJsonPath(footprint);
+					if(footprint.type == 'Point') {
+						_renderGeoJsonMarker(markerOptions);//_renderPoint(_context); // 
+					}
+					else if(footprint.type == 'LineString') {
+						console.log("WE HAVE A LINESTRING");
+						_renderGeoJsonPath(footprint, true);
+					}
 				});	
 				
 				console.log('_context.entity');
