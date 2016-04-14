@@ -1,15 +1,15 @@
 require('./index.less');
 
 var $ = require('jquery'),
-	velocity = require('velocity-animate'),
-	Hammer = require('hammerjs'),
-	_ = require('lodash'),
-	EditExistingForm = require('edit-existing-form'),
-	tmpl = require('./index.vash'),
-	inlineChildTmpl = require('./inline-child.vash'),
-	PopupButtons = require('popup-buttons'),
-	scrollTmpl = require('./scroll.vash'),
-	Scroll = require('iscroll');
+velocity = require('velocity-animate'),
+Hammer = require('hammerjs'),
+_ = require('lodash'),
+EditExistingForm = require('edit-existing-form'),
+tmpl = require('./index.vash'),
+inlineChildTmpl = require('./inline-child.vash'),
+PopupButtons = require('popup-buttons'),
+scrollTmpl = require('./scroll.vash'),
+Scroll = require('iscroll');
 
 var CreateSelectMenu = require('../../../create-select-dialog');
 
@@ -19,25 +19,25 @@ var util = require('util');
 
 function _createChildCollectionData(parentDomain, childDomains){
 	var lookup = _.chain(childDomains)
-		.map(function(d){
-			// sorry, cheap hack todo: hide this somewhere
-			var parentPropertyName = d.getService('parent-'+parentDomain.name);
+	.map(function(d){
+		// sorry, cheap hack todo: hide this somewhere
+		var parentPropertyName = d.getService('parent-'+parentDomain.name);
 
-			return {
-				collectionName: parentPropertyName,
-				domain: d,
-			};
-		})
-		.groupBy(function(d){return d.collectionName;})
-		.value();
+		return {
+			collectionName: parentPropertyName,
+			domain: d,
+		};
+	})
+	.groupBy(function(d){return d.collectionName;})
+	.value();
 
 	return _.keys(lookup)
-		.map(function(collectionName){
-			return {
-				collectionName: collectionName,
-				domainNames:_.map(lookup[collectionName], function(d){return d.domain.name;}).join(','),
-			};
-		});
+	.map(function(collectionName){
+		return {
+			collectionName: collectionName,
+			domainNames:_.map(lookup[collectionName], function(d){return d.domain.name;}).join(','),
+		};
+	});
 }
 
 function EditTab(opts){
@@ -87,69 +87,69 @@ function EditTab(opts){
 		var standardChildren = _createChildCollectionData(ctx.domain, standardChildDomains);
 		console.log("ctx", ctx);
 		standardChildren.forEach(function(item){
-				item.entities = (ctx.entity[item.collectionName] || [])
-					.map(function(child){
-						// TODO: Use description manager
-						var title = child.name;
-						if(!_.isString(title) || title.length == 0) {
-							title = child.title;
-						}
-						if(!_.isString(title) || title.length == 0) {
-							title = child.subjectId;
-						}
-						if(!_.isString(title) || title.length == 0) {
-							title = child.location;
-						}
-						if(!_.isString(title) || title.length == 0) {
-							title = child._id || child.id;
-						}
+			item.entities = (ctx.entity[item.collectionName] || [])
+			.map(function(child){
+				// TODO: Use description manager
+				var title = child.name;
+				if(!_.isString(title) || title.length == 0) {
+					title = child.title;
+				}
+				if(!_.isString(title) || title.length == 0) {
+					title = child.subjectId;
+				}
+				if(!_.isString(title) || title.length == 0) {
+					title = child.location;
+				}
+				if(!_.isString(title) || title.length == 0) {
+					title = child._id || child.id;
+				}
 
 
-						return {
-							_id: child._id || child.id,
-							domainLabel: child.domainName,
-							entityLabel: ctx.getShortDescription(child),
-							truncatedName: title // ctx.descManager.getLongDescription(child)//	child.name || child.title || child._id
-						};
-					});
+				return {
+					_id: child._id || child.id,
+					domainLabel: child.domainName,
+					entityLabel: ctx.getShortDescription(child),
+					truncatedName: title // ctx.descManager.getLongDescription(child)//	child.name || child.title || child._id
+				};
 			});
+		});
 
 		self.$element
-			.find('.scroller')
-			.empty()
-			.append(tmpl({
-				childData: inlineChildren,
-				standardChildren: standardChildren,
-				label: ctx.domain.label,
-			}));
+		.find('.scroller')
+		.empty()
+		.append(tmpl({
+			childData: inlineChildren,
+			standardChildren: standardChildren,
+			label: ctx.domain.label,
+		}));
 			
 		self.$element
-			.find('.iScrollVerticalScrollbar').remove();
+		.find('.iScrollVerticalScrollbar').remove();
 
 		self.$element
-			.find('.edit-form')
-			.empty()
-			.append(editForm.$element);
+		.find('.edit-form')
+		.empty()
+		.append(editForm.$element);
 
 		self.$element
-			.css('width', window.innerWidth)
-			.css('height', window.innerHeight-(96+44));
+		.css('width', window.innerWidth)
+		.css('height', window.innerHeight-(96+44));
 
 		self.$element
-			.find('.float-right')
-			.css('float', 'right');
+		.find('.float-right')
+		.css('float', 'right');
 
 
 			
 		// give the browser a chance to reflow the new elements
 		setTimeout(function() {
 			var scroll = new Scroll(self.$element[0], {
-					mouseWheel: true,
-					scrollbars: true,
-					tap:true
-				});
+				mouseWheel: true,
+				scrollbars: true,
+				tap:true
+			});
 		
-				console.log(scroll);				
+			console.log(scroll);				
 		},100);
 
 		function _doSave(){
@@ -161,76 +161,78 @@ function EditTab(opts){
 			//
 			// return rootEntityManager.save(rootEntity)
 			// 	.then(function(info){
-			// 		rootEntity._id = info.id;
-			// 		rootEntity._rev = info.rev;
-			//
-			// 		return info;
-			// 	});
-		}
-		function _collapseChildren(collectionName){
-			var $accordians = self.$element.find('.js-collection-'+ collectionName);
+				// 		rootEntity._id = info.id;
+				// 		rootEntity._rev = info.rev;
+				//
+				// 		return info;
+				// 	});
+			}
+			function _collapseChildren(collectionName){
+				var $accordians = self.$element.find('.js-collection-'+ collectionName);
 
-			var $icons = $accordians.find('i.js-expand-icon');
-			var $itemContainers = $accordians.find('.item-container');
+				var $icons = $accordians.find('i.js-expand-icon');
+				var $itemContainers = $accordians.find('.item-container');
 
-			$itemContainers.find('.js-expand-toggle').data('collapsed', true);
-			velocity($itemContainers.find('.js-fields'), 'slideUp', {duration: 300});
-			$icons.removeClass('ion-arrow-down-b').addClass('ion-arrow-right-b');
-		}
+				$itemContainers.find('.js-expand-toggle').data('collapsed', true);
+				velocity($itemContainers.find('.js-fields'), 'slideUp', {duration: 300});
+				$icons.removeClass('ion-arrow-down-b').addClass('ion-arrow-right-b');
+			}
 
-		function _addInlineChild(collectionName, domainName){
+			function _addInlineChild(collectionName, domainName){
 
-			_collapseChildren(collectionName);
-			var domain = _.find(childDomains, function(d){return d.name == domainName;}),
+				_collapseChildren(collectionName);
+				var domain = _.find(childDomains, function(d){return d.name == domainName;}),
 				$containerLi = $('<li></li>')
 				.addClass('item')
 				.addClass('item-container')
 				//.addClass('header')
 				.append(inlineChildTmpl({domainLabel: domain.label || domain.name}));
 
-			var childForm = new EditExistingForm({entity: {domainName: domain.name}});
-			childForm.$element.addClass('js-fields');
-			$containerLi.append(childForm.$element);
+				var childForm = new EditExistingForm({entity: {domainName: domain.name}});
+				childForm.$element.addClass('js-fields');
+				$containerLi.append(childForm.$element);
 		
-			var $ul = self.$element.find('.js-collection-'+ collectionName);
-			$ul.closest('ul')
+				var $ul = self.$element.find('.js-collection-'+ collectionName);
+				$ul.closest('ul')
 				.append($containerLi);
 
-			var $header = $containerLi.find('.js-expand-toggle');
+				var $header = $containerLi.find('.js-expand-toggle');
 
-			var headerHammer = new Hammer($header[0]);
-			headerHammer.on('press', function(ev){
-				headerHammer.on('pressup', function(){
-					setTimeout(function(){
-						popupButtons.opened();
-					}, 10);
+				var headerHammer = new Hammer($header[0]);
+				headerHammer.on('press', function(ev){
+					headerHammer.on('pressup', function(){
+						setTimeout(function(){
+							console.log('HAMMERED');
+							popupButtons.opened();
+						}, 10);
+					});
+
+					var popupButtons = new PopupButtons({
+						items: [{ value: 'remove', label: 'Remove', 'class': 'button-assertive'}],
+					});
+
+					popupButtons.on('click', function(key){
+						console.log("LINE 214 CLICK");
+						if (key == 'remove')
+							velocity($header.closest('.item-container'), 'fadeOut', {duration:400});
+
+						popupButtons.remove();
+					});
+
+					popupButtons.show(ev.pointers[0], true);
 				});
 
-				var popupButtons = new PopupButtons({
-					items: [{ value: 'remove', label: 'Remove', 'class': 'button-assertive'}],
-				});
-
-				popupButtons.on('click', function(key){
-					if (key == 'remove')
-						velocity($header.closest('.item-container'), 'fadeOut', {duration:400});
-
-					popupButtons.remove();
-				});
-
-				popupButtons.show(ev.pointers[0], true);
-			});
-
-			headerHammer
+				headerHammer
 				.on('tap', function(){
 					var DURATION = 200;
 					var $this = $header,
-						$icon = $this.find('i'),
-						$accordian = $this.closest('.accordian');
+					$icon = $this.find('i'),
+					$accordian = $this.closest('.accordian');
 
 					var $allIcons = $accordian.find('i.js-expand-icon').not($icon);
 					var $allItemContainers = $accordian
-						.find('.item-container')
-						.not($containerLi);
+					.find('.item-container')
+					.not($containerLi);
 
 					$allItemContainers.find('.js-expand-toggle').data('collapsed', true);
 					velocity($allItemContainers.find('.js-fields'), 'slideUp', {duration: DURATION});
@@ -248,110 +250,73 @@ function EditTab(opts){
 					$this.data('collapsed', !isCollapsed);
 				});
 
-			setTimeout(function(){
+				setTimeout(function(){
 				
-				var scroll = new Scroll(self.$element[0], {
+					var scroll = new Scroll(self.$element[0], {
 						mouseWheel: true,
 						scrollbars: true,
 						tap:true
 					});
-				scroll.refresh();
-			}, 100);
-		}
+					scroll.refresh();
+				}, 100);
+			}
 		
-		var $btnAddChild = self.$element.find('.js-child-add');
+			var $btnAddChild = self.$element.find('.js-child-add');
 
-		console.log("$btnAddChild");
-		console.log($btnAddChild);
+			console.log("$btnAddChild");
+			console.log($btnAddChild);
 
-		self.$element.find('.js-child-add').each(function( index ){
-			
-			$(this).on('click', function(ev){
-				var $this = $(this),
+/*			self.$element.find('.js-child-add').each(function( index ){
+				console.log("SETTING THE ONCLICK HANDLER!!!");
+				$(this).on('click', function(ev){
+					console.log("CLICKY");
+					var $this = $(this),
 					collectionName = $this.data('collection'),
 					domainNames = $this.data('domains').split(','),
 					domains = childDomains.filter(function(d){return _.contains(domainNames, d.name);});
 
 
-				var popupButtons = new PopupButtons({
-					items: domains.map(function(d){ return {value: d.name, label: d.label};}),
+					var popupButtons = new PopupButtons({
+						items: domains.map(function(d){ return {value: d.name, label: d.label};}),
+					});
+
+					popupButtons.on('click', function(domainName){
+						console.log("LINE 283 CLICK edit tab popup button clicked");
+
+						var m = new CreateSelectMenu({
+							title: domainName,
+							domains: domains.filter(function(d){return !d.inline;}),
+							//crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
+						});
+
+						m.on('created', function(child){
+							// This seems to never get called
+							var childDomain = app.getDomain(child.domainName),
+							entityManager = childDomain.getService('entity-manager');
+
+							console.log('created child');
+							console.log(_context.entity);
+							console.log(child);
+							entityManager.addToParent(_context.entity, child);
+						});
+						m.show(ev);
+
+
+						//////////////
+						popupButtons.remove();
+					});
+
+					popupButtons.show(ev); // This needs to go back in
 				});
+			});*/
 
-				popupButtons.on('click', function(domainName){
-//					_addInlineChild(collectionName, domainName);
-
-////////////
-
-
-	// var descMgr = domain.getService('description-manager');
-	// var title = 'Add a child to ' + descMgr.getShortDescription(entity);
-
-
-	var m = new CreateSelectMenu({
-		title: domainName,
-		domains: domains.filter(function(d){return !d.inline;}),
-		//crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
-	});
-
-	m.on('created', function(child){
-		// This seems to never get called
-		var childDomain = app.getDomain(child.domainName),
-			entityManager = childDomain.getService('entity-manager');
-
-			console.log('created child');
-			console.log(_context.entity);
-			console.log(child);
-		entityManager.addToParent(_context.entity, child);
-
-	// var rootDomain = app.getDomain(_context.entity.domainName),
-	// 	rootEntityManager = rootDomain.getService('entity-manager');
-	//
-	// rootEntityManager.save(child)
-	// 	.then(function(info){
-	// 		child._id = info.id;
-	// 		child._rev = info.rev;
-	//
-	// 		return info;
-	// 	});
-	
-	
-
-
-		// _doSave().then(function(info){
-// 				console.log("info.id");
-// 				console.log(info.id);
-// 				child._id = info.id;
-// 				child._rev = info.rev;
-//
-// 			//_changeEntity(child);
-// 			//_updateAddButton();
-// 			//breadcrumb.add({context:child, label: _getLabel(child), color: _getColor(child)});
-// 		})
-// 		.catch(function(err){
-// 			console.error(err);
-// 		});
-
-});
-	m.show(ev);
-
-
-//////////////
-					popupButtons.remove();
-				});
-
-				popupButtons.show(ev);
-			});
-			// $(this).focusout(function(){
-			// 	console.log('focusout');
-			// });
-		});
-
-		self.$element.find('.js-inline-add')
+			self.$element.find('.js-inline-add')
 			.on('click', function(ev){
+				console.log('LINE 314 CLICK');
 				var $this = $(this),
-					collectionName = $this.data('collection'),
-					domainNames = $this.data('domains').split(','),
-					domains = childDomains.filter(function(d){return _.contains(domainNames, d.name);});
+				collectionName = $this.data('collection'),
+				domainNames = $this.data('domains').split(','),
+				domains = childDomains.filter(function(d){return _.contains(domainNames, d.name);});
 
 
 				var popupButtons = new PopupButtons({
@@ -359,6 +324,7 @@ function EditTab(opts){
 				});
 
 				popupButtons.on('click', function(domainName){
+					console.log("LINE 324 CLICK");
 					_addInlineChild(collectionName, domainName);
 					popupButtons.remove();
 				});
@@ -366,59 +332,59 @@ function EditTab(opts){
 				popupButtons.show(ev);
 			});
 
-	};
+		};
 
-	self.$element.on('tap', '.js-child-link', function(){
-		var $this = $(this),
+		self.$element.on('tap', '.js-child-link', function(){
+			var $this = $(this),
 			collectionName = $this.data('collection'),
 			_id = $this.data('id');
 
-		var child = _.find(_context.entity[collectionName], function(c){
-			return (c._id || c.id) == _id;
+			var child = _.find(_context.entity[collectionName], function(c){
+				return (c._id || c.id) == _id;
+			});
+			self.loseFocus();
+			_context.descend(child);
 		});
-		self.loseFocus();
-		_context.descend(child);
-	});
 
-	self.loseFocus = function(){
-		console.log("loseFocus");
-		console.log("Root entity before updateFields:");
-		console.log(rootEntity);
+		self.loseFocus = function(){
+			console.log("loseFocus");
+			console.log("Root entity before updateFields:");
+			console.log(rootEntity);
 		
-		// This gets the data FROM the form and uses it to 
-		// update the entity. Bad name! 
-		editForm.updateFields();
+			// This gets the data FROM the form and uses it to 
+			// update the entity. Bad name! 
+			editForm.updateFields();
 		
-	var rootDomain = app.getDomain(rootEntity.domainName),
-		rootEntityManager = rootDomain.getService('entity-manager');
+			var rootDomain = app.getDomain(rootEntity.domainName),
+			rootEntityManager = rootDomain.getService('entity-manager');
 
-		console.log("DO SAVE");
-		console.log("Root entity:");
-		console.log(rootEntity);
+			console.log("DO SAVE");
+			console.log("Root entity:");
+			console.log(rootEntity);
 
-		// rootEntityManager.getDiary(rootEntity).then(function(diary) {
-		rootEntityManager.save(rootEntity) // was diary
-			.then(function(info){
-				console.log("Save success");
-				// diary._id = info.id;
-				// diary._rev = info.rev;
+			// rootEntityManager.getDiary(rootEntity).then(function(diary) {
+				rootEntityManager.save(rootEntity) // was diary
+				.then(function(info){
+					console.log("Save success");
+					// diary._id = info.id;
+					// diary._rev = info.rev;
 
-				return info;
-			}).catch(function(err) {
-				console.error(err);
-			});			
-		// });
+					return info;
+				}).catch(function(err) {
+					console.error(err);
+				});			
+				// });
 	
 		
-//rootEntity		//
-		// _doSave().then(function(){
-		// 		_update(true);
-		// 	}).catch(function(err){
-		// 		console.error(err);
-		// 	});
-	};
+				//rootEntity		//
+				// _doSave().then(function(){
+					// 		_update(true);
+					// 	}).catch(function(err){
+						// 		console.error(err);
+						// 	});
+					};
 
-}
+				}
 
-util.inherits(EditTab, EventEmitter);
-module.exports = EditTab;
+				util.inherits(EditTab, EventEmitter);
+				module.exports = EditTab;

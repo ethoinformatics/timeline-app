@@ -176,6 +176,11 @@ function ViewExistingDialog(opts){
 
 		_updateAddButton();
 
+		console.log(self);
+		if(_.isFunction(self.show)) {
+			self.show();			
+		}
+
 		return true;
 	}
 
@@ -351,7 +356,7 @@ function ViewExistingDialog(opts){
 					self.hide();
 				});
 		});
-
+		
 		$btnAddChild.click(function(ev){
 			console.log('add contact button jrc');
 			ev.preventDefault();
