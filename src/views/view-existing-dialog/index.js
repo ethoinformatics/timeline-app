@@ -54,6 +54,7 @@ function ViewExistingDialog(opts){
 	
 	console.log("ViewExistingDialog()");
 	console.log(rootEntity);
+	console.log('window.geo', window.geo);
 	
 
 	var tabEdit = new TabEdit(tabOptions),

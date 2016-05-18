@@ -96,7 +96,6 @@ var success = function(data){
 		console.err("error: " + e);
 	}
 
-
 	fireFireFire();
 };
 
