@@ -5,34 +5,74 @@ var latestCoordinates;
 
 var DEFAULTS = {
 	enableHighAccuracy: true, 
-	maximumAge        : 30000, 
-	timeout           : 27000
+	maximumAge        : 30000,
+	frequency					: 30000,
+	timeout           : 15000
 };
+
+var debugCount = 0;
 
 $(function(){
 	window.isCordova = false;
 
-    if(document.URL.indexOf("http://") === -1 && document.URL.indexOf("https://") === -1) {
+  if(document.URL.indexOf("http://") === -1 && document.URL.indexOf("https://") === -1) {
 		window.isCordova = true;
 	}
 
 	if(window.isCordova) {
-		document.addEventListener("deviceready", onDeviceReady, false);
+		setTimeout(function() {
+			console.log("isCordova");
+			document.addEventListener("deviceready", onDeviceReady, false);
+		}, 10000);		
 	 } else {
-		onDeviceReady();
+		setTimeout(function() {
+			console.log("isNotCordova");
+	 		onDeviceReady();		 	
+		}, 10000);
 	}
 });
 
 function onDeviceReady(){
+	console.log("starting geolocation");
+	
+	// var bgGeo = window.BackgroundGeolocation;
+	// bgGeo.on('location', success, error);
+	// bgGeo.start();
 	navigator
 		.geolocation
 		.watchPosition(success, error, DEFAULTS);
+
+		console.log("cordova.plugins.backgroundMode", cordova.plugins.backgroundMode);
+	cordova.plugins.backgroundMode.setDefaults({ text:'Ethoinformatics is still running'});
+	cordova.plugins.backgroundMode.onactivate = function() {
+		console.log("bg activated");
+	};
+	cordova.plugins.backgroundMode.ondeactivate = function() {
+		console.log("bg deactivated");
+	};	
+	cordova.plugins.backgroundMode.onfailure = function(errorCode) {
+		console.log("bg failed: " + errorCode);
+	};
+	cordova.plugins.backgroundMode.enable();
+	
+	setInterval(function() {
+		console.log("ping.");		
+	},10000);
+
 }
 
 var success = function(data){
 
 	try {
 		if (data){
+			if(latestCoordinates) { // dedupe
+				if(latestCoordinates.coords.latitude == data.coords.latitude && 
+					latestCoordinates.coords.longitude == data.coords.longitude) {
+						console.log("duplicate geolocation record ignored");
+						return;
+					}
+			}
+			
 			latestCoordinates = {
 				coords: {
 					speed: data.coords.speed,
@@ -46,12 +86,14 @@ var success = function(data){
 				timestamp: data.timestamp,
 			};
 			
-			console.log("success");
+			console.log("success",new Date());
 			console.log(latestCoordinates);
+			debugCount += 1;
+			console.log("debugCount", debugCount);
 		}
 
 	} catch (e){
-		
+		console.err("error: " + e);
 	}
 
 
@@ -59,8 +101,9 @@ var success = function(data){
 };
 
 var error = function(err){
-	console.log('there was an error getting the position');
+	console.log('there was an error getting the position.');
 	console.dir(err);
+	
 	callbacks.fire(err);
 };
 

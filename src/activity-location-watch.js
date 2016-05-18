@@ -22,7 +22,8 @@ function _getDeviceSettingsObject(){
 
 module.exports = function(){
 	function onLocationUpdate(err, data){
-		console.log("activity-location-watch::onLocationUpdate()");
+		console.log("activity-location-watch::onLocationUpdate() NEW");
+		console.log(arguments);
 		if (err){
 			console.log('geolocation error');
 			return console.error(err);
