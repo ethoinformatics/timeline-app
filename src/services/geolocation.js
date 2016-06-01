@@ -42,18 +42,20 @@ function onDeviceReady(){
 		.geolocation
 		.watchPosition(success, error, DEFAULTS);
 
+	if(cordova) {
 		console.log("cordova.plugins.backgroundMode", cordova.plugins.backgroundMode);
-	cordova.plugins.backgroundMode.setDefaults({ text:'Ethoinformatics is still running'});
-	cordova.plugins.backgroundMode.onactivate = function() {
-		console.log("bg activated");
-	};
-	cordova.plugins.backgroundMode.ondeactivate = function() {
-		console.log("bg deactivated");
-	};	
-	cordova.plugins.backgroundMode.onfailure = function(errorCode) {
-		console.log("bg failed: " + errorCode);
-	};
-	cordova.plugins.backgroundMode.enable();
+		cordova.plugins.backgroundMode.setDefaults({ text:'Ethoinformatics is still running'});
+		cordova.plugins.backgroundMode.onactivate = function() {
+			console.log("bg activated");
+		};
+		cordova.plugins.backgroundMode.ondeactivate = function() {
+			console.log("bg deactivated");
+		};	
+		cordova.plugins.backgroundMode.onfailure = function(errorCode) {
+			console.log("bg failed: " + errorCode);
+		};
+		cordova.plugins.backgroundMode.enable();			
+	}
 	
 	setInterval(function() {
 		console.log("ping.");		
