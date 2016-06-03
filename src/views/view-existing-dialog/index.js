@@ -54,6 +54,7 @@ function ViewExistingDialog(opts){
 	
 	console.log("ViewExistingDialog()");
 	console.log(rootEntity);
+	console.log('window.geo', window.geo);
 	
 
 	var tabEdit = new TabEdit(tabOptions),
@@ -176,9 +177,16 @@ function ViewExistingDialog(opts){
 
 		_updateAddButton();
 
+//<<<<<<< HEAD
 
 		tabEdit.addTriangleHandlers();
 
+//=======
+		// console.log(self);
+		// if(_.isFunction(self.show)) {
+		// 	self.show();
+		// }
+//>>>>>>> origin/master
 
 		return true;
 	}
@@ -355,9 +363,50 @@ function ViewExistingDialog(opts){
 					self.hide();
 				});
 		});
+//<<<<<<< HEAD
 
 		
 		// this was causing duplicate drop downs because the edit tab creates them 
+// =======
+//
+// 		$btnAddChild.click(function(ev){
+// 			console.log('add contact button jrc');
+// 			ev.preventDefault();
+//
+// 			if ($(this).hasClass('disabled')) return console.log('ignore click');
+//
+// 			var descMgr = domain.getService('description-manager');
+// 			var title = 'Add a child to ' + descMgr.getShortDescription(entity);
+//
+// 			var filteredDomains = myDomains;
+// 			var targetDomains = $(ev.target).data('domains');
+//
+// 			var m = new CreateSelectMenu({
+// 				title: title,
+// 				// domains: myDomains.filter(function(d){return !d.inline;}),
+// 				domains: myDomains.filter(function(d){return targetDomains.indexOf(d.name) >= 0;}), // TODO: This filtering is super hacked - fix it
+// 				crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
+// 			});
+//
+// 			m.on('created', function(child){
+// 				var childDomain = app.getDomain(child.domainName),
+// 					entityManager = childDomain.getService('entity-manager');
+//
+// 				entityManager.addToParent(entity, child);
+//
+// 				_doSave()
+// 					.then(function(info){
+// 						rootEntity._id = info.id;
+// 						rootEntity._rev = info.rev;
+//
+// 					_changeEntity(child);
+// 					_updateAddButton();
+// 					breadcrumb.add({context:child, label: _getLabel(child), color: _getColor(child)});
+// 				})
+// 				.catch(function(err){
+// 					console.error(err);
+// 				});
+// >>>>>>> origin/master
 
 		// $btnAddChild.click(function(ev){
 		// 	console.log('add contact button jrc');

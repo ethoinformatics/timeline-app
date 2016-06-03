@@ -10,7 +10,8 @@
 var $ = require('jquery'),
 	_ = require('lodash'),
 	app = require('app')(),
-	MapView = require('map');
+	MapView = require('map'),
+	moment = require('moment');
 	
 var tmpl = require('./index.vash');
 var mapMarkers = [];
@@ -87,7 +88,7 @@ function MapTab(){
 	}
 	
 	function _getGeo(beginTime, endTime) {
-		// go to the diary,
+		// go to the diary, TODO: or the window.geo object or localStorage
 		// get teh data,
 		// format it
 		// return it
@@ -116,38 +117,83 @@ function MapTab(){
 		// 	});
 		// });
 
+		var key = moment(diary.eventDate).format('YYYYMMDD');
+		var geo = null;
+		if(window.geo && window.geo[key]) {
+			geo = window.geo[key];
+		}
+		if(!footprint) {
+			var fromStorage = window.localStorage.getItem(key);
+			if(fromStorage) {
+				window.geo[key] = JSON.parse(fromStorage);
+				geo = window.geo[key];
+			}	
+		}
 
-
-		return new Promise(function(resolve, reject) {
-			diaryPromise.then(function(diary) {
+		if(geo) {
+			return new Promise(function(resolve, reject) {
+				// TODO: DRY
 				var startIndex, endIndex;
 
-				for(var i = 0; i < diary.geo.timestamps.length; i++) {
-					var thisTimestamp = diary.geo.timestamps[i];
+				var geo = window.geo[key];
+				for(var i = 0; i < geo.timestamps.length; i++) {
+					var thisTimestamp = geo.timestamps[i];
 					if(beginTime >= thisTimestamp) startIndex = i;
 					if(endTime >= thisTimestamp) endIndex = i;
 				}
 
-				if(!startIndex) startIndex = diary.geo.timestamps.length - 1;				
-				if(!endIndex) endIndex = diary.geo.timestamps.length - 1;
+				if(!startIndex) startIndex = geo.timestamps.length - 1;				
+				if(!endIndex) endIndex = geo.timestamps.length - 1;
 
-				var startPoint = diary.geo.footprint.coordinates[0]; // this will break on empty data
+				var startPoint = geo.footprint.coordinates[0]; // this will break on empty data
 				var coordinates = [];
 				for(var i = startIndex; i <= endIndex; i++) {
 					// coordinates.push([startPoint[0] + Math.random() * 0.1, startPoint[1] + Math.random() * 0.1, startPoint[2]]);
-					coordinates.push(diary.geo.footprint.coordinates[i]);
+					coordinates.push(geo.footprint.coordinates[i]);
 				}
 				if(coordinates.length == 1) {
 					var geoJson = { "type": "Point", "coordinates": coordinates[0] };					
 				} else {
 					var geoJson = { "type": "LineString", "coordinates": coordinates };
 				}
-				// console.log("beginTime: " + beginTime + ", endTime: " + endTime);
-				// console.log("startIndex: " + startIndex + ", endIndex: " + endIndex);
-				// console.log(geoJson);
-				resolve(geoJson);
+				console.log("beginTime: " + beginTime + ", endTime: " + endTime);
+				console.log("startIndex: " + startIndex + ", endIndex: " + endIndex);
+				console.log('geoJson');
+				console.log(geoJson);
+				resolve(geoJson);				
 			});
-		});
+		} else {
+			return new Promise(function(resolve, reject) {
+				diaryPromise.then(function(diary) {
+					var startIndex, endIndex;
+
+					for(var i = 0; i < diary.geo.timestamps.length; i++) {
+						var thisTimestamp = diary.geo.timestamps[i];
+						if(beginTime >= thisTimestamp) startIndex = i;
+						if(endTime >= thisTimestamp) endIndex = i;
+					}
+
+					if(!startIndex) startIndex = diary.geo.timestamps.length - 1;				
+					if(!endIndex) endIndex = diary.geo.timestamps.length - 1;
+
+					var startPoint = diary.geo.footprint.coordinates[0]; // this will break on empty data
+					var coordinates = [];
+					for(var i = startIndex; i <= endIndex; i++) {
+						// coordinates.push([startPoint[0] + Math.random() * 0.1, startPoint[1] + Math.random() * 0.1, startPoint[2]]);
+						coordinates.push(diary.geo.footprint.coordinates[i]);
+					}
+					if(coordinates.length == 1) {
+						var geoJson = { "type": "Point", "coordinates": coordinates[0] };					
+					} else {
+						var geoJson = { "type": "LineString", "coordinates": coordinates };
+					}
+					// console.log("beginTime: " + beginTime + ", endTime: " + endTime);
+					// console.log("startIndex: " + startIndex + ", endIndex: " + endIndex);
+					// console.log(geoJson);
+					resolve(geoJson);
+				});
+			});			
+		}
 	}
 	
 	 
@@ -275,7 +321,7 @@ function MapTab(){
 
 
 	function _renderGeoJsonPath(geoJson, pathOptions){
-		
+		console.log('_renderGeoJsonPath', geoJson);
 		var path = L.geoJson(geoJson, {
 			style: pathOptions
 		});
@@ -399,6 +445,7 @@ function MapTab(){
 
 	var path;
 	self.show = function(){
+		console.log("map tab show!");
 		self.$element.show();
 		lmap.invalidateSize();
 
@@ -413,17 +460,19 @@ function MapTab(){
 		//var children = _context.getChildren();
 		
 		// entityManager.getDiary( _context.entity ).then(function(diary) {
+		console.log("diaryPromise", diaryPromise);
 		diaryPromise.then(function(diary) {
-			
+			console.log("diaryPromise then");
 
 
 			// This is where fake geo data is created. Comment out the next two lines to disable it
-			if(!(diary.geo && diary.geo.footprint && diary.geo.timestamps && diary.geo.timestamps.length > 50)) {
-				console.log("Creating fake geo");
-				_createFakeGeo(diary);
-				_doSave(diary);
-			}
+			// if(!(diary.geo && diary.geo.footprint && diary.geo.timestamps && diary.geo.timestamps.length > 50)) {
+			// 	console.log("Creating fake geo");
+			// 	_createFakeGeo(diary);
+			// 	_doSave(diary);
+			// }
 			
+			/*
 			var saveDiary = false;
 			if(_.isArray(diary.contacts)) {
 				_.forEach(diary.contacts, function(contact) {
@@ -442,67 +491,106 @@ function MapTab(){
 			if(saveDiary) {
 				_doSave(diary);
 			}
+			*/
+
+			// TODO: Look for cached version in localStorage or window.geo variable
+			console.log("looking for footprint");
+
+			var mainFootprint = null;
+			var key = moment(diary.eventDate).format('YYYYMMDD');
+			console.log("key", key);
+			if(window.geo && window.geo[key]) {
+				console.log('window.geo[key]',window.geo[key]);
+				mainFootprint = window.geo[key].footprint;
+			}
+			if(!mainFootprint) {
+				console.log("didn't get from window.geo");
+				var fromStorage = window.localStorage.getItem(key);
+				console.log('fromStorage',fromStorage);
+				if(fromStorage) {
+					var obj = JSON.parse(fromStorage);
+					console.log('obj', obj);
+					if(!window.geo) window.geo = {};
+					window.geo[key] = obj;
+					mainFootprint = window.geo[key].footprint;					
+				}			
+			}
+			
+			if(!mainFootprint) {
+				console.log("didn't get from LS");
+				mainFootprint = diary.geo.footprint;
+			}
+
+			console.log("mainFootprint");
+			console.log(mainFootprint);
+			
+			// mainFootprint = {
+			// 	'type': "LineString",
+			// 	'coordinates': [
+			// 		[-73.9405, 41.3839, null],
+			// 		[-73.913, 41.18, null],
+			// 		[-73.903, 41.12, null]
+			// 	]
+			// };
+			
 			
 
-			var footprint = diary.geo.footprint;
-		
-			
-			
+			if(diary.contacts) {
+				for( var i=0; i < diary.contacts.length; i++){
 
-			for( var i=0; i < diary.contacts.length; i++){
+					var heading = 	'<strong>' 					+ diary.contacts[i].domainName + ': '+ diary.contacts[i].title+ '</strong>';
+					var body = 	  	'Observer: ' 				+ diary.contacts[i].observerId;
+					body += 	  	'<br>Taxon: ' 				+ diary.contacts[i].taxon;
+					body +=       	'<br>Subject ID: '			+ diary.contacts[i].subjectId;
+					body += 		'<br>Sampling Protocol: '	+ diary.contacts[i].samplingProtocol;
+					body += 		'<br>Basis of record: '		+ diary.contacts[i].basisOfRecord;
+					body += 		'<br>Remarks: '				+ diary.contacts[i].remarks;
 
-				var heading = 	'<strong>' 					+ diary.contacts[i].domainName + ': '+ diary.contacts[i].title+ '</strong>';
-				var body = 	  	'Observer: ' 				+ diary.contacts[i].observerId;
-				body += 	  	'<br>Taxon: ' 				+ diary.contacts[i].taxon;
-				body +=       	'<br>Subject ID: '			+ diary.contacts[i].subjectId;
-				body += 		'<br>Sampling Protocol: '	+ diary.contacts[i].samplingProtocol;
-				body += 		'<br>Basis of record: '		+ diary.contacts[i].basisOfRecord;
-				body += 		'<br>Remarks: '				+ diary.contacts[i].remarks;
+					var contactId = diary.contacts[i].id;
 
-				var contactId = diary.contacts[i].id;
-
-				_getGeo( diary.contacts[i].beginTime, diary.contacts[i].endTime ).then(function(footprint) {
-					console.log("footprint loop " + i);
-					console.log(footprint);
+					_getGeo( diary.contacts[i].beginTime, diary.contacts[i].endTime ).then(function(footprint) {
+						console.log("footprint loop " + i);
+						console.log(footprint);
 				
 					
-					var markerOptions = {
-						circleOnly: false,//showContactsAsDotsOnly,
-						pinColor: 'none',
-						footprint: null,
-						draggable: true,
-						id: contactId,
-						heading: heading,
-						body: body,
-					};
+						var markerOptions = {
+							circleOnly: false,//showContactsAsDotsOnly,
+							pinColor: 'none',
+							footprint: null,
+							draggable: true,
+							id: contactId,
+							heading: heading,
+							body: body,
+						};
 					
 					
-					if(footprint.type == 'Point') {
-						markerOptions.footprint = footprint;												
-						_renderGeoJsonMarker(markerOptions);
-					}else if(footprint.type == 'LineString') {
-						var pathOptions = {
-								color: "#555655", // ff7800
-								weight: 2,
-								opacity: 1
-							};
-						_renderGeoJsonPath(footprint, pathOptions);					
-						// place point at start of contact
-						if( footprint.coordinates.length > 0 ){
-							var newCoordinatesArray = footprint.coordinates[0];
-							markerOptions.footprint = { type: "Point", coordinates: newCoordinatesArray };							
+						if(footprint.type == 'Point') {
+							markerOptions.footprint = footprint;												
 							_renderGeoJsonMarker(markerOptions);
-						}
+						}else if(footprint.type == 'LineString') {
+							var pathOptions = {
+									color: "#555655", // ff7800
+									weight: 2,
+									opacity: 1
+								};
+							_renderGeoJsonPath(footprint, pathOptions);					
+							// place point at start of contact
+							if( footprint.coordinates.length > 0 ){
+								var newCoordinatesArray = footprint.coordinates[0];
+								markerOptions.footprint = { type: "Point", coordinates: newCoordinatesArray };							
+								_renderGeoJsonMarker(markerOptions);
+							}
 					
-					}
+						}
 
-				});
+					});
 				
-			}			
+				}							
+			}
 			
 			
 			
-			
+			console.log('HERE');
 			
 			
 			
@@ -512,7 +600,7 @@ function MapTab(){
 			var showContactsAsDotsOnly = false;
 			//if(diary._id != _context.entity._id) { 
 			if(diary.domainName != _context.entity.domainName) { 
-				
+				console.log('here b');
 				// if we're looking at something other than the diary
 				showContactsAsDotsOnly = true;
 				
@@ -574,18 +662,19 @@ function MapTab(){
 			}
 
 
-
+			
 
 			
 			
 			var pathOptions = {
-					color: "#bbbcbb", //(showContactsAsDotsOnly) ? "#bbbcbb" : "#ff7800",				
+					// color: "#bbbcbb", //(showContactsAsDotsOnly) ? "#bbbcbb" : "#ff7800",
+					color: "#ff0000", //(showContactsAsDotsOnly) ? "#bbbcbb" : "#ff7800",				
 					weight: 2,
 					opacity: 1
 				};
 			
-			
-			_renderGeoJsonPath(diary.geo.footprint, pathOptions);
+				console.log('DOWN HERE');
+			_renderGeoJsonPath(mainFootprint, pathOptions);
 			_renderChildren(_context.entity, 0);		
 			
 			map.show();
