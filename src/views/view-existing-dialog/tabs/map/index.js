@@ -321,7 +321,7 @@ function MapTab(){
 
 
 	function _renderGeoJsonPath(geoJson, pathOptions){
-		
+		console.log('_renderGeoJsonPath', geoJson);
 		var path = L.geoJson(geoJson, {
 			style: pathOptions
 		});
@@ -496,85 +496,101 @@ function MapTab(){
 			// TODO: Look for cached version in localStorage or window.geo variable
 			console.log("looking for footprint");
 
-			var footprint = null;
+			var mainFootprint = null;
 			var key = moment(diary.eventDate).format('YYYYMMDD');
 			console.log("key", key);
-			if(window.geo[key]) {
-				footprint = window.geo[key].footprint;
+			if(window.geo && window.geo[key]) {
+				console.log('window.geo[key]',window.geo[key]);
+				mainFootprint = window.geo[key].footprint;
 			}
-			if(!footprint) {
+			if(!mainFootprint) {
 				console.log("didn't get from window.geo");
 				var fromStorage = window.localStorage.getItem(key);
+				console.log('fromStorage',fromStorage);
 				if(fromStorage) {
-					window.geo[key] = JSON.parse(fromStorage);
-					footprint = window.geo[key].footprint;					
+					var obj = JSON.parse(fromStorage);
+					console.log('obj', obj);
+					if(!window.geo) window.geo = {};
+					window.geo[key] = obj;
+					mainFootprint = window.geo[key].footprint;					
 				}			
 			}
 			
-			if(!footprint) {
+			if(!mainFootprint) {
 				console.log("didn't get from LS");
-				footprint = diary.geo.footprint;
+				mainFootprint = diary.geo.footprint;
 			}
 
-			console.log("footprint");
-			console.log(footprint);
+			console.log("mainFootprint");
+			console.log(mainFootprint);
+			
+			// mainFootprint = {
+			// 	'type': "LineString",
+			// 	'coordinates': [
+			// 		[-73.9405, 41.3839, null],
+			// 		[-73.913, 41.18, null],
+			// 		[-73.903, 41.12, null]
+			// 	]
+			// };
 			
 			
 
-			for( var i=0; i < diary.contacts.length; i++){
+			if(diary.contacts) {
+				for( var i=0; i < diary.contacts.length; i++){
 
-				var heading = 	'<strong>' 					+ diary.contacts[i].domainName + ': '+ diary.contacts[i].title+ '</strong>';
-				var body = 	  	'Observer: ' 				+ diary.contacts[i].observerId;
-				body += 	  	'<br>Taxon: ' 				+ diary.contacts[i].taxon;
-				body +=       	'<br>Subject ID: '			+ diary.contacts[i].subjectId;
-				body += 		'<br>Sampling Protocol: '	+ diary.contacts[i].samplingProtocol;
-				body += 		'<br>Basis of record: '		+ diary.contacts[i].basisOfRecord;
-				body += 		'<br>Remarks: '				+ diary.contacts[i].remarks;
+					var heading = 	'<strong>' 					+ diary.contacts[i].domainName + ': '+ diary.contacts[i].title+ '</strong>';
+					var body = 	  	'Observer: ' 				+ diary.contacts[i].observerId;
+					body += 	  	'<br>Taxon: ' 				+ diary.contacts[i].taxon;
+					body +=       	'<br>Subject ID: '			+ diary.contacts[i].subjectId;
+					body += 		'<br>Sampling Protocol: '	+ diary.contacts[i].samplingProtocol;
+					body += 		'<br>Basis of record: '		+ diary.contacts[i].basisOfRecord;
+					body += 		'<br>Remarks: '				+ diary.contacts[i].remarks;
 
-				var contactId = diary.contacts[i].id;
+					var contactId = diary.contacts[i].id;
 
-				_getGeo( diary.contacts[i].beginTime, diary.contacts[i].endTime ).then(function(footprint) {
-					console.log("footprint loop " + i);
-					console.log(footprint);
+					_getGeo( diary.contacts[i].beginTime, diary.contacts[i].endTime ).then(function(footprint) {
+						console.log("footprint loop " + i);
+						console.log(footprint);
 				
 					
-					var markerOptions = {
-						circleOnly: false,//showContactsAsDotsOnly,
-						pinColor: 'none',
-						footprint: null,
-						draggable: true,
-						id: contactId,
-						heading: heading,
-						body: body,
-					};
+						var markerOptions = {
+							circleOnly: false,//showContactsAsDotsOnly,
+							pinColor: 'none',
+							footprint: null,
+							draggable: true,
+							id: contactId,
+							heading: heading,
+							body: body,
+						};
 					
 					
-					if(footprint.type == 'Point') {
-						markerOptions.footprint = footprint;												
-						_renderGeoJsonMarker(markerOptions);
-					}else if(footprint.type == 'LineString') {
-						var pathOptions = {
-								color: "#555655", // ff7800
-								weight: 2,
-								opacity: 1
-							};
-						_renderGeoJsonPath(footprint, pathOptions);					
-						// place point at start of contact
-						if( footprint.coordinates.length > 0 ){
-							var newCoordinatesArray = footprint.coordinates[0];
-							markerOptions.footprint = { type: "Point", coordinates: newCoordinatesArray };							
+						if(footprint.type == 'Point') {
+							markerOptions.footprint = footprint;												
 							_renderGeoJsonMarker(markerOptions);
-						}
+						}else if(footprint.type == 'LineString') {
+							var pathOptions = {
+									color: "#555655", // ff7800
+									weight: 2,
+									opacity: 1
+								};
+							_renderGeoJsonPath(footprint, pathOptions);					
+							// place point at start of contact
+							if( footprint.coordinates.length > 0 ){
+								var newCoordinatesArray = footprint.coordinates[0];
+								markerOptions.footprint = { type: "Point", coordinates: newCoordinatesArray };							
+								_renderGeoJsonMarker(markerOptions);
+							}
 					
-					}
+						}
 
-				});
+					});
 				
-			}			
+				}							
+			}
 			
 			
 			
-			
+			console.log('HERE');
 			
 			
 			
@@ -584,7 +600,7 @@ function MapTab(){
 			var showContactsAsDotsOnly = false;
 			//if(diary._id != _context.entity._id) { 
 			if(diary.domainName != _context.entity.domainName) { 
-				
+				console.log('here b');
 				// if we're looking at something other than the diary
 				showContactsAsDotsOnly = true;
 				
@@ -646,18 +662,19 @@ function MapTab(){
 			}
 
 
-
+			
 
 			
 			
 			var pathOptions = {
-					color: "#bbbcbb", //(showContactsAsDotsOnly) ? "#bbbcbb" : "#ff7800",				
+					// color: "#bbbcbb", //(showContactsAsDotsOnly) ? "#bbbcbb" : "#ff7800",
+					color: "#ff0000", //(showContactsAsDotsOnly) ? "#bbbcbb" : "#ff7800",				
 					weight: 2,
 					opacity: 1
 				};
 			
-			
-			_renderGeoJsonPath(diary.geo.footprint, pathOptions);
+				console.log('DOWN HERE');
+			_renderGeoJsonPath(mainFootprint, pathOptions);
 			_renderChildren(_context.entity, 0);		
 			
 			map.show();
