@@ -176,6 +176,10 @@ function ViewExistingDialog(opts){
 
 		_updateAddButton();
 
+
+		tabEdit.addTriangleHandlers();
+
+
 		return true;
 	}
 
@@ -208,7 +212,7 @@ function ViewExistingDialog(opts){
 			console.log("setting up header click");
 			$header.on('click', function(){
 				_tabClick.call(this, arguments[0], tab);
-				
+
 				var usernameDiv = $content.find('.username-label-view-existing-dialogue');
 				if( usernameDiv != null ){
 					var usernameDivHeight = usernameDiv.height();
@@ -243,6 +247,7 @@ function ViewExistingDialog(opts){
 		}
 
 		previousTab = clickedTab;
+
 	}
 
 	modal = new Modal({
@@ -323,7 +328,6 @@ function ViewExistingDialog(opts){
 		var form = formBuilder.buildDataEntryForm(domain);
 
 
-//		$('input').css('background-color', '#dddddd');
 
 		var $btnSnapshot = $content.find('.js-snapshot'),
 			$btnFollow = $content.find('.js-follow'),
@@ -352,44 +356,47 @@ function ViewExistingDialog(opts){
 				});
 		});
 
-		$btnAddChild.click(function(ev){
-			console.log('add contact button jrc');
-			ev.preventDefault();
+		
+		// this was causing duplicate drop downs because the edit tab creates them 
 
-			if ($(this).hasClass('disabled')) return console.log('ignore click');
-
-			var descMgr = domain.getService('description-manager');
-			var title = 'Add a child to ' + descMgr.getShortDescription(entity);
-
-
-			var m = new CreateSelectMenu({
-				title: title,
-				domains: myDomains.filter(function(d){return !d.inline;}),
-				crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
-			});
-
-			m.on('created', function(child){
-				var childDomain = app.getDomain(child.domainName),
-					entityManager = childDomain.getService('entity-manager');
-
-				entityManager.addToParent(entity, child);
-
-				_doSave()
-					.then(function(info){
-						rootEntity._id = info.id;
-						rootEntity._rev = info.rev;
-
-					_changeEntity(child);
-					_updateAddButton();
-					breadcrumb.add({context:child, label: _getLabel(child), color: _getColor(child)});
-				})
-				.catch(function(err){
-					console.error(err);
-				});
-
-			});
-			m.show(ev);
-		});
+		// $btnAddChild.click(function(ev){
+		// 	console.log('add contact button jrc');
+		// 	ev.preventDefault();
+		//
+		// 	if ($(this).hasClass('disabled')) return console.log('ignore click');
+		//
+		// 	var descMgr = domain.getService('description-manager');
+		// 	var title = 'Add a child to ' + descMgr.getShortDescription(entity);
+		//
+		//
+		// 	var m = new CreateSelectMenu({
+		// 		title: title,
+		// 		domains: myDomains.filter(function(d){return !d.inline;}),
+		// 		crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
+		// 	});
+		//
+		// 	m.on('created', function(child){
+		// 		var childDomain = app.getDomain(child.domainName),
+		// 			entityManager = childDomain.getService('entity-manager');
+		//
+		// 		entityManager.addToParent(entity, child);
+		//
+		// 		_doSave()
+		// 			.then(function(info){
+		// 				rootEntity._id = info.id;
+		// 				rootEntity._rev = info.rev;
+		//
+		// 			_changeEntity(child);
+		// 			_updateAddButton();
+		// 			breadcrumb.add({context:child, label: _getLabel(child), color: _getColor(child)});
+		// 		})
+		// 		.catch(function(err){
+		// 			console.error(err);
+		// 		});
+		//
+		// 	});
+		// 	m.show(ev);
+		// });
 
 	function _handleSave(keepOpen){
 		var now = Date.now();

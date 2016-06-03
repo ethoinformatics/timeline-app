@@ -18,6 +18,8 @@ var util = require('util');
 
 
 function _createChildCollectionData(parentDomain, childDomains){
+	console.log('_createChildCollectionData');
+	console.log(parentDomain, childDomains);
 	var lookup = _.chain(childDomains)
 		.map(function(d){
 			// sorry, cheap hack todo: hide this somewhere
@@ -40,7 +42,29 @@ function _createChildCollectionData(parentDomain, childDomains){
 		});
 }
 
+// this allows us to get child, grandchild, great-grandchild and so on for any entity 
+function _findRecursiveByName(entity, name, results) {
+	if(!results) results = [];
+	
+	for(var k in entity) {
+		var v = entity[k];
+		if(k == name) {
+			for(var i = 0; i < v.length; i++) {
+				results.push(v[i]);
+			}
+		}
+		if(typeof v == 'object') {
+			_findRecursiveByName(v, name, results);
+		}
+	}
+	
+	return results;
+}
+
+
+
 function EditTab(opts){
+
 	console.log('Edittab');
 	console.log(opts);
 	EventEmitter.call(this);
@@ -87,7 +111,15 @@ function EditTab(opts){
 		var standardChildren = _createChildCollectionData(ctx.domain, standardChildDomains);
 		console.log("ctx", ctx);
 		standardChildren.forEach(function(item){
-				item.entities = (ctx.entity[item.collectionName] || [])
+
+			// var results = _findRecursiveByName(ctx.entity, item.collectionName);
+			// console.log('RECURSIVE RESULTS');
+			// console.log(results);
+			
+				
+
+				// item.entities = (ctx.entity[item.collectionName] || [])
+			item.entities = _findRecursiveByName(ctx.entity, item.collectionName)
 					.map(function(child){
 						// TODO: Use description manager
 						var title = child.name;
@@ -112,6 +144,15 @@ function EditTab(opts){
 							truncatedName: title // ctx.descManager.getLongDescription(child)//	child.name || child.title || child._id
 						};
 					});
+
+					// so the header know whether or not it has a triangle	
+					item.collectionHeaderData = {
+						collectionHeaderName: item.collectionName,
+						triangleDisplay: (item.entities < 1) ? 'none' : 'inline-block',
+						triangleOpacity: (item.entities < 1) ? '0.2' : '1.0',
+						itemCount: item.entities.length,
+					};
+					
 			});
 
 		self.$element
@@ -138,6 +179,9 @@ function EditTab(opts){
 		self.$element
 			.find('.float-right')
 			.css('float', 'right');
+
+
+
 
 
 			
@@ -264,9 +308,12 @@ function EditTab(opts){
 		console.log("$btnAddChild");
 		console.log($btnAddChild);
 
+
+		// This adds a drop down to any add (+) button
 		self.$element.find('.js-child-add').each(function( index ){
 			
 			$(this).on('click', function(ev){
+
 				var $this = $(this),
 					collectionName = $this.data('collection'),
 					domainNames = $this.data('domains').split(','),
@@ -278,76 +325,38 @@ function EditTab(opts){
 				});
 
 				popupButtons.on('click', function(domainName){
-//					_addInlineChild(collectionName, domainName);
+					//_addInlineChild(collectionName, domainName);
+					// var descMgr = domain.getService('description-manager');
+					// var title = 'Add a child to ' + descMgr.getShortDescription(entity);
 
-////////////
+					var m = new CreateSelectMenu({
+						title: domainName,
+						domains: domains.filter(function(d){return !d.inline;}),
+						//crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
+					});
 
+					m.on('created', function(child){
+						// This seems to never get called
+						var childDomain = app.getDomain(child.domainName),
+							entityManager = childDomain.getService('entity-manager');
 
-	// var descMgr = domain.getService('description-manager');
-	// var title = 'Add a child to ' + descMgr.getShortDescription(entity);
+						console.log('created child');
+						console.log(_context.entity);
+						console.log(child);
+						entityManager.addToParent(_context.entity, child);
 
+					});
+					m.show(ev);
 
-	var m = new CreateSelectMenu({
-		title: domainName,
-		domains: domains.filter(function(d){return !d.inline;}),
-		//crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
-	});
-
-	m.on('created', function(child){
-		// This seems to never get called
-		var childDomain = app.getDomain(child.domainName),
-			entityManager = childDomain.getService('entity-manager');
-
-			console.log('created child');
-			console.log(_context.entity);
-			console.log(child);
-		entityManager.addToParent(_context.entity, child);
-
-	// var rootDomain = app.getDomain(_context.entity.domainName),
-	// 	rootEntityManager = rootDomain.getService('entity-manager');
-	//
-	// rootEntityManager.save(child)
-	// 	.then(function(info){
-	// 		child._id = info.id;
-	// 		child._rev = info.rev;
-	//
-	// 		return info;
-	// 	});
-	
-	
-
-
-		// _doSave().then(function(info){
-// 				console.log("info.id");
-// 				console.log(info.id);
-// 				child._id = info.id;
-// 				child._rev = info.rev;
-//
-// 			//_changeEntity(child);
-// 			//_updateAddButton();
-// 			//breadcrumb.add({context:child, label: _getLabel(child), color: _getColor(child)});
-// 		})
-// 		.catch(function(err){
-// 			console.error(err);
-// 		});
-
-});
-	m.show(ev);
-
-
-//////////////
 					popupButtons.remove();
 				});
 
 				popupButtons.show(ev);
 			});
-			// $(this).focusout(function(){
-			// 	console.log('focusout');
-			// });
+
 		});
 
-		self.$element.find('.js-inline-add')
-			.on('click', function(ev){
+		self.$element.find('.js-inline-add').on('click', function(ev){
 				var $this = $(this),
 					collectionName = $this.data('collection'),
 					domainNames = $this.data('domains').split(','),
@@ -364,9 +373,10 @@ function EditTab(opts){
 				});
 
 				popupButtons.show(ev);
-			});
+		});
 
 	};
+
 
 	self.$element.on('tap', '.js-child-link', function(){
 		var $this = $(this),
@@ -379,6 +389,78 @@ function EditTab(opts){
 		self.loseFocus();
 		_context.descend(child);
 	});
+
+	
+	// triangle / accordian controls
+	console.log('make toggleTriangle');
+	// self.$element.on('tap', '.item.item-divider.header', function(){
+	//
+	// 	$( this ).nextAll().toggle();
+	// 	if( $( this ).next().is(":visible") ) {
+	// 		$( this ).find('.tri0').addClass('toggleTriangle');
+	// 	}else{
+	// 		$( this ).find('.tri0').removeClass('toggleTriangle');
+	// 	}
+	//
+	// });
+	
+	
+	self.addTriangleHandlers = function(){
+		console.log('addTriangleHandlers');
+// 		self.$element.off('touchstart', '.item.item-divider.header');
+// 		var tapCount = 0;
+// 		self.$element.on('touchstart', '.item.item-divider.header', function(e){
+// 				// if(tapCount > 0){
+// 				// 	tapCount = 0;
+// 				// 	return false;
+// 				// }
+// 			// e.preventDefault();
+// 			//     e.stopImmediatePropagation();
+//
+// 			console.log('tap me?');
+// 			console.log(this);
+// 			$( this ).nextAll().toggle();
+// 			if( $( this ).next().is(":visible") ) {
+// 				$( this ).find('.tri0').addClass('toggleTriangle');
+// 			}else{
+// 				$( this ).find('.tri0').removeClass('toggleTriangle');
+// 			}
+// //			tapCount++;
+// 		});
+		
+		
+		self.$element.find('.item.item-divider.header').each(function( index ){
+
+			console.log('make touch');
+			$(this).off('touchstart');
+			$(this).off('touchstart').on('touchstart', function(e){
+				// e.preventDefault();
+				//     e.stopImmediatePropagation();
+
+				$( this ).nextAll().toggle();
+				if( $( this ).next().is(":visible") ) {
+					$( this ).find('.tri0').addClass('toggleTriangle');
+				}else{
+					$( this ).find('.tri0').removeClass('toggleTriangle');
+				}
+
+				if(e.handled !== true) // This will prevent event triggering more then once
+		        {
+		            //alert('Clicked');
+		            e.handled = true;
+		        }
+			});
+		});
+	};
+	
+	self.toggleAccordian = function(){
+		$( this ).nextAll().toggle();
+		if( $( this ).next().is(":visible") ) {
+			$( this ).find('.tri0').addClass('toggleTriangle');
+		}else{
+			$( this ).find('.tri0').removeClass('toggleTriangle');
+		}
+	};
 
 	self.loseFocus = function(){
 		console.log("loseFocus");

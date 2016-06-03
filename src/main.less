@@ -90,3 +90,55 @@ input[type=text], input[type=date] { background-color: #dedede; }
 		position:relative;
 	}
 }
+
+/* headers to data */
+span.item-count { 
+	color: #999;
+	padding-left: 7px;
+
+	font-weight: normal; 
+	
+}
+.item.item-divider.header {
+	padding-top: 8px;
+}
+
+.item.item-divider.header > div.non-button-content { display: inline-block; margin-top: 5px;  } 
+
+/* triangles: need to add rotate class */
+.item.js-child-link {
+	display: none;
+}
+	
+.tri0 {
+    width: 0;
+    height: 0;
+	margin-right: 14px;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid black;
+    float: left;
+    -moz-transition: -moz-transform .2s;
+    -webkit-transition: -webkit-transform .2s;
+    -o-transition: -o-transform .2s;
+    transition: transform .2s;
+}
+
+.toggleTriangle {
+    -moz-transform: rotate(90deg);
+     -o-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+
+
+
+
+
+
+
+
+
+
+
+

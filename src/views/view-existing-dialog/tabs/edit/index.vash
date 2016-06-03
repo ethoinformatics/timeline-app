@@ -9,13 +9,19 @@
 
 	@model.standardChildren.forEach(function(data){
 	<ul class="list list-inset accordian js-collection-@data.collectionName">
-		<li class="item item-divider header">
-			@data.collectionName 
+		<li class="item item-divider header">	
+				
+				<div class="non-button-content" style=" ">
+				
+			<div class="tri0" style="opacity:@data.collectionHeaderData.triangleOpacity;"></div> @data.collectionHeaderData.collectionHeaderName <span class="item-count">@data.collectionHeaderData.itemCount<span>
+			
+</div>
+
+
+
+			 
 			 <button type="button" data-collection="@data.collectionName" data-domains="@data.domainNames" class="js-child-add child-add button button-balanced button-small float-right "><i class="icon ion-plus-circled"></i></button>
-			 <!--
-			 js-child-add
-			  js-inline-add 
-			  -->
+			 
 		</li>
 		@data.entities.forEach(function(childEntity){
 			<li title= "@childEntity._id" class="item js-child-link" data-collection="@data.collectionName" data-id="@childEntity._id">
@@ -29,7 +35,7 @@
 	@model.childData.forEach(function(data){
 		<ul class="list list-inset accordian js-collection-@data.collectionName">
 		<li class="item item-divider header item-button-right">
-			@data.collectionName 
+			<div class="tri0"></div> @data.collectionName  <span class="item-count">@data.entities.length<span>
 			<button data-collection="@data.collectionName" data-domains="@data.domainNames" class="js-inline-add button-small button header-button button-balanced">
 				<i class="ion ion-plus-circled"></i>
 			</button>
