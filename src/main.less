@@ -76,6 +76,8 @@ input[type=text], input[type=date] { background-color: #dedede; }
  
  textarea.remarks {
 	 padding: 20px;
+     font-size: 16px;
+     line-height: 140%;
  }
 	 
 #left-menu{
@@ -132,11 +134,40 @@ span.item-count {
 }
 
 .item-select select {
-	padding: 2px 48px 2px 16px;
-	margin: 10px 10px 0px 0px;
+	padding: 4px 48px 4px 16px;
+	margin: 8px 10px 0px 0px;
 	background: none;
 	border: solid 1px #ccc;
 }
+
+
+.js-breadcrumb-close {
+	padding: 0px;
+}
+.home-crumb-container.crumb-container:first-child {
+	padding-left: 0px;
+		margin-left: 0px;	
+}
+.etho-breadcrumb .breadcrumb a:first-child, .etho-breadcrumb .breadcrumb span.crumb-container:first-child a {
+	padding-left: 0px;
+	margin-left: 0px;	
+}
+.js-show-left-menu.button.button-icon.icon.ion-close {
+/*	color: #fff;
+	background-color: #000000;
+*/	
+}
+#js-show-left-menu-modal-version {
+	color: #fff;
+		background-color: none;
+/*		position: absolute;
+		z-index: 9999; */
+}
+
+#left-menu {
+	width: 100%;
+}
+
 
 
 

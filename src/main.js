@@ -67,6 +67,7 @@ ready(function appLoad(){
 	// create listeners
 	addButton.on('created', function(){ listView.refresh(); });
 	sideMenu.on('click', function(moduleName){
+
 		sideMenu.close();
 		listView.restoreExistingDialog();
 

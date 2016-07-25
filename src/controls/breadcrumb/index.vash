@@ -7,10 +7,26 @@
 	
 		<span class="home-crumb-container crumb-container">
   	  		
-			<a href="#" class="js-breadcrumb-close"><i class="icon ion-home"></i></a>
-			<span class="spacer">
-				<span class="space"></span>
+
+
+					<a href="#" class="js-breadcrumb-close" style="padding-left: 0px;">
+						<div style="padding: 0px 15px 0px 15px;">					
+							<i class="icon ion-home"></i>
+
+			<span style="left: 15px;" class="spacer">
+				<span style="z-index: 1; box-shadow: 2px -2px 0 2px rgba(0,0,0,.4),3px -3px 0 2px rgba(255,255,255,.1); border-radius: 0 5px 0 50px; border-right: solid 1px #999999; border-top: solid 1px #999999; margin-right: 0px; padding-right: 0px;" class="space"></span>
 			</span>
+
+						</div>
+			
+					</a>
+
+
+
+
+			
+
+
 		</span>
 	</div>
 </div>

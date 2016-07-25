@@ -98,18 +98,47 @@ function Modal(options){
 	};
 
 	this.peekBehindModal = function( peekBehind ){
-		velocity($modal, {left: peekBehind ? '240':'0'}, {
+		
+		
+		var windowWidth = parseInt( $(window).width() );
+
+		//alert('ppek '+windowWidth);
+
+		velocity($modal, {left: peekBehind ? windowWidth.toString():'0'}, {
 			duration:140,
 			complete: function(){
 
 			},
 		});
-		velocity($('#main-container'), {left: peekBehind ? '240':'0'}, {
+		
+		var $showLeftMenuBtnWithHamburger = $('#js-show-left-menu-modal-version');
+		if( peekBehind ){
+			$showLeftMenuBtnWithHamburger.removeClass('ion-navicon');
+			$showLeftMenuBtnWithHamburger.addClass('ion-close');
+			$showLeftMenuBtnWithHamburger.css('left', '-60px');
+			$showLeftMenuBtnWithHamburger.css('z-index', '10000');
+			$showLeftMenuBtnWithHamburger.css('position', 'absolute');			
+			$showLeftMenuBtnWithHamburger.css('color', '#444');			
+			$modal.css('overflow', 'visible');
+		}else{
+			$showLeftMenuBtnWithHamburger.addClass('ion-navicon');
+			$showLeftMenuBtnWithHamburger.removeClass('ion-close');
+			$showLeftMenuBtnWithHamburger.css('left', '0px');
+			$showLeftMenuBtnWithHamburger.css('z-index', '1');			
+			$showLeftMenuBtnWithHamburger.css('color', '#ffffff');			
+			$showLeftMenuBtnWithHamburger.css('position', 'relative');			
+			$modal.css('overflow', 'hidden');
+		}
+		
+		velocity($('#main-container'), {left: peekBehind ? windowWidth.toString():'0'}, {
 			duration:140,
 			complete: function(){
 
 			},
 		});
+
+		
+		
 		var mask = $('.mask');
 		console.log(mask, $modal);
 		if(peekBehind) {

@@ -7,6 +7,7 @@ var velocity = require('velocity-animate'),
 	
 
 function SideMenu(opt){
+	//var $body = $('body');
 	var $content = $(opt.content);
 	var $mask = $('.mask');
 	var self = new EventEmitter();
@@ -54,7 +55,9 @@ function SideMenu(opt){
 
 	function openCloseLeftMenu(){
 		console.log("oCLM");
-		velocity($content, {left: isLeftMenuOpen? '0':'240'}, {
+		
+		var leftEdgeMainContent = parseInt( $( window ).width() ).toString();
+		velocity($content, {left: isLeftMenuOpen? '0': leftEdgeMainContent }, {
 			duration:140,
 			complete: function(){
 
@@ -72,6 +75,21 @@ function SideMenu(opt){
 		ev.stopPropagation();
 
 		openCloseLeftMenu();
+		
+	//	$(this).hide();
+		if( isLeftMenuOpen ) {
+
+			$(this).removeClass('ion-navicon');
+			$(this).addClass('ion-close');	
+			$(this).css('left', '-60px');		
+		}else{
+
+			$(this).addClass('ion-navicon');
+			$(this).removeClass('ion-close');			
+			$(this).css('left', '0px');		
+
+		}
+		
 	});
 
 	return self;
