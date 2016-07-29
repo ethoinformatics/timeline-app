@@ -63,7 +63,7 @@ function _findRecursiveByName(entity, name, results) {
 
 
 
-function EditTab(opts){
+function EditTab(opts, listViewReference){
 
 	console.log('Edittab');
 	console.log(opts);
@@ -74,6 +74,8 @@ function EditTab(opts){
 	self.label = 'Data';
 	self.$element = $(scrollTmpl({}));
 	var	rootEntity = opts.rootEntity || opts.entity;
+
+	self.listViewReference = listViewReference;
 
 
 	self.setContext = function(ctx){
@@ -344,7 +346,7 @@ function EditTab(opts){
 						console.log(_context.entity);
 						console.log(child);
 						entityManager.addToParent(_context.entity, child);
-
+						self.saveAndReloadDiary();					
 					});
 					m.show(ev);
 
@@ -355,6 +357,8 @@ function EditTab(opts){
 			});
 
 		});
+
+
 
 		self.$element.find('.js-inline-add').on('click', function(ev){
 				var $this = $(this),
@@ -375,6 +379,23 @@ function EditTab(opts){
 				popupButtons.show(ev);
 		});
 
+	};
+
+	
+	self.saveAndReloadDiary = function(){
+		console.log('saveAndReloadDiary');
+		var rootDomain = app.getDomain(rootEntity.domainName),
+			rootEntityManager = rootDomain.getService('entity-manager');
+			rootEntityManager.save(rootEntity) // was diary
+				.then(function(info){
+					console.log("Save success");
+					// diary._id = info.id;
+					// diary._rev = info.rev;
+					self.listViewReference.itemReload("diary", info.id);
+					return info;
+				}).catch(function(err) {
+					console.error(err);
+				});		
 	};
 
 
@@ -453,6 +474,7 @@ function EditTab(opts){
 		});
 	};
 	
+	
 	self.toggleAccordian = function(){
 		$( this ).nextAll().toggle();
 		if( $( this ).next().is(":visible") ) {
@@ -471,25 +493,24 @@ function EditTab(opts){
 		// update the entity. Bad name! 
 		editForm.updateFields();
 		
-	var rootDomain = app.getDomain(rootEntity.domainName),
-		rootEntityManager = rootDomain.getService('entity-manager');
+		var rootDomain = app.getDomain(rootEntity.domainName),
+			rootEntityManager = rootDomain.getService('entity-manager');
 
-		console.log("DO SAVE");
-		console.log("Root entity:");
-		console.log(rootEntity);
+			console.log("DO SAVE");
+			console.log("Root entity:");
+			console.log(rootEntity);
 
-		// rootEntityManager.getDiary(rootEntity).then(function(diary) {
-		rootEntityManager.save(rootEntity) // was diary
-			.then(function(info){
-				console.log("Save success");
-				// diary._id = info.id;
-				// diary._rev = info.rev;
-
-				return info;
-			}).catch(function(err) {
-				console.error(err);
-			});			
-		// });
+			// rootEntityManager.getDiary(rootEntity).then(function(diary) {
+			rootEntityManager.save(rootEntity) // was diary
+				.then(function(info){
+					console.log("Save success");
+					// diary._id = info.id;
+					// diary._rev = info.rev;
+					return info;
+				}).catch(function(err) {
+					console.error(err);
+				});			
+			// });
 	
 		
 //rootEntity		//

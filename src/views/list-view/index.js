@@ -119,7 +119,39 @@ function ListView(){
 				if (!entity) return window.alert('unable to find entity');
 				// load page (with tabs) for this record 
 				console.log('loaded entity');
-				var m = new ViewExistingDialog({ entity: entity, });
+				var m = new ViewExistingDialog({ entity: entity, listViewReference: self });
+				m.show( true );
+				self.viewExistingDialog = m;
+				var $showLeftMenu = $('#js-show-left-menu-modal-version');
+				$showLeftMenu.click(function(ev){
+					console.log('showLeftMenu:click');
+					ev.stopPropagation();
+					self.dialogPushedOver = !self.dialogPushedOver;					
+					m.peekBehindDialog( self.dialogPushedOver );
+				});
+				
+			})
+			.catch(function(err){
+				console.error(err);
+			});
+	}
+	
+	self.itemReload = function(domainName, _id){
+		self.viewExistingDialog.remove();
+		self.viewExistingDialog = null;
+		console.log("ListView itemReload");
+//		return;
+		console.log('opening: ' + domainName + ' ' + _id);
+		var domain = app.getDomain(domainName),
+			entityManager = domain.getService('entity-manager');
+
+		// get the item clicked
+		entityManager.byId(_id)
+			.then(function(entity){
+				if (!entity) return window.alert('unable to find entity');
+				// load page (with tabs) for this record 
+				console.log('loaded entity');
+				var m = new ViewExistingDialog({ entity: entity, listViewReference: self });
 				m.show( true );
 				self.viewExistingDialog = m;
 				var $showLeftMenu = $('#js-show-left-menu-modal-version');

@@ -75,12 +75,40 @@ function MapView(){
 
 
 
-	L.tileLayer( app.setting('tile-layer-url'), {
+
+
+	///////////////
+	//
+	// OSM TILES
+	//
+	///////////////
+	L.tileLayer( app.setting('tile-layer-url'), { 
 	//L.tileLayer(tiles, {
 		maxZoom: 19,
 		minZoom: 11,
 		id: 'examples.map-i875mjb7'
 	}).addTo(map);
+
+
+	// do not use: // L.tileLayer('http://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png', {
+
+	///////////////
+	//
+	// LOCAL TILES
+	//
+	///////////////
+	// L.tileLayer('osm/tiles/{z}/{x}/{y}.png', {
+	// 	maxZoom: 19,
+	// 	minZoom: 11,
+	// 	id: 'examples.map-i875mjb7'
+	// }).addTo(map);
+
+
+
+
+
+
+
 
 
 

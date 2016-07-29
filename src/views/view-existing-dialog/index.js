@@ -47,6 +47,8 @@ function ViewExistingDialog(opts){
 		descManager,
 		myDomains;
 
+
+
 	var tabOptions = {
 		rootEntity: rootEntity,
 	};
@@ -54,10 +56,12 @@ function ViewExistingDialog(opts){
 	
 	console.log("ViewExistingDialog()");
 	console.log(rootEntity);
+	console.log(opts.listViewReference.itemReload);
+	//var listViewReference = opts.listViewReference;
 	console.log('window.geo', window.geo);
 	
 
-	var tabEdit = new TabEdit(tabOptions),
+	var tabEdit = new TabEdit(tabOptions, opts.listViewReference),
 		tabMap = new TabMap(tabOptions),
 		tabRemarks = new TabRemarks(tabOptions),
 		tabTimeline = new TabTimeline(tabOptions);
@@ -169,15 +173,25 @@ function ViewExistingDialog(opts){
 		[tabEdit, tabRemarks, tabTimeline, tabMap]
 			.forEach(function(tab){
 				tab.setContext(ctx);
+				// tabEdit.listViewreference = listViewReference;
+				
 			});
 			
 			if(previousTab && _.isFunction(previousTab.show)) {
 				previousTab.show();
 			}
 
+			
 		_updateAddButton();
 
+
+
 //<<<<<<< HEAD
+		// console.log("tabEdit");
+		// tabEdit.listViewreference = listViewReference;
+		// console.log(tabEdit);
+		// console.log(listViewReference);
+
 
 		tabEdit.addTriangleHandlers();
 
@@ -509,6 +523,7 @@ function ViewExistingDialog(opts){
 					$this.parent()
 						.find('input,button')
 						.removeAttr('disabled');
+						
 				});
 		}
 

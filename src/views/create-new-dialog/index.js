@@ -51,7 +51,7 @@ function CreateNewDialog(opt){
 	function _handleSave(keepOpen){
 		var now = Date.now();
 
-		console.log("_handleSave");
+		console.log("_handleSaveYYY");
 		var entity = {
 				domainName: domain.name,
 				beginTime: now,
@@ -97,6 +97,9 @@ function CreateNewDialog(opt){
 		var $this = $(this),
 			oldText = $this.text();
 
+			console.log("parent analysis jrc");
+			console.log($this);
+			
 		$this.parent()
 			.find('input,button')
 			.attr('disabled', 'disabled');
