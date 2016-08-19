@@ -117,83 +117,89 @@ function MapTab(){
 		// 	});
 		// });
 
-		var key = moment(diary.eventDate).format('YYYYMMDD');
-		var geo = null;
-		if(window.geo && window.geo[key]) {
-			geo = window.geo[key];
-		}
-		if(!footprint) {
-			var fromStorage = window.localStorage.getItem(key);
-			if(fromStorage) {
-				window.geo[key] = JSON.parse(fromStorage);
-				geo = window.geo[key];
-			}	
-		}
+		return new Promise(function(resolve, reject) {
+			diaryPromise.then(function(diary) {
 
-		if(geo) {
-			return new Promise(function(resolve, reject) {
-				// TODO: DRY
-				var startIndex, endIndex;
-
-				var geo = window.geo[key];
-				for(var i = 0; i < geo.timestamps.length; i++) {
-					var thisTimestamp = geo.timestamps[i];
-					if(beginTime >= thisTimestamp) startIndex = i;
-					if(endTime >= thisTimestamp) endIndex = i;
+				var key = moment(diary.eventDate).format('YYYYMMDD');
+				var geo = null;
+				if(window.geo && window.geo[key]) {
+					geo = window.geo[key];
+				}
+				if(!footprint) {
+					var fromStorage = window.localStorage.getItem(key);
+					if(fromStorage) {
+						window.geo[key] = JSON.parse(fromStorage);
+						geo = window.geo[key];
+					}	
 				}
 
-				if(!startIndex) startIndex = geo.timestamps.length - 1;				
-				if(!endIndex) endIndex = geo.timestamps.length - 1;
 
-				var startPoint = geo.footprint.coordinates[0]; // this will break on empty data
-				var coordinates = [];
-				for(var i = startIndex; i <= endIndex; i++) {
-					// coordinates.push([startPoint[0] + Math.random() * 0.1, startPoint[1] + Math.random() * 0.1, startPoint[2]]);
-					coordinates.push(geo.footprint.coordinates[i]);
-				}
-				if(coordinates.length == 1) {
-					var geoJson = { "type": "Point", "coordinates": coordinates[0] };					
+				if(geo) {
+					return new Promise(function(resolve, reject) {
+						// TODO: DRY
+						var startIndex, endIndex;
+
+						var geo = window.geo[key];
+						for(var i = 0; i < geo.timestamps.length; i++) {
+							var thisTimestamp = geo.timestamps[i];
+							if(beginTime >= thisTimestamp) startIndex = i;
+							if(endTime >= thisTimestamp) endIndex = i;
+						}
+
+						if(!startIndex) startIndex = geo.timestamps.length - 1;				
+						if(!endIndex) endIndex = geo.timestamps.length - 1;
+
+						var startPoint = geo.footprint.coordinates[0]; // this will break on empty data
+						var coordinates = [];
+						for(var i = startIndex; i <= endIndex; i++) {
+							// coordinates.push([startPoint[0] + Math.random() * 0.1, startPoint[1] + Math.random() * 0.1, startPoint[2]]);
+							coordinates.push(geo.footprint.coordinates[i]);
+						}
+						if(coordinates.length == 1) {
+							var geoJson = { "type": "Point", "coordinates": coordinates[0] };					
+						} else {
+							var geoJson = { "type": "LineString", "coordinates": coordinates };
+						}
+						console.log("beginTime: " + beginTime + ", endTime: " + endTime);
+						console.log("startIndex: " + startIndex + ", endIndex: " + endIndex);
+						console.log('geoJson');
+						console.log(geoJson);
+						resolve(geoJson);				
+					});
 				} else {
-					var geoJson = { "type": "LineString", "coordinates": coordinates };
+					return new Promise(function(resolve, reject) {
+						// diaryPromise.then(function(diary) {
+							var startIndex, endIndex;
+
+							for(var i = 0; i < diary.geo.timestamps.length; i++) {
+								var thisTimestamp = diary.geo.timestamps[i];
+								if(beginTime >= thisTimestamp) startIndex = i;
+								if(endTime >= thisTimestamp) endIndex = i;
+							}
+
+							if(!startIndex) startIndex = diary.geo.timestamps.length - 1;				
+							if(!endIndex) endIndex = diary.geo.timestamps.length - 1;
+
+							var startPoint = diary.geo.footprint.coordinates[0]; // this will break on empty data
+							var coordinates = [];
+							for(var i = startIndex; i <= endIndex; i++) {
+								// coordinates.push([startPoint[0] + Math.random() * 0.1, startPoint[1] + Math.random() * 0.1, startPoint[2]]);
+								coordinates.push(diary.geo.footprint.coordinates[i]);
+							}
+							if(coordinates.length == 1) {
+								var geoJson = { "type": "Point", "coordinates": coordinates[0] };					
+							} else {
+								var geoJson = { "type": "LineString", "coordinates": coordinates };
+							}
+							// console.log("beginTime: " + beginTime + ", endTime: " + endTime);
+							// console.log("startIndex: " + startIndex + ", endIndex: " + endIndex);
+							// console.log(geoJson);
+							resolve(geoJson);
+						// });
+					});		
 				}
-				console.log("beginTime: " + beginTime + ", endTime: " + endTime);
-				console.log("startIndex: " + startIndex + ", endIndex: " + endIndex);
-				console.log('geoJson');
-				console.log(geoJson);
-				resolve(geoJson);				
-			});
-		} else {
-			return new Promise(function(resolve, reject) {
-				diaryPromise.then(function(diary) {
-					var startIndex, endIndex;
-
-					for(var i = 0; i < diary.geo.timestamps.length; i++) {
-						var thisTimestamp = diary.geo.timestamps[i];
-						if(beginTime >= thisTimestamp) startIndex = i;
-						if(endTime >= thisTimestamp) endIndex = i;
-					}
-
-					if(!startIndex) startIndex = diary.geo.timestamps.length - 1;				
-					if(!endIndex) endIndex = diary.geo.timestamps.length - 1;
-
-					var startPoint = diary.geo.footprint.coordinates[0]; // this will break on empty data
-					var coordinates = [];
-					for(var i = startIndex; i <= endIndex; i++) {
-						// coordinates.push([startPoint[0] + Math.random() * 0.1, startPoint[1] + Math.random() * 0.1, startPoint[2]]);
-						coordinates.push(diary.geo.footprint.coordinates[i]);
-					}
-					if(coordinates.length == 1) {
-						var geoJson = { "type": "Point", "coordinates": coordinates[0] };					
-					} else {
-						var geoJson = { "type": "LineString", "coordinates": coordinates };
-					}
-					// console.log("beginTime: " + beginTime + ", endTime: " + endTime);
-					// console.log("startIndex: " + startIndex + ", endIndex: " + endIndex);
-					// console.log(geoJson);
-					resolve(geoJson);
-				});
-			});			
-		}
+			});	
+		});
 	}
 	
 	 
@@ -551,8 +557,8 @@ function MapTab(){
 					_getGeo( diary.contacts[i].beginTime, diary.contacts[i].endTime ).then(function(footprint) {
 						console.log("footprint loop " + i);
 						console.log(footprint);
-				
-					
+
+
 						var markerOptions = {
 							circleOnly: false,//showContactsAsDotsOnly,
 							pinColor: 'none',
@@ -562,10 +568,10 @@ function MapTab(){
 							heading: heading,
 							body: body,
 						};
-					
-					
+
+
 						if(footprint.type == 'Point') {
-							markerOptions.footprint = footprint;												
+							markerOptions.footprint = footprint;
 							_renderGeoJsonMarker(markerOptions);
 						}else if(footprint.type == 'LineString') {
 							var pathOptions = {
@@ -573,14 +579,14 @@ function MapTab(){
 									weight: 2,
 									opacity: 1
 								};
-							_renderGeoJsonPath(footprint, pathOptions);					
+							_renderGeoJsonPath(footprint, pathOptions);
 							// place point at start of contact
 							if( footprint.coordinates.length > 0 ){
 								var newCoordinatesArray = footprint.coordinates[0];
-								markerOptions.footprint = { type: "Point", coordinates: newCoordinatesArray };							
+								markerOptions.footprint = { type: "Point", coordinates: newCoordinatesArray };
 								_renderGeoJsonMarker(markerOptions);
 							}
-					
+
 						}
 
 					});
