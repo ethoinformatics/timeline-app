@@ -1,98 +1,96 @@
-var velocity = require('velocity-animate'),
-	$ = require('jquery'),
-	EventEmitter = require('events').EventEmitter,
-	template = require('./index.vash'),
-	deviceSettings = require('device-settings'),
-	app = require('app')();
-	
-
+var velocity = require('velocity-animate');
+var $ = require('jquery');
+var EventEmitter = require('events').EventEmitter;
+var template = require('./index.vash');
+var deviceSettings = require('device-settings');
+var app = require('app')();
+  
 function SideMenu(opt){
-	//var $body = $('body');
-	var $content = $(opt.content);
-	var $mask = $('.mask');
-	var self = new EventEmitter();
+  var $content = $(opt.content);
+  var $mask = $('.mask');
+  var self = new EventEmitter();
 
+  self.$element = $(template({})); //username:''
+  
+  self.displayUser = function(){
+    deviceSettings()
+      .then(function(settings){     
+        if( settings['user'] ){
+          $('#left-title').text(settings['user']);
+      }
+    }); 
+  }
+  self.displayUser(); 
 
-	console.log('app');
+  self.$element.on('click', '.js-upload', function(){
+      self.emit('click', 'sync');
+    });
 
-	
-	self.$element = $(template({})); //username:''
-	
-	self.displayUser = function(){
-		deviceSettings()
-			.then(function(settings){			
-				if( settings['user'] ){
-					$('#left-title').text(settings['user']);
-			}
-		});	
-	}
-	self.displayUser();	
+  self.$element.on('click', '.js-code-manager', function(){
+      self.emit('click', 'code-manager');
+    });
 
-	self.$element.on('click', '.js-upload', function(){
-			self.emit('click', 'sync');
-		});
+  self.$element.on('click', '.js-settings', function(){
+      self.emit('click', 'settings');
+    });
 
-	self.$element.on('click', '.js-code-manager', function(){
-			self.emit('click', 'code-manager');
-		});
+  self.$element.on('click', '.js-geolocation-viewer', function(){
+      self.emit('click', 'geolocation-viewer');
+    });
 
-	self.$element.on('click', '.js-settings', function(){
-			self.emit('click', 'settings');
-		});
+  var $showLeftMenu = $('.js-show-left-menu');
+  
+  var isOpen = false;
 
-	self.$element.on('click', '.js-geolocation-viewer', function(){
-			self.emit('click', 'geolocation-viewer');
-		});
+  // Public close function.
+  // noop if menu is not open.
+  self.close = function(){
+    if (!isOpen) return;
+    updateMenu();
+  };
 
-	var $showLeftMenu = $('.js-show-left-menu'),
-		isLeftMenuOpen = false;
+  // Private close function.
+  function updateMenu(){
+    // Toggle flag.
+    isOpen = !isOpen;
 
+    console.log("Update menu: >>>>", isOpen);
+    
+    // Apply styles based on new state.
+    // Animate menu position
+    var contentOffset = parseInt( $( window ).width() ).toString();
+    velocity($content, {left: isOpen? contentOffset: '0' }, {
+      duration:140,
+      complete: function(){}
+    });
+    
+    // Change menu icon.
+    if( isOpen ) {
+      $showLeftMenu.removeClass('ion-navicon');
+      $showLeftMenu.addClass('ion-close');  
+      $showLeftMenu.css('left', '-60px');   
+    }else{
+      $showLeftMenu.addClass('ion-navicon');
+      $showLeftMenu.removeClass('ion-close');     
+      $showLeftMenu.css('left', '0px');   
+    }
 
-	self.close = function(){
-		if (!isLeftMenuOpen) return;
-		openCloseLeftMenu();
-	};
+    // Not sure what this is atm.
+    if(isOpen) {
+      $mask.fadeIn(140);
+    } else {
+      $mask.fadeOut(140);
+    }
+  }
 
-	function openCloseLeftMenu(){
-		console.log("oCLM");
-		
-		var leftEdgeMainContent = parseInt( $( window ).width() ).toString();
-		velocity($content, {left: isLeftMenuOpen? '0': leftEdgeMainContent }, {
-			duration:140,
-			complete: function(){
+  // Simple event handler.
+  $showLeftMenu.click(function(ev){
+    console.log("Show menu menu: >>>>", isOpen);
+    ev.stopPropagation();
+    updateMenu();
+  });
 
-			},
-		});
-		isLeftMenuOpen = !isLeftMenuOpen;
-		if(isLeftMenuOpen) {
-			$mask.fadeIn(140);
-		} else {
-			$mask.fadeOut(140);
-		}
-	}
-
-	$showLeftMenu.click(function(ev){
-		ev.stopPropagation();
-
-		openCloseLeftMenu();
-		
-	//	$(this).hide();
-		if( isLeftMenuOpen ) {
-
-			$(this).removeClass('ion-navicon');
-			$(this).addClass('ion-close');	
-			$(this).css('left', '-60px');		
-		}else{
-
-			$(this).addClass('ion-navicon');
-			$(this).removeClass('ion-close');			
-			$(this).css('left', '0px');		
-
-		}
-		
-	});
-
-	return self;
+  return self;
 }
 
 module.exports = SideMenu;
