@@ -1,7 +1,7 @@
 require('./index.less');
 
 var Modal = require('modal'),
-	moment = require('moment'),
+  moment = require('moment'),
 _ = require('lodash'),
 q = require('q'),
 $ = require('jquery'),
@@ -22,570 +22,570 @@ TabTimeline = require('./tabs/timeline/index.js');
 
 //get device settings stored in db
 function _getDeviceSettingsObject(){
-	var settingsDomain = app.getDomain('_etho-settings');
-	var entityManager = settingsDomain.getService('entity-manager');
+  var settingsDomain = app.getDomain('_etho-settings');
+  var entityManager = settingsDomain.getService('entity-manager');
 
-	return entityManager.getAll()
-		.then(function(entities){
-			var mySettings = _.find(entities, function(entity){
-				return entity.deviceId == device.uuid;
-			});
+  return entityManager.getAll()
+    .then(function(entities){
+      var mySettings = _.find(entities, function(entity){
+        return entity.deviceId == device.uuid;
+      });
 
-			if (!mySettings) return { deviceId: device.uuid };
+      if (!mySettings) return { deviceId: device.uuid };
 
-			return mySettings;
-		});
+      return mySettings;
+    });
 }
 
 function ViewExistingDialog(opts){
-	var self = this,
-		entity,
-		descManagerCache = {},
-		rootEntity = opts.rootEntity || opts.entity,
-		crumbs = opts.crumbs,
-		domain,
-		descManager,
-		myDomains;
+  var self = this,
+    entity,
+    descManagerCache = {},
+    rootEntity = opts.rootEntity || opts.entity,
+    crumbs = opts.crumbs,
+    domain,
+    descManager,
+    myDomains;
 
 
 
-	var tabOptions = {
-		rootEntity: rootEntity,
-	};
-	
-	
-	console.log("ViewExistingDialog()");
-	console.log(rootEntity);
-	console.log(opts.listViewReference.itemReload);
-	//var listViewReference = opts.listViewReference;
-	console.log('window.geo', window.geo);
-	
+  var tabOptions = {
+    rootEntity: rootEntity,
+  };
+  
+  
+  console.log("ViewExistingDialog()", opts);
+  //console.log(rootEntity);
+  //console.log(opts.listViewReference.itemReload);
+  //var listViewReference = opts.listViewReference;
+  //console.log('window.geo', window.geo);
+  
 
-	var tabEdit = new TabEdit(tabOptions, opts.listViewReference),
-		tabMap = new TabMap(tabOptions),
-		tabRemarks = new TabRemarks(tabOptions),
-		tabTimeline = new TabTimeline(tabOptions);
-		
-	var previousTab = tabEdit; // because edit is the tab that is open when dialog shows
+  var tabEdit = new TabEdit(tabOptions, opts.listViewReference),
+    tabMap = new TabMap(tabOptions),
+    tabRemarks = new TabRemarks(tabOptions),
+    tabTimeline = new TabTimeline(tabOptions);
+    
+  var previousTab = tabEdit; // because edit is the tab that is open when dialog shows
 
-	var rootDomain = app.getDomain(rootEntity.domainName);
+  var rootDomain = app.getDomain(rootEntity.domainName);
 // test
-	// var geoAware = rootDomain.getService('geo-aware');
-	// if (geoAware){
-	// 	_getDeviceSettingsObject()
-	// 		.then(function(settings){
-	// 			geolocation.watch(function(err, data){
-	// 				if (err) return console.log('geo-aware watch error');
-	//
-	// 				geoAware.update(rootEntity, data, settings);
-	// 			});
-	// 		})
-	// 		.catch(function(err){
-	// 			console.log('error getting device settings');
-	// 			console.error(err);
-	// 		});
-	// }
-	// make this (self) an EventEmitter (?)
-	EventEmitter.call(self);
+  // var geoAware = rootDomain.getService('geo-aware');
+  // if (geoAware){
+  //  _getDeviceSettingsObject()
+  //    .then(function(settings){
+  //      geolocation.watch(function(err, data){
+  //        if (err) return console.log('geo-aware watch error');
+  //
+  //        geoAware.update(rootEntity, data, settings);
+  //      });
+  //    })
+  //    .catch(function(err){
+  //      console.log('error getting device settings');
+  //      console.error(err);
+  //    });
+  // }
+  // make this (self) an EventEmitter (?)
+  EventEmitter.call(self);
 
 
-	var username = (rootEntity.hasOwnProperty('observerId')) ? rootEntity.observerId : '';
-	var $content = $(template({
-		username: (username == '') ? '' : 'Diary created by: ' + username,
-		isNew: true,
-			crumbs: crumbs,
-		})),
-	$tabContainer = $content.find('.js-tabcontainer');
+  var username = (rootEntity.hasOwnProperty('observerId')) ? rootEntity.observerId : '';
+  var $content = $(template({
+    username: (username == '') ? '' : 'Diary created by: ' + username,
+    isNew: true,
+      crumbs: crumbs,
+    })),
+  $tabContainer = $content.find('.js-tabcontainer');
 
-	// load the current entity
-	_changeEntity(opts.entity || opts.rootEntity);
+  // load the current entity
+  _changeEntity(opts.entity || opts.rootEntity);
 
-	function _getColor(entity){
-		var domain = app.getDomain(entity.domainName),
-			service;
+  function _getColor(entity){
+    var domain = app.getDomain(entity.domainName),
+      service;
 
-		if (domain)
-			service = domain.getService('color');
+    if (domain)
+      service = domain.getService('color');
 
-		return service || 'pink';
-	}
+    return service || 'pink';
+  }
 
-	crumbs = _.chain(crumbs)
-		.toArray()
-		.push({context: entity, label:_getLabel(entity), color: _getColor(entity)})
-		.value();
+  crumbs = _.chain(crumbs)
+    .toArray()
+    .push({context: entity, label:_getLabel(entity), color: _getColor(entity)})
+    .value();
 
-	var breadcrumb = new Breadcrumb({crumbs: crumbs});
+  var breadcrumb = new Breadcrumb({crumbs: crumbs});
 
-	breadcrumb.on('close', function(data){
-		self.remove();
-	});
+  breadcrumb.on('close', function(data){
+    self.remove();
+  });
 
-	breadcrumb.on('selection', function(data){
-		if(previousTab && _.isFunction(previousTab.loseFocus)) {
-			previousTab.loseFocus();			
-		}
-		
-		if (!_changeEntity(data.context)) return;
-		
-		if(self && _.isFunction(self.show)) {
-			self.show();
-		}
+  breadcrumb.on('selection', function(data){
+    if(previousTab && _.isFunction(previousTab.loseFocus)) {
+      previousTab.loseFocus();      
+    }
+    
+    if (!_changeEntity(data.context)) return;
+    
+    if(self && _.isFunction(self.show)) {
+      self.show();
+    }
 
-	// _doSave()
-	// 	.then(function(info){
-	// 		rootEntity._id = info.id;
-	// 		rootEntity._rev = info.rev;
-	// })
-	// .catch(function(err){
-	// 	console.error(err);
-	// });
-	//
-	// 	if( data.context.domainName == 'diary' ){
-	// 		self.show( false );
-	// 	}
-		_updateAddButton();
-	});
+  // _doSave()
+  //  .then(function(info){
+  //    rootEntity._id = info.id;
+  //    rootEntity._rev = info.rev;
+  // })
+  // .catch(function(err){
+  //  console.error(err);
+  // });
+  //
+  //  if( data.context.domainName == 'diary' ){
+  //    self.show( false );
+  //  }
+    _updateAddButton();
+  });
 
-	function _changeEntity(entityToLoad){
-		if (entityToLoad == entity) return false;
+  function _changeEntity(entityToLoad){
+    if (entityToLoad == entity) return false;
 
-		if (!entityToLoad.domainName) return window.alert('missing domainName property');
-		var myDomain = app.getDomain(entityToLoad.domainName);
-		if (!myDomain) return window.alert('cannot find domain for ' + entityToLoad.domainName);
+    if (!entityToLoad.domainName) return window.alert('missing domainName property');
+    var myDomain = app.getDomain(entityToLoad.domainName);
+    if (!myDomain) return window.alert('cannot find domain for ' + entityToLoad.domainName);
 
-		entity = entityToLoad;
-		domain = myDomain;
+    entity = entityToLoad;
+    domain = myDomain;
 
-		descManager = descManagerCache[entity.domainName] = descManagerCache[entity.domainName] || domain.getService('description-manager');
+    descManager = descManagerCache[entity.domainName] = descManagerCache[entity.domainName] || domain.getService('description-manager');
 
-		myDomains = domain.getChildren();
+    myDomains = domain.getChildren();
 
-		// load the description managers now because they are slow
-		myDomains.forEach(function(myDomain){
-			if (descManagerCache[myDomain.name]) return;
+    // load the description managers now because they are slow
+    myDomains.forEach(function(myDomain){
+      if (descManagerCache[myDomain.name]) return;
 
-			descManagerCache[myDomain.name] = myDomain.getService('description-manager');
-		});
+      descManagerCache[myDomain.name] = myDomain.getService('description-manager');
+    });
 
-		var ctx = createContext(entity);
+    var ctx = createContext(entity);
 
-		[tabEdit, tabRemarks, tabTimeline, tabMap]
-			.forEach(function(tab){
-				tab.setContext(ctx);
-				// tabEdit.listViewreference = listViewReference;
-				
-			});
-			
-			if(previousTab && _.isFunction(previousTab.show)) {
-				previousTab.show();
-			}
+    [tabEdit, tabRemarks, tabTimeline, tabMap]
+      .forEach(function(tab){
+        tab.setContext(ctx);
+        // tabEdit.listViewreference = listViewReference;
+        
+      });
+      
+      if(previousTab && _.isFunction(previousTab.show)) {
+        previousTab.show();
+      }
 
-			
-		_updateAddButton();
+      
+    _updateAddButton();
 
 
 
 //<<<<<<< HEAD
-		// console.log("tabEdit");
-		// tabEdit.listViewreference = listViewReference;
-		// console.log(tabEdit);
-		// console.log(listViewReference);
+    // console.log("tabEdit");
+    // tabEdit.listViewreference = listViewReference;
+    // console.log(tabEdit);
+    // console.log(listViewReference);
 
 
-		tabEdit.addTriangleHandlers();
+    tabEdit.addTriangleHandlers();
 
 //=======
-		// console.log(self);
-		// if(_.isFunction(self.show)) {
-		// 	self.show();
-		// }
+    // console.log(self);
+    // if(_.isFunction(self.show)) {
+    //  self.show();
+    // }
 //>>>>>>> origin/master
 
-		return true;
-	}
+    return true;
+  }
 
-	function _getLabel(myEntity){
-		return descManager.getShortDescription(myEntity);
-	}
+  function _getLabel(myEntity){
+    return descManager.getShortDescription(myEntity);
+  }
 
-	var modal;
-	
-	$tabContainer.css('height', (window.innerHeight-88)+'px');
-	var $tabHeaderContainer = $content.find('.js-etho-tabs');
-	
-	[tabEdit, tabRemarks, tabTimeline, tabMap]
-		.forEach(function(tab, i){
-			var $header = $('<li></li>')
-				.addClass('js-etho-tab')
-				.attr('data-tabclass', tab.label)
-				.text(tab.label);
+  var modal;
+  
+  $tabContainer.css('height', (window.innerHeight-88)+'px');
+  var $tabHeaderContainer = $content.find('.js-etho-tabs');
+  
+  [tabEdit, tabRemarks, tabTimeline, tabMap]
+    .forEach(function(tab, i){
+      var $header = $('<li></li>')
+        .addClass('js-etho-tab')
+        .attr('data-tabclass', tab.label)
+        .text(tab.label);
 
-			if (i === 0) {
-				$header.addClass('selected');
-				tab.$element.show();
-			} else {
-				tab.$element.hide();
-			}
+      if (i === 0) {
+        $header.addClass('selected');
+        tab.$element.show();
+      } else {
+        tab.$element.hide();
+      }
 
-			$tabHeaderContainer.append($header);
-			$tabContainer.append(tab.$element);
+      $tabHeaderContainer.append($header);
+      $tabContainer.append(tab.$element);
 
-			console.log("setting up header click");
-			$header.on('click', function(){
-				_tabClick.call(this, arguments[0], tab);
+      console.log("setting up header click");
+      $header.on('click', function(){
+        _tabClick.call(this, arguments[0], tab);
 
-				var usernameDiv = $content.find('.username-label-view-existing-dialogue');
-				if( usernameDiv != null ){
-					var usernameDivHeight = usernameDiv.height();
-					usernameDivHeight += parseInt( usernameDiv.css('margin-top') );
-					usernameDivHeight += parseInt( usernameDiv.css('margin-bottom') );
-					$tabContainer.css('height', (window.innerHeight-88-usernameDivHeight)+'px');
-				}
-			});
-		});
-
-
-	function _tabClick(ev, clickedTab){
-		var $this = $(this);
-
-		console.log("_tabClick");		
-		console.log(previousTab);
-
-		if (previousTab && _.isFunction(previousTab.loseFocus)) {
-			previousTab.loseFocus();
-		}
+        var usernameDiv = $content.find('.username-label-view-existing-dialogue');
+        if( usernameDiv != null ){
+          var usernameDivHeight = usernameDiv.height();
+          usernameDivHeight += parseInt( usernameDiv.css('margin-top') );
+          usernameDivHeight += parseInt( usernameDiv.css('margin-bottom') );
+          $tabContainer.css('height', (window.innerHeight-88-usernameDivHeight)+'px');
+        }
+      });
+    });
 
 
-		$this.siblings().removeClass('selected');
-		$this.addClass('selected');
-		$tabContainer.children().hide();
+  function _tabClick(ev, clickedTab){
+    var $this = $(this);
 
-		// show the content of the clicked tab: map, remarks, timeline, etc
-		if (_.isFunction(clickedTab.show)){
-			clickedTab.show();
-		} else {
-			clickedTab.$element.show();
-		}
+    console.log("_tabClick");   
+    console.log(previousTab);
 
-		previousTab = clickedTab;
-
-	}
-
-	modal = new Modal({
-			$header: breadcrumb.$element,
-			$content: $content,
-			hideOkay: true,
-			backAction: opts.backAction,
-		  	hideClose: true,
-		});
-
-	modal.on('closed', function(){
-		self.emit('closed');
-	});
-
-	function descendContext(newEntity){
-		_changeEntity(newEntity);
-
-		tabMap.descend(newEntity);
-
-		
-		breadcrumb.add({
-			context: newEntity, 
-			label: _getLabel(newEntity), 
-			color: _getColor(newEntity), 
-		});
-	}
-
-	function createContext(entity){
-		return {
-			descend: descendContext,
-			entity: entity,
-			domain: domain,
-			descManager: descManager,
-			getChildren: function(myEntity){
-				return _.chain(myEntity || entity)
-					.values()
-					.filter(_.isArray)
-					.flatten()
-					.filter(function(val){return val.domainName;})
-					.value();
-			},
-			getShortDescription: function(entity){
-				var descManager = descManagerCache[entity.domainName];
-				if (!descManager) return entity._id || entity.id;
-				return descManager.getShortDescription(entity);
-			},
-		};
-	}
-
-	function _updateAddButton(){
-		
-		// var $btnAddChild = $content.find('.js-child-add');
-		// //$btnAddChild.text('Add');
-		// console.log("_updateAddButton");
-		// var popupChildDomains = myDomains.filter(function(d){return !d.inline;});
-		//
-		// // to do jrc: make sure this
-		//
-		// console.log("popupChildDomains");
-		// console.log(popupChildDomains);
-		//
-		// if (_.size(popupChildDomains) == 1){
-		// //	$btnAddChild.text('Add ' + popupChildDomains[0].label);
-		// 	$btnAddChild.removeClass('disabled');
-		// } else if (_.size(popupChildDomains) === 0){
-		// 	$btnAddChild.addClass('disabled');
-		// } else {
-		// 	$btnAddChild.removeClass('disabled');
-		// }
-	}
-
-	this.show = function( showAnimated ){
-		
-		
-		console.log('show view existing dialogue!');
-		_updateAddButton();
-
-		var form = formBuilder.buildDataEntryForm(domain);
+    if (previousTab && _.isFunction(previousTab.loseFocus)) {
+      previousTab.loseFocus();
+    }
 
 
+    $this.siblings().removeClass('selected');
+    $this.addClass('selected');
+    $tabContainer.children().hide();
 
-		var $btnSnapshot = $content.find('.js-snapshot'),
-			$btnFollow = $content.find('.js-follow'),
-			$btnAddChild = $content.find('.js-child-add'),
-			$btnRemove = $content.find('.js-view-remove');
+    // show the content of the clicked tab: map, remarks, timeline, etc
+    if (_.isFunction(clickedTab.show)){
+      clickedTab.show();
+    } else {
+      clickedTab.$element.show();
+    }
 
-			
-			// this means it's the contact button
-			if( $btnAddChild.length == 1 ) {
-				console.log("should strip button");
-				$btnAddChild.unbind( "click" ); // remove click in case it was added by the EditTab class
-			}
+    previousTab = clickedTab;
+
+  }
+
+  modal = new Modal({
+      $header: breadcrumb.$element,
+      $content: $content,
+      hideOkay: true,
+      backAction: opts.backAction,
+        hideClose: true,
+    });
+
+  modal.on('closed', function(){
+    self.emit('closed');
+  });
+
+  function descendContext(newEntity){
+    _changeEntity(newEntity);
+
+    tabMap.descend(newEntity);
+
+    
+    breadcrumb.add({
+      context: newEntity, 
+      label: _getLabel(newEntity), 
+      color: _getColor(newEntity), 
+    });
+  }
+
+  function createContext(entity){
+    return {
+      descend: descendContext,
+      entity: entity,
+      domain: domain,
+      descManager: descManager,
+      getChildren: function(myEntity){
+        return _.chain(myEntity || entity)
+          .values()
+          .filter(_.isArray)
+          .flatten()
+          .filter(function(val){return val.domainName;})
+          .value();
+      },
+      getShortDescription: function(entity){
+        var descManager = descManagerCache[entity.domainName];
+        if (!descManager) return entity._id || entity.id;
+        return descManager.getShortDescription(entity);
+      },
+    };
+  }
+
+  function _updateAddButton(){
+    
+    // var $btnAddChild = $content.find('.js-child-add');
+    // //$btnAddChild.text('Add');
+    // console.log("_updateAddButton");
+    // var popupChildDomains = myDomains.filter(function(d){return !d.inline;});
+    //
+    // // to do jrc: make sure this
+    //
+    // console.log("popupChildDomains");
+    // console.log(popupChildDomains);
+    //
+    // if (_.size(popupChildDomains) == 1){
+    // // $btnAddChild.text('Add ' + popupChildDomains[0].label);
+    //  $btnAddChild.removeClass('disabled');
+    // } else if (_.size(popupChildDomains) === 0){
+    //  $btnAddChild.addClass('disabled');
+    // } else {
+    //  $btnAddChild.removeClass('disabled');
+    // }
+  }
+
+  this.show = function( showAnimated ){
+    
+    
+    console.log('show view existing dialogue!');
+    _updateAddButton();
+
+    var form = formBuilder.buildDataEntryForm(domain);
 
 
 
-		$btnRemove.click(function(){
-			if (rootEntity!=entity) return window.alert('not implemeneted yet');
+    var $btnSnapshot = $content.find('.js-snapshot'),
+      $btnFollow = $content.find('.js-follow'),
+      $btnAddChild = $content.find('.js-child-add'),
+      $btnRemove = $content.find('.js-view-remove');
 
-			console.log('removing');
-			var entityManager = domain.getService('entity-manager');
+      
+      // this means it's the contact button
+      if( $btnAddChild.length == 1 ) {
+        console.log("should strip button");
+        $btnAddChild.unbind( "click" ); // remove click in case it was added by the EditTab class
+      }
 
-			entityManager.remove(entity)
-				.then(function(){
-					self.emit('removed', entity);
-					self.hide();
-				});
-		});
+
+
+    $btnRemove.click(function(){
+      if (rootEntity!=entity) return window.alert('not implemeneted yet');
+
+      console.log('removing');
+      var entityManager = domain.getService('entity-manager');
+
+      entityManager.remove(entity)
+        .then(function(){
+          self.emit('removed', entity);
+          self.hide();
+        });
+    });
 //<<<<<<< HEAD
 
-		
-		// this was causing duplicate drop downs because the edit tab creates them 
+    
+    // this was causing duplicate drop downs because the edit tab creates them 
 // =======
 //
-// 		$btnAddChild.click(function(ev){
-// 			console.log('add contact button jrc');
-// 			ev.preventDefault();
+//    $btnAddChild.click(function(ev){
+//      console.log('add contact button jrc');
+//      ev.preventDefault();
 //
-// 			if ($(this).hasClass('disabled')) return console.log('ignore click');
+//      if ($(this).hasClass('disabled')) return console.log('ignore click');
 //
-// 			var descMgr = domain.getService('description-manager');
-// 			var title = 'Add a child to ' + descMgr.getShortDescription(entity);
+//      var descMgr = domain.getService('description-manager');
+//      var title = 'Add a child to ' + descMgr.getShortDescription(entity);
 //
-// 			var filteredDomains = myDomains;
-// 			var targetDomains = $(ev.target).data('domains');
+//      var filteredDomains = myDomains;
+//      var targetDomains = $(ev.target).data('domains');
 //
-// 			var m = new CreateSelectMenu({
-// 				title: title,
-// 				// domains: myDomains.filter(function(d){return !d.inline;}),
-// 				domains: myDomains.filter(function(d){return targetDomains.indexOf(d.name) >= 0;}), // TODO: This filtering is super hacked - fix it
-// 				crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
-// 			});
+//      var m = new CreateSelectMenu({
+//        title: title,
+//        // domains: myDomains.filter(function(d){return !d.inline;}),
+//        domains: myDomains.filter(function(d){return targetDomains.indexOf(d.name) >= 0;}), // TODO: This filtering is super hacked - fix it
+//        crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
+//      });
 //
-// 			m.on('created', function(child){
-// 				var childDomain = app.getDomain(child.domainName),
-// 					entityManager = childDomain.getService('entity-manager');
+//      m.on('created', function(child){
+//        var childDomain = app.getDomain(child.domainName),
+//          entityManager = childDomain.getService('entity-manager');
 //
-// 				entityManager.addToParent(entity, child);
+//        entityManager.addToParent(entity, child);
 //
-// 				_doSave()
-// 					.then(function(info){
-// 						rootEntity._id = info.id;
-// 						rootEntity._rev = info.rev;
+//        _doSave()
+//          .then(function(info){
+//            rootEntity._id = info.id;
+//            rootEntity._rev = info.rev;
 //
-// 					_changeEntity(child);
-// 					_updateAddButton();
-// 					breadcrumb.add({context:child, label: _getLabel(child), color: _getColor(child)});
-// 				})
-// 				.catch(function(err){
-// 					console.error(err);
-// 				});
+//          _changeEntity(child);
+//          _updateAddButton();
+//          breadcrumb.add({context:child, label: _getLabel(child), color: _getColor(child)});
+//        })
+//        .catch(function(err){
+//          console.error(err);
+//        });
 // >>>>>>> origin/master
 
-		// $btnAddChild.click(function(ev){
-		// 	console.log('add contact button jrc');
-		// 	ev.preventDefault();
-		//
-		// 	if ($(this).hasClass('disabled')) return console.log('ignore click');
-		//
-		// 	var descMgr = domain.getService('description-manager');
-		// 	var title = 'Add a child to ' + descMgr.getShortDescription(entity);
-		//
-		//
-		// 	var m = new CreateSelectMenu({
-		// 		title: title,
-		// 		domains: myDomains.filter(function(d){return !d.inline;}),
-		// 		crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
-		// 	});
-		//
-		// 	m.on('created', function(child){
-		// 		var childDomain = app.getDomain(child.domainName),
-		// 			entityManager = childDomain.getService('entity-manager');
-		//
-		// 		entityManager.addToParent(entity, child);
-		//
-		// 		_doSave()
-		// 			.then(function(info){
-		// 				rootEntity._id = info.id;
-		// 				rootEntity._rev = info.rev;
-		//
-		// 			_changeEntity(child);
-		// 			_updateAddButton();
-		// 			breadcrumb.add({context:child, label: _getLabel(child), color: _getColor(child)});
-		// 		})
-		// 		.catch(function(err){
-		// 			console.error(err);
-		// 		});
-		//
-		// 	});
-		// 	m.show(ev);
-		// });
+    // $btnAddChild.click(function(ev){
+    //  console.log('add contact button jrc');
+    //  ev.preventDefault();
+    //
+    //  if ($(this).hasClass('disabled')) return console.log('ignore click');
+    //
+    //  var descMgr = domain.getService('description-manager');
+    //  var title = 'Add a child to ' + descMgr.getShortDescription(entity);
+    //
+    //
+    //  var m = new CreateSelectMenu({
+    //    title: title,
+    //    domains: myDomains.filter(function(d){return !d.inline;}),
+    //    crumbs: _.chain(crumbs).clone().push({label: 'Add child'}).value(),
+    //  });
+    //
+    //  m.on('created', function(child){
+    //    var childDomain = app.getDomain(child.domainName),
+    //      entityManager = childDomain.getService('entity-manager');
+    //
+    //    entityManager.addToParent(entity, child);
+    //
+    //    _doSave()
+    //      .then(function(info){
+    //        rootEntity._id = info.id;
+    //        rootEntity._rev = info.rev;
+    //
+    //      _changeEntity(child);
+    //      _updateAddButton();
+    //      breadcrumb.add({context:child, label: _getLabel(child), color: _getColor(child)});
+    //    })
+    //    .catch(function(err){
+    //      console.error(err);
+    //    });
+    //
+    //  });
+    //  m.show(ev);
+    // });
 
-	function _handleSave(keepOpen){
-		var now = Date.now();
+  function _handleSave(keepOpen){
+    var now = Date.now();
 
-		var data = {
-				domainName: domain.name,
-				beginTime: now,
-				endTime: keepOpen ? null : now,
-			};
+    var data = {
+        domainName: domain.name,
+        beginTime: now,
+        endTime: keepOpen ? null : now,
+      };
 
-			data = _.extend(data, form.getData());
+      data = _.extend(data, form.getData());
 
-			var activityService = domain.getService('activity');
-			if (activityService){
-				activityService.start(data);
-			}
+      var activityService = domain.getService('activity');
+      if (activityService){
+        activityService.start(data);
+      }
 
-			var eventService = domain.getService('event');
-			if (eventService){
-				eventService.create(data);
-			}
+      var eventService = domain.getService('event');
+      if (eventService){
+        eventService.create(data);
+      }
 
-			var entityManager = domain.getService('entity-manager');
+      var entityManager = domain.getService('entity-manager');
 
-			return entityManager.save(data)
-				.then(function(savedData){
-					self.emit('new', data);
+      return entityManager.save(data)
+        .then(function(savedData){
+          self.emit('new', data);
 
-					console.log('saved data: ');
-					console.dir(savedData);
+          console.log('saved data: ');
+          console.dir(savedData);
 
-					return data;
-				});
-		}
+          return data;
+        });
+    }
 
-		function _createButtonClick(keepActivityRunning, ev){
-			// this is the creation of a new contact
-			console.log('gotta click');
+    function _createButtonClick(keepActivityRunning, ev){
+      // this is the creation of a new contact
+      console.log('gotta click');
 
-			var $this = $(this),
-				oldText = $this.text();
+      var $this = $(this),
+        oldText = $this.text();
 
-			$this.parent()
-				.find('input,button')
-				.attr('disabled', 'disabled');
+      $this.parent()
+        .find('input,button')
+        .attr('disabled', 'disabled');
 
-			$this.text('Please wait...');
+      $this.text('Please wait...');
 
-			ev.preventDefault();
-			return _handleSave(keepActivityRunning)
-				.then(function(data){
+      ev.preventDefault();
+      return _handleSave(keepActivityRunning)
+        .then(function(data){
 
-				})
-				.catch(function(err){
-					console.error(err);
+        })
+        .catch(function(err){
+          console.error(err);
 
-					alert('error');
-				})
-				.finally(function(){
-					$this.text(oldText);
-					$this.parent()
-						.find('input,button')
-						.removeAttr('disabled');
-						
-				});
-		}
+          alert('error');
+        })
+        .finally(function(){
+          $this.text(oldText);
+          $this.parent()
+            .find('input,button')
+            .removeAttr('disabled');
+            
+        });
+    }
 
 
-		$btnSnapshot.click(_.partial(_createButtonClick, false));
-		$btnFollow.click(_.partial(_createButtonClick, true));
+    $btnSnapshot.click(_.partial(_createButtonClick, false));
+    $btnFollow.click(_.partial(_createButtonClick, true));
 
-		if(showAnimated) modal.show();
-		else modal.showInstant();
-	};
+    if(showAnimated) modal.show();
+    else modal.showInstant();
+  };
 
-	this.hide = function() {
-		if(previousTab && _.isFunction(previousTab.loseFocus)) {
-			previousTab.loseFocus();			
-		}
+  this.hide = function() {
+    if(previousTab && _.isFunction(previousTab.loseFocus)) {
+      previousTab.loseFocus();      
+    }
 
-		modal.hide.bind(modal)();
-	}
-	
+    modal.hide.bind(modal)();
+  }
+  
 
-	this.remove = function() {
-		if(previousTab && _.isFunction(previousTab.loseFocus)) {
-			previousTab.loseFocus();			
-		}
+  this.remove = function() {
+    if(previousTab && _.isFunction(previousTab.loseFocus)) {
+      previousTab.loseFocus();      
+    }
 
-		modal.remove.bind(modal)();
-	}
+    modal.remove.bind(modal)();
+  }
 
-	this.peekBehindDialog = function( _peekBehind ){
-				console.log('_peekBehind');
-		modal.peekBehindModal( _peekBehind );
-	}
+  this.peekBehindDialog = function( _peekBehind ){
+        console.log('_peekBehind');
+    modal.peekBehindModal( _peekBehind );
+  }
 
-	function _doSave(){
+  function _doSave(){
 
-		console.log('ved-_doSave');
-		var rootDomain = app.getDomain(rootEntity.domainName),
-			rootEntityManager = rootDomain.getService('entity-manager');
+    console.log('ved-_doSave');
+    var rootDomain = app.getDomain(rootEntity.domainName),
+      rootEntityManager = rootDomain.getService('entity-manager');
 
-		return rootEntityManager.save(rootEntity)
-			.then(function(info){
-				rootEntity._id = info.id;
-				rootEntity._rev = info.rev;
+    return rootEntityManager.save(rootEntity)
+      .then(function(info){
+        rootEntity._id = info.id;
+        rootEntity._rev = info.rev;
 
-				return info;
-			});
-	}
+        return info;
+      });
+  }
 
-	///////////
-	
-	// var $showLeftMenu = $('#js-show-left-menu-modal-version'),
-	// isLeftMenuOpen = false;
-	//
-	// $showLeftMenu.click(function(ev){
-	// 	ev.stopPropagation();
-	// 	isLeftMenuOpen = !isLeftMenuOpen;
-	// 	modal.slideForSettings(isLeftMenuOpen);
-	//
-	// 	console.log('app ved');
-	// 			console.log(app);
-	// });
-	
+  ///////////
+  
+  // var $showLeftMenu = $('#js-show-left-menu-modal-version'),
+  // isLeftMenuOpen = false;
+  //
+  // $showLeftMenu.click(function(ev){
+  //  ev.stopPropagation();
+  //  isLeftMenuOpen = !isLeftMenuOpen;
+  //  modal.slideForSettings(isLeftMenuOpen);
+  //
+  //  console.log('app ved');
+  //      console.log(app);
+  // });
+  
 }
 
 
