@@ -56,7 +56,7 @@ function CreateSelectDialog(opt) {
     createNewDialog.setCrumbs(myCrumbs);
 
     createNewDialog.on('created', function(data) {
-      // console.log(">>>>> created: ", data)
+      console.log("CreateSelect >>>>> created: ", data)
       createNewDialog.remove();
       self.emit('created', data);
     });
