@@ -17,9 +17,9 @@
   "author": "ethoformatics",
   "license": "none",
   "bugs": {
-    "url": "https://github.com/ethoinformatics/sample-ui-browserify/issues"
+    "url": "https://github.com/ethoinformatics/ethoinfo-framework/issues"
   },
-  "homepage": "https://github.com/ethoinformatics/sample-ui-browserify",
+  "homepage": "https://github.com/ethoinformatics/ethoinfo-framework",
   "dependencies": {
     "async": "~0.9.0",
     "bn.js": "^0.15.0",
@@ -43,7 +43,7 @@
     "rgba-generate": "^1.0.0",
     "vashify": "^0.3.3",
     "velocity-animate": "^1.2.1",
-		"fastclick": "^1.0.6"
+    "fastclick": "^1.0.6"
   },
   "devDependencies": {
     "chai": "^3.2.0",
